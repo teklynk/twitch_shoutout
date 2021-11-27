@@ -1,0 +1,6 @@
+.idea
+data.json
+auth.json
+block.json
+notifications.json
+/media/*
