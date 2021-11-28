@@ -108,21 +108,25 @@ $(document).ready(function () {
             getInfo(getChannel, function (data) {
                 getDetails(data.data[0]['id'], function (info) {
                     // Say message in chat
-                    client.say(channelName, getChannel + " was last playing: " + info['game'] + " - " + info['status'] + " - " + info['url']);
+                    client.say(channelName, "Go check out " + getChannel + "! They were playing: " + info['game'] + " - " + info['status'] + " - " + info['url']);
 
                     // Show Clip
                     if (playClip === 'true') {
                         getClips(data.data[0]['id'], function (info) {
                             // if clips exist
                             if (info.data[0]['id']) {
-                                if (document.getElementById("clip")) {
-                                    document.getElementById("clip").remove();
+                                if ($('video').paused === true) {
+                                    if (document.getElementById("clip")) {
+                                        document.getElementById("clip").remove();
+                                    }
                                 }
+
                                 let numOfClips = info.data.length;
                                 let randClip = Math.floor(Math.random() * numOfClips);
                                 let thumbPart = info.data[randClip]['thumbnail_url'].split("-preview-");
                                 thumbPart = thumbPart[0] + ".mp4";
-                                $("<video id='clip' class='video' autoplay><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
+
+                                $("<video id='clip' class='video' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
 
                                 document.getElementById("clip").onended = function(e) {
                                     document.getElementById("clip").remove();
