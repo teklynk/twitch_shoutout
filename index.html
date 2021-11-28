@@ -40,22 +40,10 @@
             a Twitch Access Token</a>
     </div>
     <div class="form-label-group mb-2">
-        <input type="password" id="accessToken" class="form-control" required>
-        <label for="accessToken">
+        <input type="password" id="ref" class="form-control" required>
+        <label for="ref">
             <small>Access token
-                <span id="show_token"
-                      style="cursor:pointer;text-align:right;display:inline-block;width:70px;margin-top: 4px;font-size:smaller;vertical-align:top;"
-                      title="Show/Hide">
-                    show
-                </span>
-            </small>
-        </label>
-    </div>
-    <div class="form-label-group mb-2">
-        <input type="password" id="clientId" class="form-control" required>
-        <label for="clientId">
-            <small>Client Id
-                <span id="show_clientId"
+                <span id="show_ref"
                       style="cursor:pointer;text-align:right;display:inline-block;width:70px;margin-top: 4px;font-size:smaller;vertical-align:top;"
                       title="Show/Hide">
                     show
@@ -70,9 +58,16 @@
     </div>
     <br>
     <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="showClip">
+        <input class="form-check-input" type="checkbox" value="" id="showClip" checked>
         <label class="form-check-label" for="showClip">
             Show Random Clip
+        </label>
+    </div>
+    <br>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="modsOnly" checked>
+        <label class="form-check-label" for="modsOnly">
+            Mods Only
         </label>
     </div>
     <br>
@@ -86,47 +81,35 @@
             alert('No support for localStorage');
         }
 
-        document.getElementById("accessToken").value = localStorage.getItem("TwitchSOAuthToken");
-        document.getElementById("clientId").value = localStorage.getItem("TwitchSOClientId");
+        document.getElementById("ref").value = localStorage.getItem("TwitchSORef");
         document.getElementById("mainAccount").value = localStorage.getItem("TwitchSOMainAccount");
     }
 
-    document.getElementById("show_token").addEventListener("click", function (e) {
-        if (document.getElementById("show_token").innerHTML === "hide") {
-            document.getElementById("show_token").innerHTML = "show";
-            document.getElementById("accessToken").setAttribute('type', 'password');
+    document.getElementById("show_ref").addEventListener("click", function (e) {
+        if (document.getElementById("show_ref").innerHTML === "hide") {
+            document.getElementById("show_ref").innerHTML = "show";
+            document.getElementById("ref").setAttribute('type', 'password');
         } else {
-            document.getElementById("show_token").innerHTML = "hide";
-            document.getElementById("accessToken").setAttribute('type', 'text');
-        }
-    }, false);
-
-    document.getElementById("show_clientId").addEventListener("click", function (e) {
-        if (document.getElementById("show_clientId").innerHTML === "hide") {
-            document.getElementById("show_clientId").innerHTML = "show";
-            document.getElementById("clientId").setAttribute('type', 'password');
-        } else {
-            document.getElementById("show_clientId").innerHTML = "hide";
-            document.getElementById("clientId").setAttribute('type', 'text');
+            document.getElementById("show_ref").innerHTML = "hide";
+            document.getElementById("ref").setAttribute('type', 'text');
         }
     }, false);
 
     document.getElementById("generate_button").addEventListener("click", function (e) {
         let mainAccount = document.getElementById("mainAccount").value;
         let showClip = document.getElementById("showClip").checked;
+        let modsOnly = document.getElementById("modsOnly").checked;
         if (!mainAccount) {
             alert('Twitch username is not set');
         }
-        let accessToken = document.getElementById("accessToken").value;
-        let clientId = document.getElementById("clientId").value;
-        localStorage.setItem("TwitchSOAuthToken", accessToken);
-        localStorage.setItem("TwitchSOClientId", clientId);
+        let ref = document.getElementById("ref").value;
+        localStorage.setItem("TwitchSORef", ref);
         localStorage.setItem("TwitchSOMainAccount", mainAccount);
 
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount + "&showClip=" + showClip;
+            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&modsOnly=" + modsOnly + "&ref=" + btoa(ref);
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
                 "<a href='" + fullUrl + "' target='_blank'>" + fullUrl + "</a></p>";

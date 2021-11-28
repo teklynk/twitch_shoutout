@@ -7,51 +7,23 @@ $(document).ready(function () {
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
-    let channelName = getUrlParameter('channel');
+    let channelName = getUrlParameter('channel').toLowerCase();
 
     let playClip = getUrlParameter('showClip');
+
+    let ref = getUrlParameter('ref');
+
+    let modsonly = getUrlParameter('modsOnly');
 
     if (channelName === '') {
         alert('channel is not set in the URL');
     }
 
-    let authtoken = localStorage.getItem('TwitchSOAuthToken');
-    let clientId = localStorage.getItem('TwitchSOClientId');
-
-    if (authtoken === '') {
-        alert('Auth Token not set');
-    }
-
-    if (clientId === '') {
-        alert('Client Id not set');
-    }
-
-    // Twitch API: user info: user_id
-    function getInfo(channelName, callback) {
-        let urlI = "https://api.twitch.tv/helix/users?login=" + channelName + "";
-        let xhrI = new XMLHttpRequest();
-        xhrI.open("GET", urlI);
-        xhrI.setRequestHeader("Authorization", "Bearer " + authtoken + "");
-        xhrI.setRequestHeader("Client-Id", clientId);
-        xhrI.onreadystatechange = function () {
-            if (xhrI.readyState === 4 && xhrI.status === 200) {
-                callback(JSON.parse(xhrI.responseText));
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        xhrI.send();
-    }
-
     // Twitch API get last game played from a user
-    let getDetails = function (channelID, callback) {
-        let urlG = "https://api.twitch.tv/kraken/channels/" + channelID + "";
+    let getDetails = function (SOChannel, callback) {
+        let urlG = "https://twitchapi.teklynk.com/getuserstatus.php?channel=" + SOChannel + "";
         let xhrG = new XMLHttpRequest();
         xhrG.open("GET", urlG);
-        xhrG.setRequestHeader("Accept", "application/vnd.twitchtv.v5+json");
-        xhrG.setRequestHeader("Client-Id", clientId);
         xhrG.onreadystatechange = function () {
             if (xhrG.readyState === 4) {
                 callback(JSON.parse(xhrG.responseText));
@@ -64,12 +36,10 @@ $(document).ready(function () {
     };
 
     // Twitch API get clips for !so command
-    let getClips = function (refUserID, callback) {
-        let urlC = "https://api.twitch.tv/helix/clips?broadcaster_id=" + refUserID + "&first=20";
+    let getClips = function (SOChannel, callback) {
+        let urlC = "https://twitchapi.teklynk.com/getuserclips.php?channel=" + SOChannel + "";
         let xhrC = new XMLHttpRequest();
         xhrC.open("GET", urlC);
-        xhrC.setRequestHeader("Authorization", "Bearer " + authtoken + "");
-        xhrC.setRequestHeader("Client-Id", clientId);
         xhrC.onreadystatechange = function () {
             if (xhrC.readyState === 4) {
                 callback(JSON.parse(xhrC.responseText));
@@ -86,7 +56,7 @@ $(document).ready(function () {
         connection: {reconnect: true},
         identity: {
             username: channelName,
-            password: 'oauth:' + authtoken
+            password: 'oauth:' + atob(ref)
         },
         channels: [channelName]
     });
@@ -105,20 +75,26 @@ $(document).ready(function () {
                 return false;
             }
 
-            getInfo(getChannel, function (data) {
-                getDetails(data.data[0]['id'], function (info) {
+            if (modsonly === 'true' && (user.mod || user.username === channelName)) {
+                doShoutOut(); //mods only
+            } else if (modsonly === 'false' || user.username === channelName) {
+                doShoutOut(); //everyone
+            }
+
+            function doShoutOut() {
+                //getInfo(getChannel, function (data) {
+                getDetails(getChannel, function (info) {
+
                     // Say message in chat
-                    client.say(channelName, "Go check out " + getChannel + "! They were playing: " + info['game'] + " - " + info['status'] + " - " + info['url']);
+                    client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
 
                     // Show Clip
                     if (playClip === 'true') {
-                        getClips(data.data[0]['id'], function (info) {
+                        getClips(getChannel, function (info) {
                             // if clips exist
                             if (info.data[0]['id']) {
-                                if ($('video').paused === true) {
-                                    if (document.getElementById("clip")) {
-                                        document.getElementById("clip").remove();
-                                    }
+                                if (document.getElementById("clip")) {
+                                    document.getElementById("clip").remove();
                                 }
 
                                 let numOfClips = info.data.length;
@@ -128,16 +104,16 @@ $(document).ready(function () {
 
                                 $("<video id='clip' class='video' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
 
-                                document.getElementById("clip").onended = function(e) {
+                                document.getElementById("clip").onended = function (e) {
                                     document.getElementById("clip").remove();
                                 };
                             }
                         });
-
                     }
 
                 });
-            });
+            }
+
         }
     });
 
