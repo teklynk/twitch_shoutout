@@ -24,3 +24,30 @@ Tokens can be generated here: [https://twitchtokengenerator.com/](https://twitch
 
 If you want your bot to reply in chat after a command, I suggest creating tokens using your bots account. To do this,
 you will need to sign in to Twitch using your bot account before visiting twitchtokengenerator.
+
+### Custom CSS
+Add this CSS to the OBS browser source and modify as needed.
+```
+video {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    border-radius: 10px;
+}
+
+#text-container {
+    width: 100%;
+    margin: 40px 0;
+    position: absolute;
+}
+
+.title-text {
+    font-family: Basic, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 5vw;
+    word-wrap: break-word;
+    color: #fff;
+    text-align: center;
+    text-shadow: 2px 2px #000;
+}
+```
