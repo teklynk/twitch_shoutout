@@ -35,10 +35,15 @@
             <img src="assets/images/robot.gif" style="width: 60px;" alt="">
         </div>
     </div>
-    <div class="card mt-4 mb-4">
+    <div class="card mt-4">
         <a class="btn btn-lg btn-secondary" href="https://twitchtokengenerator.com/" target="_blank">Generate
             a Twitch Access Token</a>
     </div>
+    <br>
+    <div>
+        <span><a class="text-info text-center" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank">Instructions</a></span>
+    </div>
+    <br>
     <div class="form-label-group mb-2">
         <input type="password" id="ref" class="form-control" required>
         <label for="ref">
@@ -128,7 +133,7 @@
             let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showMsg=" + showMsg + "&showText=" + showText + "&modsOnly=" + modsOnly + "&ref=" + btoa(ref);
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
-                "<a href='" + fullUrl + "' target='_blank'>" + fullUrl + "</a></p>";
+                "<a href='" + fullUrl + "' target='_blank'>" + fullUrl + "</a><br><span class='text-warning'>* Never share this url with anyone or show it on stream!</span></p>";
         }
     });
 </script>
