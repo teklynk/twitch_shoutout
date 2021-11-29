@@ -102,6 +102,7 @@ $(document).ready(function () {
                             if (info.data[0]['id']) {
                                 if (document.getElementById("clip")) {
                                     document.getElementById("clip").remove();
+                                    document.getElementById("text-container").remove();
                                 }
 
                                 let numOfClips = info.data.length;
@@ -110,7 +111,7 @@ $(document).ready(function () {
                                 thumbPart = thumbPart[0] + ".mp4";
 
                                 if (showText === 'true') {
-                                    titleText = "<div class='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
+                                    titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
                                 } else {
                                     titleText = '';
                                 }
@@ -119,6 +120,7 @@ $(document).ready(function () {
 
                                 document.getElementById("clip").onended = function (e) {
                                     document.getElementById("clip").remove();
+                                    document.getElementById("text-container").remove();
                                 };
                             }
                         });
