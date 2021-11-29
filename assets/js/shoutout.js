@@ -9,11 +9,15 @@ $(document).ready(function () {
 
     let channelName = getUrlParameter('channel').toLowerCase();
 
-    let playClip = getUrlParameter('showClip');
+    let showClip = getUrlParameter('showClip');
+
+    let showMsg = getUrlParameter('showMsg');
+
+    let showText = getUrlParameter('showText');
 
     let ref = getUrlParameter('ref');
 
-    let modsonly = getUrlParameter('modsOnly');
+    let modsOnly = getUrlParameter('modsOnly');
 
     if (channelName === '') {
         alert('channel is not set in the URL');
@@ -37,7 +41,7 @@ $(document).ready(function () {
 
     // Twitch API get clips for !so command
     let getClips = function (SOChannel, callback) {
-        let urlC = "https://twitchapi.teklynk.com/getuserclips.php?channel=" + SOChannel + "";
+        let urlC = "https://twitchapi.teklynk.com/getuserclips.php?channel=" + SOChannel + "&limit=20";
         let xhrC = new XMLHttpRequest();
         xhrC.open("GET", urlC);
         xhrC.onreadystatechange = function () {
@@ -68,6 +72,7 @@ $(document).ready(function () {
         // shout-out message
         if (user['message-type'] === 'chat' && message.startsWith('!')) {
             let getChannel;
+            let titleText;
 
             if (message.startsWith('!so')) {
                 getChannel = message.substr(4);
@@ -75,9 +80,9 @@ $(document).ready(function () {
                 return false;
             }
 
-            if (modsonly === 'true' && (user.mod || user.username === channelName)) {
+            if (modsOnly === 'true' && (user.mod || user.username === channelName)) {
                 doShoutOut(); //mods only
-            } else if (modsonly === 'false' || user.username === channelName) {
+            } else if (modsOnly === 'false' || user.username === channelName) {
                 doShoutOut(); //everyone
             }
 
@@ -85,11 +90,13 @@ $(document).ready(function () {
                 //getInfo(getChannel, function (data) {
                 getDetails(getChannel, function (info) {
 
-                    // Say message in chat
-                    client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                    if (showMsg === 'true') {
+                        // Say message in chat
+                        client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                    }
 
                     // Show Clip
-                    if (playClip === 'true') {
+                    if (showClip === 'true') {
                         getClips(getChannel, function (info) {
                             // if clips exist
                             if (info.data[0]['id']) {
@@ -102,7 +109,13 @@ $(document).ready(function () {
                                 let thumbPart = info.data[randClip]['thumbnail_url'].split("-preview-");
                                 thumbPart = thumbPart[0] + ".mp4";
 
-                                $("<video id='clip' class='video' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
+                                if (showText === 'true') {
+                                    titleText = "<div class='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
+                                } else {
+                                    titleText = '';
+                                }
+
+                                $(titleText + "<video id='clip' class='video' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
 
                                 document.getElementById("clip").onended = function (e) {
                                     document.getElementById("clip").remove();

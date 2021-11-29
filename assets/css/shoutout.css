@@ -23,3 +23,18 @@ video {
     height: auto;
     max-height: 100%;
 }
+
+.text-container {
+    width: 100%;
+    margin: 20px 0 20px 0;
+    position: absolute;
+}
+
+.title-text {
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 4vw;
+    color: #fff;
+    text-align: center;
+    text-shadow: 2px 2px #000;
+}
