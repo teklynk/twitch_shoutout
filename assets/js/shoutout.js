@@ -11,6 +11,8 @@ $(document).ready(function () {
 
     let showClip = getUrlParameter('showClip');
 
+    let showRecentClip = getUrlParameter('showRecentClip');
+
     let showMsg = getUrlParameter('showMsg');
 
     let showText = getUrlParameter('showText');
@@ -40,8 +42,8 @@ $(document).ready(function () {
     };
 
     // Twitch API get clips for !so command
-    let getClips = function (SOChannel, callback) {
-        let urlC = "https://twitchapi.teklynk.com/getuserclips.php?channel=" + SOChannel + "&limit=20";
+    let getClips = function (SOChannel, limit, callback) {
+        let urlC = "https://twitchapi.teklynk.com/getuserclips.php?channel=" + SOChannel + "&limit=" + limit;
         let xhrC = new XMLHttpRequest();
         xhrC.open("GET", urlC);
         xhrC.onreadystatechange = function () {
@@ -96,28 +98,43 @@ $(document).ready(function () {
                     }
 
                     // Show Clip
-                    if (showClip === 'true') {
-                        getClips(getChannel, function (info) {
-                            // if clips exist
+                    if (showClip === 'true' || showRecentClip === 'true') {
+
+                        // Default set to Random clip
+                        let clipLimit = '20';
+                        // Recent clip
+                        if (showRecentClip === 'true') {
+                            clipLimit = '1';
+                        }
+
+                        getClips(getChannel, clipLimit, function (info) {
+                            // If clips exist
                             if (info.data[0]['id']) {
+                                // Remove existing video element
                                 if (document.getElementById("clip")) {
                                     document.getElementById("clip").remove();
                                     document.getElementById("text-container").remove();
                                 }
 
+                                // Random clip logic
                                 let numOfClips = info.data.length;
                                 let randClip = Math.floor(Math.random() * numOfClips);
+
+                                // Parse thumbnail image to build the clip url
                                 let thumbPart = info.data[randClip]['thumbnail_url'].split("-preview-");
                                 thumbPart = thumbPart[0] + ".mp4";
 
+                                // Text on top of clip
                                 if (showText === 'true') {
                                     titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
                                 } else {
                                     titleText = '';
                                 }
 
+                                // Video Clip
                                 $(titleText + "<video id='clip' class='video' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
 
+                                // Remove video element after it has finished playing
                                 document.getElementById("clip").onended = function (e) {
                                     document.getElementById("clip").remove();
                                     document.getElementById("text-container").remove();
