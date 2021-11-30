@@ -4,15 +4,23 @@
 
 This is a Twitch Shout-Out generator, browser source overlay for OBS.
 
-**Chat command:** !so MrCoolStreamer
+### Chat command:
 
-**Optional chat message:** "Go check out MrCoolStreamer! They were playing: Retro - Super Mario Brothers | Some more
-gaming - https://twitch.tv/mrcoolstreamer"
+!so MrCoolStreamer
 
-**Optional random clip:** This will show a random clip from the user that you are shouting out. Pulls the most recent
-top 20.
+### Options
 
-**Optional title text:** Displays a title on top of the video clip "Go check out MrCoolStreamer".
+**Show chat message:** Displays a chat message like: "Go check out MrCoolStreamer! They were playing: Retro - Super
+Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
+
+**Show a random clip:** This will show a random clip from the user that you are shouting out. Pulls the most recent top
+20 popular clips.
+
+**Show the most recent clip:** This will show the most recent popular clip.
+
+**Show text on top of clip:** Displays a title on top of the video clip "Go check out MrCoolStreamer".
+
+**Mods only:** Limit the !so to mods and streamer.
 
 ### Twitch oAuth token
 
@@ -22,11 +30,13 @@ Tokens can be generated here: [https://twitchtokengenerator.com/](https://twitch
 
 **When generating a Twitch Access token, be sure to select "Bot Chat Token".**
 
-If you want your bot to reply in chat after a command, I suggest creating tokens using your bots account. To do this,
-you will need to sign in to Twitch using your bot account before visiting twitchtokengenerator.
+If you want your bot account to reply in chat after the !so command, I suggest creating tokens using your bots account.
+To do this, you will need to sign in to Twitch using your bot account before visiting twitchtokengenerator.
 
 ### Custom CSS
+
 Add this CSS to the OBS browser source and modify as needed.
+
 ```
 video {
     width: 100%;
