@@ -79,17 +79,17 @@ $(document).ready(function () {
             if (message.startsWith('!so')) {
                 getChannel = message.substr(4);
             } else {
-                return false;
+                return false; // Exit, do nothing else
             }
 
             if (modsOnly === 'true' && (user.mod || user.username === channelName)) {
-                doShoutOut(); //mods only
+                doShoutOut(); // mods only
             } else if (modsOnly === 'false' || user.username === channelName) {
-                doShoutOut(); //everyone
+                doShoutOut(); // everyone
             }
 
             function doShoutOut() {
-                //getInfo(getChannel, function (data) {
+
                 getDetails(getChannel, function (info) {
 
                     if (showMsg === 'true') {
@@ -100,14 +100,13 @@ $(document).ready(function () {
                     // Show Clip
                     if (showClip === 'true' || showRecentClip === 'true') {
 
-                        // Default set to Random clip
-                        let clipLimit = '20';
-                        // Recent clip
-                        if (showRecentClip === 'true') {
-                            clipLimit = '1';
-                        }
+                        getClips(getChannel, '20', function (info) {
 
-                        getClips(getChannel, clipLimit, function (info) {
+                            // Sort info by created_at date
+                            info.data.sort(function (a, b) {
+                                return new Date(b.created_at) - new Date(a.created_at);
+                            });
+
                             // If clips exist
                             if (info.data[0]['id']) {
                                 // Remove existing video element
@@ -116,12 +115,17 @@ $(document).ready(function () {
                                     document.getElementById("text-container").remove();
                                 }
 
+                                // Default value = most recent index after sorted
+                                let indexClip = 0;
+
                                 // Random clip logic
-                                let numOfClips = info.data.length;
-                                let randClip = Math.floor(Math.random() * numOfClips);
+                                if (showClip === 'true') {
+                                    let numOfClips = info.data.length;
+                                    indexClip = Math.floor(Math.random() * numOfClips);
+                                }
 
                                 // Parse thumbnail image to build the clip url
-                                let thumbPart = info.data[randClip]['thumbnail_url'].split("-preview-");
+                                let thumbPart = info.data[indexClip]['thumbnail_url'].split("-preview-");
                                 thumbPart = thumbPart[0] + ".mp4";
 
                                 // Text on top of clip
