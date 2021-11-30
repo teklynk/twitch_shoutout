@@ -2,7 +2,9 @@
 
 ### What is this?
 
-This is a Twitch Shout-Out generator, browser source overlay for OBS.
+This is a Twitch Shout-Out generator, browser source overlay for OBS. This project uses [TMIJS](https://tmijs.com/), javascript, html, css. It is client-side code that can run locally (localhost) or on your own server.
+
+### [Try it here](https://twitch-shoutout.pages.dev/)
 
 ### Chat command:
 

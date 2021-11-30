@@ -57,6 +57,16 @@ $(document).ready(function () {
         xhrC.send();
     };
 
+    function sortByProperty(property) {
+        return function (a, b) {
+            if (a[property] < b[property])
+                return 1;
+            else if (a[property] > b[property])
+                return -1;
+            return 0;
+        }
+    }
+
     const client = new tmi.Client({
         options: {debug: true},
         connection: {reconnect: true},
@@ -102,13 +112,11 @@ $(document).ready(function () {
 
                         getClips(getChannel, '20', function (info) {
 
-                            // Sort info by created_at date
-                            info.data.sort(function (a, b) {
-                                return new Date(b.created_at) - new Date(a.created_at);
-                            });
+                            // Sort array by created_at
+                            info.data.sort(sortByProperty('created_at'));
 
                             // If clips exist
-                            if (info.data[0]['id']) {
+                            if (info.data[0]['created_at']) {
                                 // Remove existing video element
                                 if (document.getElementById("clip")) {
                                     document.getElementById("clip").remove();
@@ -131,8 +139,6 @@ $(document).ready(function () {
                                 // Text on top of clip
                                 if (showText === 'true') {
                                     titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
-                                } else {
-                                    titleText = '';
                                 }
 
                                 // Video Clip

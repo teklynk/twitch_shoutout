@@ -40,56 +40,45 @@
             a Twitch Access Token</a>
     </div>
     <br>
-    <div>
-        <span><a class="text-info text-center" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank">Instructions</a></span>
-    </div>
-    <br>
-    <div class="form-label-group mb-2">
-        <input type="password" id="ref" class="form-control" required>
-        <label for="ref">
-            <small>Access token
-                <span id="show_ref"
-                      style="cursor:pointer;text-align:right;display:inline-block;width:70px;margin-top: 4px;font-size:smaller;vertical-align:top;"
-                      title="Show/Hide">
-                    show
-                </span>
-            </small>
-        </label>
-    </div>
-    <br>
     <div class="form-label-group mb-2">
         <label for="mainAccount">Twitch Account</label>
         <input type="text" id="mainAccount" class="form-control">
     </div>
-    <br>
+    <div class="form-label-group mb-2">
+        <label for="ref">Access token</label>
+        <input type="password" id="ref" class="form-control" required>
+        <span id="show_ref"
+              style="cursor:pointer;text-align:left;display:inline-block;width:70px;margin-top: 4px;font-size:smaller;vertical-align:top;"
+              title="Show/Hide">
+            show
+        </span>
+    </div>
+    <hr>
+    <h2>Options</h2>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showClip">
         <label class="form-check-label" for="showClip">
             Show a random clip
         </label>
     </div>
-    <br>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showRecentClip">
         <label class="form-check-label" for="showRecentClip">
             Show the most recent clip
         </label>
     </div>
-    <br>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showText" checked>
         <label class="form-check-label" for="showText">
             Show text on top of clip
         </label>
     </div>
-    <br>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showMsg" checked>
         <label class="form-check-label" for="showMsg">
             Show chat message
         </label>
     </div>
-    <br>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="modsOnly" checked>
         <label class="form-check-label" for="modsOnly">
