@@ -35,8 +35,8 @@
             <img src="assets/images/robot.gif" style="width: 60px;" alt="">
         </div>
     </div>
-    <div class="card mt-4">
-        <a class="btn btn-lg btn-secondary" href="https://twitchtokengenerator.com/" target="_blank">Generate
+    <div class="mt-4">
+        <a class="btn btn-lg btn-secondary btn-block" href="https://twitchtokengenerator.com/" target="_blank">Generate
             a Twitch Access Token</a>
     </div>
     <br>
@@ -49,8 +49,7 @@
         <input type="password" id="ref" class="form-control" required>
         <span id="show_ref"
               style="cursor:pointer;text-align:left;display:inline-block;width:70px;margin-top: 4px;font-size:smaller;vertical-align:top;"
-              title="Show/Hide">
-            show
+              title="Show/Hide">show
         </span>
     </div>
     <hr>
@@ -58,25 +57,25 @@
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showClip">
         <label class="form-check-label" for="showClip">
-            Show a random clip
+            Show a random popular clip
         </label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showRecentClip">
         <label class="form-check-label" for="showRecentClip">
-            Show the most recent clip
+            Show the most recent popular clip
         </label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showText" checked>
         <label class="form-check-label" for="showText">
-            Show text on top of clip
+            Show: "Go check out {channel}" on top of the clip
         </label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showMsg" checked>
         <label class="form-check-label" for="showMsg">
-            Show chat message
+            Show chat message: "Go check out {channel}! - They were playing: {game} - {title} - https://twitch.tv/channelname"
         </label>
     </div>
     <div class="form-check">
@@ -92,10 +91,6 @@
 </div>
 <script>
     function onInit() {
-        if (!window.localStorage) {
-            alert('No support for localStorage');
-        }
-
         document.getElementById("ref").value = localStorage.getItem("TwitchSORef");
         document.getElementById("mainAccount").value = localStorage.getItem("TwitchSOMainAccount");
 
@@ -117,11 +112,11 @@
     }, false);
 
     document.getElementById("show_ref").addEventListener("click", function (e) {
-        if (document.getElementById("show_ref").innerHTML === "hide") {
-            document.getElementById("show_ref").innerHTML = "show";
+        if (document.getElementById("show_ref").innerText === "hide") {
+            document.getElementById("show_ref").innerText = "show";
             document.getElementById("ref").setAttribute('type', 'password');
         } else {
-            document.getElementById("show_ref").innerHTML = "hide";
+            document.getElementById("show_ref").innerText = "hide";
             document.getElementById("ref").setAttribute('type', 'text');
         }
     }, false);
