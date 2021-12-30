@@ -7,6 +7,8 @@ $(document).ready(function () {
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
+    let client = '';
+
     let channelName = getUrlParameter('channel').toLowerCase();
 
     let showClip = getUrlParameter('showClip');
@@ -67,15 +69,23 @@ $(document).ready(function () {
         }
     }
 
-    const client = new tmi.Client({
-        options: {debug: true},
-        connection: {reconnect: true},
-        identity: {
-            username: channelName,
-            password: 'oauth:' + atob(ref)
-        },
-        channels: [channelName]
-    });
+    if (ref) {
+        client = new tmi.Client({
+            options: {debug: true},
+            connection: {reconnect: true},
+            identity: {
+                username: channelName,
+                password: 'oauth:' + atob(ref)
+            },
+            channels: [channelName]
+        });
+    } else {
+        client = new tmi.Client({
+            options: {debug: true},
+            connection: {reconnect: true},
+            channels: [channelName]
+        });
+    }
 
     client.connect().catch(console.error);
 

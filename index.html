@@ -35,7 +35,7 @@
             <img src="assets/images/robot.gif" style="width: 60px;" alt="">
         </div>
     </div>
-    <div class="mt-4">
+    <div class="mt-4 hide" id="access_token_link">
         <a class="btn btn-lg btn-secondary btn-block" href="https://twitchtokengenerator.com/" target="_blank">Generate
             a Twitch Access Token</a>
     </div>
@@ -44,9 +44,9 @@
         <label for="mainAccount">Twitch Account</label>
         <input type="text" id="mainAccount" class="form-control">
     </div>
-    <div class="form-label-group mb-2">
+    <div class="form-label-group mb-2 hide" id="access_token">
         <label for="ref">Access token</label>
-        <input type="password" id="ref" class="form-control" required>
+        <input type="password" id="ref" class="form-control" disabled>
         <span id="show_ref"
               style="cursor:pointer;text-align:left;display:inline-block;width:70px;margin-top: 4px;font-size:smaller;vertical-align:top;"
               title="Show/Hide">show
@@ -73,11 +73,12 @@
         </label>
     </div>
     <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="showMsg" checked>
+        <input class="form-check-input" type="checkbox" value="" id="showMsg">
         <label class="form-check-label" for="showMsg">
             Show chat message: "Go check out {channel}! - They were playing: {game} - {title} -
             https://twitch.tv/channelname"
         </label>
+        <small class="text-info hide" id="auth_msg"><br>* Requires Twitch Access Token<br></small>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="modsOnly" checked>
@@ -103,6 +104,19 @@
             document.getElementById("showClip").checked = false;
         }
     }
+
+    //show chat message
+    document.getElementById("showMsg").addEventListener("click", function (e) {
+        document.getElementById("access_token").classList.toggle('hide');
+        document.getElementById("access_token_link").classList.toggle('hide');
+        document.getElementById("auth_msg").classList.toggle('hide');
+        if (document.getElementById('ref').hasAttribute("disabled")) {
+            document.getElementById('ref').removeAttribute("disabled");
+        } else {
+            document.getElementById('ref').setAttribute("disabled", "true");
+        }
+
+    }, false);
 
     document.getElementById("showClip").addEventListener("click", function (e) {
         document.getElementById("showRecentClip").checked = false;
@@ -132,7 +146,13 @@
         if (!mainAccount) {
             alert('Twitch username is not set');
         }
+
         let ref = document.getElementById("ref").value;
+
+        if (!showMsg) {
+            ref = '';
+        }
+
         localStorage.setItem("TwitchSORef", ref);
         localStorage.setItem("TwitchSOMainAccount", mainAccount);
 
