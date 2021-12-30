@@ -149,6 +149,8 @@ $(document).ready(function () {
                                 // Text on top of clip
                                 if (showText === 'true') {
                                     titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
+                                } else {
+                                    titleText = '';
                                 }
 
                                 // Video Clip
