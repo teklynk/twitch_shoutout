@@ -168,7 +168,6 @@ $(document).ready(function () {
                                 // Video Clip
                                 $(titleText + "<video id='clip' class='video' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
 
-
                                 // Timeout start
                                 let timer = 0;
 
