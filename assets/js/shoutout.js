@@ -33,6 +33,9 @@ $(document).ready(function () {
         alert('channel is not set in the URL');
     }
 
+    // Default - remove 'active' state on initial load... in case it is stuck on 'active'
+    localStorage.setItem('TwitchSOVideoState', '');
+
     // Twitch API get last game played from a user
     let getDetails = function (SOChannel, callback) {
         let urlG = "https://twitchapi.teklynk.com/getuserstatus.php?channel=" + SOChannel + "";
@@ -139,6 +142,7 @@ $(document).ready(function () {
 
                             // If clips exist
                             if (info.data[0]['created_at']) {
+
                                 // Remove existing video element
                                 if (document.getElementById("clip")) {
                                     document.getElementById("clip").remove();
@@ -166,7 +170,7 @@ $(document).ready(function () {
                                 }
 
                                 // Video Clip
-                                $(titleText + "<video id='clip' class='video' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
+                                $(titleText + "<video id='clip' class='video fade' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
 
                                 // Timeout start
                                 let timer = 0;
@@ -175,14 +179,16 @@ $(document).ready(function () {
                                 let startTimer = setInterval(function () {
                                     timer++; // increment timer
 
+                                    // Save video state to localStorage - Other overlays can use this value to check if the video has finished playing, as long as the overlays are on the same domain or localhost.
+                                    localStorage.setItem('TwitchSOVideoState', 'active'); // set 'active' state
+
                                     if (timer === parseInt(timeOut)) {
                                         document.getElementById("clip").remove();
                                         document.getElementById("text-container").remove();
                                         timer = 0; // reset timer to zero
                                         clearInterval(startTimer);
+                                        localStorage.setItem('TwitchSOVideoState', ''); // remove 'active' state
                                     }
-
-                                    console.log(timer);
 
                                 }, 1000);
 
@@ -192,6 +198,7 @@ $(document).ready(function () {
                                     document.getElementById("text-container").remove();
                                     timer = 0; // reset timer to zero
                                     clearInterval(startTimer);
+                                    localStorage.setItem('TwitchSOVideoState', ''); // remove 'active' state
                                 };
 
                             }
