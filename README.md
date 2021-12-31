@@ -26,6 +26,10 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **Duration:** Max amount of time that the clip plays for.
 
+### Notes
+
+You can not shout-out a user while a clip is playing. You will need to wait for the clip to finish before doing another shout-out command.
+
 ### URL Parameters
 
 **channel=Your** channel name
