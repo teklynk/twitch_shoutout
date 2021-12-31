@@ -23,6 +23,12 @@ $(document).ready(function () {
 
     let modsOnly = getUrlParameter('modsOnly');
 
+    let timeOut = getUrlParameter('timeOut');
+
+    if (!timeOut) {
+        timeOut = 10;
+    }
+
     if (channelName === '') {
         alert('channel is not set in the URL');
     }
@@ -98,6 +104,7 @@ $(document).ready(function () {
 
             if (message.startsWith('!so')) {
                 getChannel = message.substr(4);
+                getChannel = getChannel.replace('@', '');
             } else {
                 return false; // Exit, do nothing else
             }
@@ -119,6 +126,11 @@ $(document).ready(function () {
 
                     // Show Clip
                     if (showClip === 'true' || showRecentClip === 'true') {
+
+                        // Ignore if video clip is playing
+                        if (document.getElementById("clip")) {
+                            return false; //do nothing
+                        }
 
                         getClips(getChannel, '20', function (info) {
 
@@ -156,11 +168,33 @@ $(document).ready(function () {
                                 // Video Clip
                                 $(titleText + "<video id='clip' class='video' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
 
+
+                                // Timeout start
+                                let timer = 0;
+
+                                // Remove video after timeout has been reached
+                                let startTimer = setInterval(function () {
+                                    timer++; // increment timer
+
+                                    if (timer === parseInt(timeOut)) {
+                                        document.getElementById("clip").remove();
+                                        document.getElementById("text-container").remove();
+                                        timer = 0; // reset timer to zero
+                                        clearInterval(startTimer);
+                                    }
+
+                                    console.log(timer);
+
+                                }, 1000);
+
                                 // Remove video element after it has finished playing
                                 document.getElementById("clip").onended = function (e) {
                                     document.getElementById("clip").remove();
                                     document.getElementById("text-container").remove();
+                                    timer = 0; // reset timer to zero
+                                    clearInterval(startTimer);
                                 };
+
                             }
                         });
                     }
