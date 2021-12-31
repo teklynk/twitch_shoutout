@@ -38,43 +38,19 @@
     </div>
     <ul class="nav nav-tabs" id="mainNav" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="home-tab" data-toggle="tab" href="index.html" role="tab">Clips</a>
+            <a class="nav-link" id="home-tab" data-toggle="tab" href="index.html" role="tab">Clips</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="profile-tab" data-toggle="tab" href="slider.html" role="tab">Slider</a>
+            <a class="nav-link active" id="profile-tab" data-toggle="tab" href="slider.html" role="tab">Slider</a>
         </li>
     </ul>
-    <div class="mt-4 hide" id="access_token_link">
-        <a class="btn btn-lg btn-secondary btn-block" href="https://twitchtokengenerator.com/" target="_blank">Generate
-            a Twitch Access Token</a>
-    </div>
     <br>
     <div class="form-label-group mb-2">
         <label for="mainAccount">Twitch Account</label>
         <input type="text" id="mainAccount" class="form-control">
     </div>
-    <div class="form-label-group mb-2 hide" id="access_token">
-        <label for="ref">Access token</label>
-        <input type="password" id="ref" class="form-control" disabled>
-        <span id="show_ref"
-              style="cursor:pointer;text-align:left;display:inline-block;width:70px;margin-top: 4px;font-size:smaller;vertical-align:top;"
-              title="Show/Hide">show
-        </span>
-    </div>
     <hr>
     <h2>Options</h2>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="showClip" checked>
-        <label class="form-check-label" for="showClip">
-            Show a random popular clip
-        </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="showRecentClip">
-        <label class="form-check-label" for="showRecentClip">
-            Show the most recent popular clip
-        </label>
-    </div>
     <br>
     <div class="form-group range-slider">
         <label for="timeOut">Duration</label>
@@ -82,20 +58,6 @@
                value="10" style="height: 0;">
         <small class="text-muted range-slider-value"></small>
         <small class="text-muted range-slider-value">&nbsp;Seconds</small>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="showText" checked>
-        <label class="form-check-label" for="showText">
-            Show: "Go check out {channel}" on top of the clip
-        </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="showMsg">
-        <label class="form-check-label" for="showMsg">
-            Show chat message: "Go check out {channel}! - They were playing: {game} - {title} -
-            https://twitch.tv/channelname"
-        </label>
-        <small class="text-warning hide" id="auth_msg"><br>* Requires Twitch Access Token<br></small>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="modsOnly" checked>
@@ -133,46 +95,7 @@
 
         document.getElementById("ref").value = localStorage.getItem("TwitchSORef");
         document.getElementById("mainAccount").value = localStorage.getItem("TwitchSOMainAccount");
-
-        if (document.getElementById("showClip").checked) {
-            document.getElementById("showRecentClip").checked = false;
-        }
-
-        if (document.getElementById("showRecentClip").checked) {
-            document.getElementById("showClip").checked = false;
-        }
     }
-
-    //show chat message
-    document.getElementById("showMsg").addEventListener("click", function (e) {
-        document.getElementById("access_token").classList.toggle('hide');
-        document.getElementById("access_token_link").classList.toggle('hide');
-        document.getElementById("auth_msg").classList.toggle('hide');
-        if (document.getElementById('ref').hasAttribute("disabled")) {
-            document.getElementById('ref').removeAttribute("disabled");
-        } else {
-            document.getElementById('ref').setAttribute("disabled", "true");
-        }
-
-    }, false);
-
-    document.getElementById("showClip").addEventListener("click", function (e) {
-        document.getElementById("showRecentClip").checked = false;
-    }, false);
-
-    document.getElementById("showRecentClip").addEventListener("click", function (e) {
-        document.getElementById("showClip").checked = false;
-    }, false);
-
-    document.getElementById("show_ref").addEventListener("click", function (e) {
-        if (document.getElementById("show_ref").innerText === "hide") {
-            document.getElementById("show_ref").innerText = "show";
-            document.getElementById("ref").setAttribute('type', 'password');
-        } else {
-            document.getElementById("show_ref").innerText = "hide";
-            document.getElementById("ref").setAttribute('type', 'text');
-        }
-    }, false);
 
     document.getElementById("generate_button").addEventListener("click", function (e) {
         let mainAccount = document.getElementById("mainAccount").value;
@@ -186,28 +109,13 @@
             alert('Twitch username is not set');
         }
 
-        if (!showClip && !showRecentClip) {
-            alert('Clip option is not set. Video clip will not play!');
-        }
-
-        let ref = document.getElementById("ref").value;
-
-        if (!showMsg) {
-            ref = '';
-        }
-
-        if (showMsg && !ref) {
-            alert('Twitch access token is required if show chat message is checked!');
-        }
-
-
         localStorage.setItem("TwitchSORef", ref);
         localStorage.setItem("TwitchSOMainAccount", mainAccount);
 
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutoutslider.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&ref=" + btoa(ref);
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
                 "<a style='word-break:break-all;' href='" + fullUrl + "' target='_blank'>" + fullUrl + "</a><br><span class='text-warning'>* Never share this url with anyone or show it on stream!</span></p>";
