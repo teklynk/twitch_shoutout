@@ -178,11 +178,20 @@
             alert('Twitch username is not set');
         }
 
+        if (!showClip && !showRecentClip) {
+            alert('Clip option is not set. Video clip will not play!');
+        }
+
         let ref = document.getElementById("ref").value;
 
         if (!showMsg) {
             ref = '';
         }
+
+        if (showMsg && !ref) {
+            alert('Twitch access token is required if show chat message is checked!');
+        }
+
 
         localStorage.setItem("TwitchSORef", ref);
         localStorage.setItem("TwitchSOMainAccount", mainAccount);
