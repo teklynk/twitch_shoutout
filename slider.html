@@ -51,6 +51,10 @@
     </div>
     <hr>
     <h2>Options</h2>
+    <div class="form-label-group mb-2">
+        <label for="msg">Message</label>
+        <input type="text" id="msg" class="form-control" placeholder="Go Check Out" size="250">
+    </div>
     <br>
     <div class="form-group range-slider">
         <label for="timeOut">Duration</label>
@@ -58,6 +62,12 @@
                value="10" style="height: 0;">
         <small class="text-muted range-slider-value"></small>
         <small class="text-muted range-slider-value">&nbsp;Seconds</small>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="useClips" checked>
+        <label class="form-check-label" for="useClips">
+            Use with clips overlay
+        </label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="modsOnly" checked>
@@ -93,29 +103,25 @@
 
         rangeSlider();
 
-        document.getElementById("ref").value = localStorage.getItem("TwitchSORef");
-        document.getElementById("mainAccount").value = localStorage.getItem("TwitchSOMainAccount");
+        document.getElementById("mainAccount").value = localStorage.getItem("TwitchSOSliderMainAccount");
     }
 
     document.getElementById("generate_button").addEventListener("click", function (e) {
         let mainAccount = document.getElementById("mainAccount").value;
-        let showClip = document.getElementById("showClip").checked;
-        let showRecentClip = document.getElementById("showRecentClip").checked;
+        let msg = document.getElementById("msg").value;
         let modsOnly = document.getElementById("modsOnly").checked;
-        let showMsg = document.getElementById("showMsg").checked;
-        let showText = document.getElementById("showText").checked;
-        let timeOut = document.getElementById("timeOut").value;
+        let useClips = document.getElementById("useClips").checked;
         if (!mainAccount) {
             alert('Twitch username is not set');
         }
 
-        localStorage.setItem("TwitchSORef", ref);
-        localStorage.setItem("TwitchSOMainAccount", mainAccount);
+        localStorage.setItem("TwitchSOSliderMainAccount", mainAccount);
 
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutoutslider.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutoutslider.html?channel=" + mainAccount.toLowerCase() + "&useClips=" + useClips + "&msg=" + msg + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut;
+            fullUrl = fullUrl.replace("slider.html", "");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
                 "<a style='word-break:break-all;' href='" + fullUrl + "' target='_blank'>" + fullUrl + "</a><br><span class='text-warning'>* Never share this url with anyone or show it on stream!</span></p>";

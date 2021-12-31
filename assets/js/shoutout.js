@@ -68,6 +68,7 @@ $(document).ready(function () {
         xhrC.send();
     };
 
+    // Sort function
     function sortByProperty(property) {
         return function (a, b) {
             if (a[property] < b[property])
@@ -78,6 +79,7 @@ $(document).ready(function () {
         }
     }
 
+    // If Auth token is set, then connect to chat using oauth, else connect anonymously.
     if (ref) {
         client = new tmi.Client({
             options: {debug: true},
@@ -109,13 +111,13 @@ $(document).ready(function () {
                 getChannel = message.substr(4);
                 getChannel = getChannel.replace('@', '');
             } else {
-                return false; // Exit, do nothing else
+                return false; // Exit and Do nothing else
             }
 
             if (modsOnly === 'true' && (user.mod || user.username === channelName)) {
-                doShoutOut(); // mods only
+                doShoutOut(); // Mods only
             } else if (modsOnly === 'false' || user.username === channelName) {
-                doShoutOut(); // everyone
+                doShoutOut(); // Everyone
             }
 
             function doShoutOut() {
@@ -132,16 +134,18 @@ $(document).ready(function () {
 
                         // Ignore if video clip is playing
                         if (document.getElementById("clip")) {
-                            return false; //do nothing
+                            return false; // Exit and Do nothing
                         }
 
                         getClips(getChannel, '20', function (info) {
 
-                            // Sort array by created_at
-                            info.data.sort(sortByProperty('created_at'));
-
                             // If clips exist
-                            if (info.data[0]['created_at']) {
+                            if (info.data.length > 0) {
+
+                                console.log('clips exist!');
+
+                                // Sort array by created_at
+                                info.data.sort(sortByProperty('created_at'));
 
                                 // Remove existing video element
                                 if (document.getElementById("clip")) {
@@ -177,7 +181,7 @@ $(document).ready(function () {
 
                                 // Remove video after timeout has been reached
                                 let startTimer = setInterval(function () {
-                                    timer++; // increment timer
+                                    timer++; // Increment timer
 
                                     // Save video state to localStorage - Other overlays can use this value to check if the video has finished playing, as long as the overlays are on the same domain or localhost.
                                     localStorage.setItem('TwitchSOVideoState', 'active'); // set 'active' state
@@ -200,6 +204,12 @@ $(document).ready(function () {
                                     clearInterval(startTimer);
                                     localStorage.setItem('TwitchSOVideoState', ''); // remove 'active' state
                                 };
+
+                            } else {
+
+                                console.log('no clips found!');
+
+                                return false; // Exit and Do nothing
 
                             }
                         });
