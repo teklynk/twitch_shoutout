@@ -9,6 +9,8 @@ $(document).ready(function () {
 
     let channelName = getUrlParameter('channel').toLowerCase();
     let channelMessage = getUrlParameter('msg');
+    let timeOut = getUrlParameter('timeOut');
+    let modsOnly = getUrlParameter('modsOnly');
 
     // Twitch API get user info for !so command
     let getUserInfo = function (SOChannel, callback) {
@@ -46,25 +48,70 @@ $(document).ready(function () {
             return false; // Exit and Do nothing else
         }
 
-        getUserInfo(getChannel, function (info) {
-            // Remove existing elements
-            if (document.getElementById("userMsg") || document.getElementById("userImage") || document.getElementById("userName")) {
-                document.getElementById("userMsg").remove();
-                document.getElementById("userImage").remove();
-                document.getElementById("userName").remove();
-            }
+        // Ignore if video clip is playing
+        if (document.getElementById("userMsg")) {
+            return false; // Exit and Do nothing
+        }
 
-            // TODO: check localStorage every second for clips overlay state
-            // TODO: check if useClips is set
+        if (modsOnly === 'true' && (user.mod || user.username === channelName)) {
+            doShoutOutSlider(); // Mods only
+        } else if (modsOnly === 'false' || user.username === channelName) {
+            doShoutOutSlider(); // Everyone
+        }
 
-            let userImage = info.data[0]['profile_image_url'];
-            let userDisplayName = info.data[0]['display_name'];
-            let userMsg = decodeURI(channelMessage);
+        function doShoutOutSlider() {
 
-            $("<div id='userMsg' class='slide-left'><p>" + userMsg + "</p></div>").appendTo("#container");
-            $("<div id='userImage'><img class='fade-in-image' src='" + userImage + "' alt=''/></div>").appendTo("#container");
-            $("<div id='userName' class='slide-right'><p>" + userDisplayName + "</p></div>").appendTo("#container");
-        });
+            getUserInfo(getChannel, function (info) {
+                // If user exists
+                if (info.data.length > 0) {
+
+                    // Remove existing elements on load
+                    if (document.getElementById("userMsg") || document.getElementById("userImage") || document.getElementById("userName")) {
+                        document.getElementById("userMsg").remove();
+                        document.getElementById("userImage").remove();
+                        document.getElementById("userName").remove();
+                    }
+
+                    // Timeout start
+                    let timer = 0;
+
+                    // Remove video after timeout has been reached
+                    let startTimer = setInterval(function () {
+                        timer++; // Increment timer
+
+                        console.log(timer);
+
+                        if (timer === parseInt(timeOut)) {
+                            document.getElementById("userMsg").classList.remove("slide-left-in");
+                            document.getElementById("userImage").getElementsByClassName("image")[0].classList.remove("fade-in-image");
+                            document.getElementById("userName").classList.remove("slide-right-in");
+
+                            document.getElementById("userMsg").classList.add("slide-right-out");
+                            document.getElementById("userImage").getElementsByClassName("image")[0].classList.add("fade-out-image");
+                            document.getElementById("userName").classList.add("slide-left-out");
+                            timer = 0; // reset timer to zero
+                            clearInterval(startTimer);
+
+                            // Completely remove elements after 3 seconds
+                            setTimeout(function () {
+                                document.getElementById("userMsg").remove();
+                                document.getElementById("userImage").remove();
+                                document.getElementById("userName").remove();
+                            }, 1000);
+                        }
+
+                    }, 1000);
+
+                    let userImage = info.data[0]['profile_image_url'];
+                    let userDisplayName = info.data[0]['display_name'];
+                    let userMsg = decodeURI(channelMessage);
+
+                    $("<div id='userMsg' class='slide-left-in'><p>" + userMsg + "</p></div>").appendTo("#container");
+                    $("<div id='userImage'><img class='image fade-in-image' src='" + userImage + "' alt=''/></div>").appendTo("#container");
+                    $("<div id='userName' class='slide-right-in'><p>" + userDisplayName + "</p></div>").appendTo("#container");
+                }
+            });
+        }
 
     })
 });

@@ -110,6 +110,36 @@
             Mods only
         </label>
     </div>
+    <br/>
+    <div class="form-group purple-border">
+        <label for="customCss">Custom CSS
+            <small> (Copy and paste into the OBS browser source Custom CSS section and modify as needed)</small>
+        </label>
+        <textarea class="form-control" id="customCss" rows="3" style="height: 200px;" readonly>
+video {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    border-radius: 10px;
+}
+
+#text-container {
+    width: 100%;
+    margin: 40px 0;
+    position: absolute;
+}
+
+.title-text {
+    font-family: Basic, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 5vw;
+    word-wrap: break-word;
+    color: #fff;
+    text-align: center;
+    text-shadow: 2px 2px #000;
+}
+        </textarea>
+    </div>
     <br>
     <button class="btn btn-lg btn-success btn-block" id="generate_button" type="button">Generate Overlay Link</button>
     <br>

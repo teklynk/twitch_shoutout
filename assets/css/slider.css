@@ -13,11 +13,6 @@ p {
     margin: 0;
 }
 
-img.img-fluid {
-    max-width: 100%;
-    height: auto;
-}
-
 #container {
     width: 100%;
     margin: auto;
@@ -28,8 +23,10 @@ img.img-fluid {
 }
 
 #userImage img {
-    width: 100px;
+    width: 150px;
     border-radius: 100%;
+    box-shadow: 2px 2px 2px #000000;
+    border: solid 1px #760a99;
 }
 
 #userMsg p {
@@ -48,27 +45,27 @@ img.img-fluid {
     text-shadow: 1px 1px #000000;
 }
 
-div.slide-right {
+div.slide-right-in {
     width: 100%;
     overflow: hidden;
     text-align: center;
 }
 
-div.slide-left {
+div.slide-left-in {
     width: 100%;
     overflow: hidden;
     text-align: center;
 }
 
-div.slide-left p {
-    animation: slide-left 3s, slide-right 3s;
+div.slide-left-in p {
+    animation: slide-left-in 3s, slide-right-in 3s;
 }
 
-div.slide-right p {
-    animation: slide-right 3s, slide-left 3s;
+div.slide-right-in p {
+    animation: slide-right-in 3s, slide-left-in 3s;
 }
 
-@keyframes slide-right {
+@keyframes slide-right-in {
     from {
         margin-left: -100%;
         width: 100%;
@@ -80,7 +77,7 @@ div.slide-right p {
     }
 }
 
-@keyframes slide-left {
+@keyframes slide-left-in {
     from {
         margin-left: 100%;
         width: 100%;
@@ -92,8 +89,59 @@ div.slide-right p {
     }
 }
 
+div.slide-right-out {
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+}
+
+div.slide-left-out {
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+}
+
+div.slide-left-out p {
+    animation: slide-left-out 3s, slide-right-out 3s;
+    visibility: hidden;
+}
+
+div.slide-right-out p {
+    animation: slide-right-out 3s, slide-left-out 3s;
+    visibility: hidden;
+}
+
+@keyframes slide-right-out {
+    from {
+        margin-left: 0%;
+        width: 100%;
+        visibility: visible;
+    }
+
+    to {
+        margin-left: -100%;
+        width: 100%;
+        visibility: hidden;
+    }
+}
+
+@keyframes slide-left-out {
+    from {
+        margin-left: 0%;
+        width: 100%;
+        visibility: visible;
+    }
+
+    to {
+        margin-left: 100%;
+        width: 100%;
+        visibility: hidden;
+    }
+}
+
 .fade-in-image {
-    animation: fadeIn 3s;
+    animation: fadeIn 1s;
+    visibility: visible;
 }
 
 @keyframes fadeIn {
@@ -102,5 +150,21 @@ div.slide-right p {
     }
     100% {
         opacity: 1;
+    }
+}
+
+.fade-out-image {
+    animation: fadeOut 1s;
+    visibility: hidden;
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        visibility: visible;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
     }
 }
