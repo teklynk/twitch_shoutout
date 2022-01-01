@@ -25,8 +25,14 @@ $(document).ready(function () {
 
     let timeOut = getUrlParameter('timeOut');
 
+    let command = getUrlParameter('command');
+
+    if (!command) {
+        command = 'so'; // default
+    }
+
     if (!timeOut) {
-        timeOut = 10;
+        timeOut = 10; // default
     }
 
     if (channelName === '') {
@@ -102,13 +108,12 @@ $(document).ready(function () {
 
     // triggers on message
     client.on('chat', (channel, user, message, self) => {
-        // shout-out message
         if (user['message-type'] === 'chat' && message.startsWith('!')) {
             let getChannel;
             let titleText;
 
-            if (message.startsWith('!so')) {
-                getChannel = message.substr(4);
+            if (message.startsWith('!' + command)) {
+                getChannel = message.substr(command.length + 1);
                 getChannel = getChannel.replace('@', '');
             } else {
                 return false; // Exit and Do nothing else

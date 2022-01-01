@@ -26,13 +26,15 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **Duration:** Max amount of time that the clip plays for.
 
+**Custom Command:** If not set, the default is: !so.
+
 ### Notes
 
 You can not shout-out a user while a clip is playing. You will need to wait for the clip to finish before doing another shout-out command.
 
 ### URL Parameters
 
-**channel=Your** channel name
+**channel=Your channel name** 
 
 **showClip=true/false**  Shows a random popular clip.
 
@@ -48,9 +50,11 @@ You can not shout-out a user while a clip is playing. You will need to wait for 
 
 **ref=base64**  Auth token - This is the "obfuscated" auth token. Please do not share the url with others.
 
+**command=string**  Custom command option: ie: so, soclip, playclip. No need to include the ! symbol.
+
 ### Twitch oAuth token
 
-This overlay requires a Twitch Access token in order to allow your account to post a message into chat.
+This overlay requires a Twitch Access token if you want to send a shout-out message in chat.
 
 Tokens can be generated here: [https://twitchtokengenerator.com/](https://twitchtokengenerator.com/)
 
