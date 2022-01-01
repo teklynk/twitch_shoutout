@@ -36,14 +36,6 @@
             <img src="assets/images/robot.gif" style="width: 60px;" alt="">
         </div>
     </div>
-    <ul class="nav nav-tabs" id="mainNav" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="home-tab" data-toggle="tab" href="index.html" role="tab">Clips</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="profile-tab" data-toggle="tab" href="slider.html" role="tab">Slider</a>
-        </li>
-    </ul>
     <div class="mt-4 hide" id="access_token_link">
         <a class="btn btn-lg btn-secondary btn-block" href="https://twitchtokengenerator.com/" target="_blank">Generate
             a Twitch Access Token</a>
@@ -84,9 +76,7 @@
     </div>
     <br>
     <div class="form-group range-slider">
-        <label for="timeOut">Max Duration Time
-            <small>(How long should the clip play?)</small>
-        </label>
+        <label for="timeOut">Duration</label>
         <input type="range" max="120" min="1" step="1" class="form-control range-slider-range" id="timeOut"
                value="10" style="height: 0;">
         <small class="text-muted range-slider-value"></small>
@@ -111,36 +101,6 @@
         <label class="form-check-label" for="modsOnly">
             Mods only
         </label>
-    </div>
-    <br/>
-    <div class="form-group purple-border">
-        <label for="customCss">Custom CSS
-            <small> (Copy and paste into the OBS browser source Custom CSS section and modify as needed)</small>
-        </label>
-        <textarea class="form-control" id="customCss" rows="3" style="height: 200px;" readonly>
-video {
-    width: 100%;
-    height: auto;
-    max-height: 100%;
-    border-radius: 10px;
-}
-
-#text-container {
-    width: 100%;
-    margin: 40px 0;
-    position: absolute;
-}
-
-.title-text {
-    font-family: Basic, Helvetica, sans-serif;
-    font-weight: bold;
-    font-size: 5vw;
-    word-wrap: break-word;
-    color: #fff;
-    text-align: center;
-    text-shadow: 2px 2px #000;
-}
-        </textarea>
     </div>
     <br>
     <button class="btn btn-lg btn-success btn-block" id="generate_button" type="button">Generate Overlay Link</button>
@@ -231,10 +191,6 @@ video {
             alert('Clip option is not set. Video clip will not play!');
         }
 
-        if (!command) {
-            alert('Shout-out command is not set!');
-        }
-
         let ref = document.getElementById("ref").value;
 
         if (!showMsg) {
@@ -253,6 +209,8 @@ video {
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
             let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&ref=" + btoa(ref);
+            fullUrl = fullUrl.replace("index.html", "");
+            fullUrl = fullUrl.replace("index", "");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
                 "<a style='word-break:break-all;' href='" + fullUrl + "' target='_blank'>" + fullUrl + "</a><br><span class='text-warning'>* Never share this url with anyone or show it on stream!</span></p>";
@@ -260,10 +218,7 @@ video {
     });
 </script>
 <div class="text-right m-4">
-    <a class="btn btn-link" href="https://www.twitch.com/teklynk"
-       target="_blank">Teklynk</a>
-    <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
-       target="_blank">Help</a>
+    <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank">Instructions</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
 </div>
 </body>
