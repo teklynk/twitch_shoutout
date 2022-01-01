@@ -57,16 +57,17 @@
     </div>
     <br>
     <div class="form-group range-slider">
-        <label for="timeOut">Duration</label>
+        <label for="timeOut">Max Duration Time</label>
         <input type="range" max="120" min="1" step="1" class="form-control range-slider-range" id="timeOut"
                value="10" style="height: 0;">
         <small class="text-muted range-slider-value"></small>
         <small class="text-muted range-slider-value">&nbsp;Seconds</small>
     </div>
     <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="useClips" checked>
+        <input class="form-check-input" type="checkbox" value="" id="useClips">
         <label class="form-check-label" for="useClips">
-            Use with clips overlay
+            Use with the clips overlay
+            <small>(If checked, The overlay will rely on the video clip overlays duration settings.)</small>
         </label>
     </div>
     <div class="form-check">
@@ -78,7 +79,7 @@
     <br/>
     <div class="form-group purple-border">
         <label for="customCss">Custom CSS
-            <small> (Copy and paste into the OBS browser source Custom CSS section and modify as needed)</small>
+            <small>(Copy and paste into the OBS browser source Custom CSS section and modify as needed)</small>
         </label>
         <textarea class="form-control" id="customCss" rows="3" style="height: 200px;" readonly>
 #userImage img {
@@ -137,15 +138,33 @@
         rangeSlider();
 
         document.getElementById("mainAccount").value = localStorage.getItem("TwitchSOSliderMainAccount");
+
+        if (document.getElementById("useClips").checked) {
+            document.getElementById("timeOut").setAttribute('disabled', 'disabled');
+        } else {
+            document.getElementById("timeOut").removeAttribute('disabled');
+        }
+
+        document.getElementById("useClips").addEventListener("click", function (e) {
+            if (document.getElementById("useClips").checked) {
+                document.getElementById("timeOut").setAttribute('disabled', 'disabled');
+            } else {
+                document.getElementById("timeOut").removeAttribute('disabled');
+            }
+        }, false);
     }
 
     document.getElementById("generate_button").addEventListener("click", function (e) {
         let mainAccount = document.getElementById("mainAccount").value;
         let msg = document.getElementById("msg").value;
+        let timeOut = document.getElementById("timeOut").value;
         let modsOnly = document.getElementById("modsOnly").checked;
         let useClips = document.getElementById("useClips").checked;
         if (!mainAccount) {
             alert('Twitch username is not set');
+        }
+        if (document.getElementById("timeOut").getAttribute('disabled')) {
+            timeOut = '';
         }
 
         localStorage.setItem("TwitchSOSliderMainAccount", mainAccount);
@@ -162,7 +181,10 @@
     });
 </script>
 
-<div class="text-right m-4"><a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
+<div class="text-right m-4">
+    <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
+       target="_blank">Help</a>
+    <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
 </div>
 </body>
 </html>
