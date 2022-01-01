@@ -61,9 +61,9 @@ $(document).ready(function () {
             let userDisplayName = info.data[0]['display_name'];
             let userMsg = decodeURI(channelMessage);
 
-            $("<div id='userMsg' class='fade'>" + userMsg + "</div>").appendTo("#container");
-            $("<div id='userImage' class='fade'><img src='" + userImage + "' alt=''/></div>").appendTo("#container");
-            $("<div id='userName' class='fade'>" + userDisplayName + "</div>").appendTo("#container");
+            $("<div id='userMsg' class='slide-left'><p>" + userMsg + "</p></div>").appendTo("#container");
+            $("<div id='userImage'><img class='fade-in-image' src='" + userImage + "' alt=''/></div>").appendTo("#container");
+            $("<div id='userName' class='slide-right'><p>" + userDisplayName + "</p></div>").appendTo("#container");
         });
 
     })

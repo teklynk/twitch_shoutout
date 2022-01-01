@@ -5,11 +5,102 @@ html, body {
     background: transparent;
     padding: 0;
     margin: 0;
+    font-family: Basic, Helvetica, sans-serif;
+}
+
+p {
+    padding: 0;
+    margin: 0;
+}
+
+img.img-fluid {
+    max-width: 100%;
+    height: auto;
 }
 
 #container {
-    display: block;
-    padding: 4px;
-    margin: 4px;
+    width: 100%;
+    margin: auto;
+}
+
+#userImage {
     text-align: center;
+}
+
+#userImage img {
+    width: 100px;
+    border-radius: 100%;
+}
+
+#userMsg p {
+    text-transform: uppercase;
+    color: #ffffff;
+    font-size: 4vw;
+    font-weight: bold;
+    text-shadow: 1px 1px #000000;
+}
+
+#userName p {
+    text-transform: uppercase;
+    color: #760a99;
+    font-size: 4vw;
+    font-weight: bold;
+    text-shadow: 1px 1px #000000;
+}
+
+div.slide-right {
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+}
+
+div.slide-left {
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+}
+
+div.slide-left p {
+    animation: slide-left 3s, slide-right 3s;
+}
+
+div.slide-right p {
+    animation: slide-right 3s, slide-left 3s;
+}
+
+@keyframes slide-right {
+    from {
+        margin-left: -100%;
+        width: 100%;
+    }
+
+    to {
+        margin-left: 0%;
+        width: 100%;
+    }
+}
+
+@keyframes slide-left {
+    from {
+        margin-left: 100%;
+        width: 100%;
+    }
+
+    to {
+        margin-left: 0%;
+        width: 100%;
+    }
+}
+
+.fade-in-image {
+    animation: fadeIn 3s;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }

@@ -63,6 +63,13 @@
     </div>
     <hr>
     <h2>Options</h2>
+    <div class="form-label-group mb-2">
+        <label for="command">Custom Command
+            <small>(so, soclip, playclip. No need to include the ! symbol)</small>
+        </label>
+        <input type="text" id="command" class="form-control" placeholder="so" size="50">
+    </div>
+    <br/>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showClip" checked>
         <label class="form-check-label" for="showClip">
@@ -182,6 +189,8 @@
         let showMsg = document.getElementById("showMsg").checked;
         let showText = document.getElementById("showText").checked;
         let timeOut = document.getElementById("timeOut").value;
+        let command = document.getElementById("command").value;
+
         if (!mainAccount) {
             alert('Twitch username is not set');
         }
@@ -207,15 +216,16 @@
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&ref=" + btoa(ref);
-            fullUrl = fullUrl.replace("index.html", "");
+            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&ref=" + btoa(ref);
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
                 "<a style='word-break:break-all;' href='" + fullUrl + "' target='_blank'>" + fullUrl + "</a><br><span class='text-warning'>* Never share this url with anyone or show it on stream!</span></p>";
         }
     });
 </script>
-<div class="text-right m-4"><a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
+<div class="text-right m-4">
+    <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank">Instructions</a>
+    <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
 </div>
 </body>
 </html>

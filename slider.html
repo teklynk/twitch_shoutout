@@ -75,6 +75,35 @@
             Mods only
         </label>
     </div>
+    <br/>
+    <div class="form-group purple-border">
+        <label for="customCss">Custom CSS
+            <small>(Copy and paste into the OBS browser source)</small>
+        </label>
+        <textarea class="form-control" id="customCss" rows="3" style="height: 200px;" readonly>
+#userImage img {
+    width: 100px;
+    border-radius: 100%;
+}
+
+#userMsg p {
+    text-transform: uppercase;
+    color: #ffffff;
+    font-size: 24pt;
+    font-weight: bold;
+    text-shadow: 1px 1px #000000;
+}
+
+#userName p {
+    text-transform: uppercase;
+    color: #760a99;
+    font-size: 24pt;
+    font-weight: bold;
+    text-shadow: 1px 1px #000000;
+}
+        </textarea>
+    </div>
+
     <br>
     <button class="btn btn-lg btn-success btn-block" id="generate_button" type="button">Generate Overlay Link</button>
     <br>
@@ -128,6 +157,7 @@
         }
     });
 </script>
+
 <div class="text-right m-4"><a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
 </div>
 </body>
