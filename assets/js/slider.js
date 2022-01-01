@@ -12,6 +12,11 @@ $(document).ready(function () {
     let timeOut = getUrlParameter('timeOut');
     let modsOnly = getUrlParameter('modsOnly');
     let useClips = getUrlParameter('useClips');
+    let command = getUrlParameter('command');
+
+    if (!command) {
+        command = 'so'; // default
+    }
 
 
     if (!timeOut) {
@@ -55,8 +60,8 @@ $(document).ready(function () {
 
         let getChannel;
 
-        if (message.startsWith('!so')) {
-            getChannel = message.substr(4);
+        if (message.startsWith('!' + command)) {
+            getChannel = message.substr(command.length + 1);
             getChannel = getChannel.replace('@', '');
         } else {
             return false; // Exit and Do nothing else

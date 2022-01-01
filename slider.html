@@ -52,6 +52,13 @@
     <hr>
     <h2>Options</h2>
     <div class="form-label-group mb-2">
+        <label for="command">Custom Command
+            <small>(so, soclip, playclip. No need to include the ! symbol)</small>
+        </label>
+        <input type="text" id="command" class="form-control" placeholder="so" size="50">
+    </div>
+    <br/>
+    <div class="form-label-group mb-2">
         <label for="msg">Message</label>
         <input type="text" id="msg" class="form-control" placeholder="Go Check Out" size="250">
     </div>
@@ -160,9 +167,12 @@
         let timeOut = document.getElementById("timeOut").value;
         let modsOnly = document.getElementById("modsOnly").checked;
         let useClips = document.getElementById("useClips").checked;
+        let command = document.getElementById("command").value;
+
         if (!mainAccount) {
             alert('Twitch username is not set');
         }
+
         if (document.getElementById("timeOut").getAttribute('disabled')) {
             timeOut = '';
         }
@@ -172,7 +182,7 @@
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutoutslider.html?channel=" + mainAccount.toLowerCase() + "&useClips=" + useClips + "&msg=" + msg + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut;
+            let fullUrl = srcURL + "shoutoutslider.html?channel=" + mainAccount.toLowerCase() + "&useClips=" + useClips + "&msg=" + msg + "&modsOnly=" + modsOnly + "&command=" + command + "&timeOut=" + timeOut;
             fullUrl = fullUrl.replace("slider.html", "");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
@@ -182,6 +192,8 @@
 </script>
 
 <div class="text-right m-4">
+    <a class="btn btn-link" href="https://www.twitch.com/teklynk"
+       target="_blank">Teklynk</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
        target="_blank">Help</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
