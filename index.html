@@ -39,7 +39,7 @@
     <br>
     <div class="form-label-group mb-2">
         <label for="mainAccount">Twitch Account</label>
-        <input type="text" id="mainAccount" class="form-control" placeholder="MrCoolStreamer">
+        <input type="text" id="mainAccount" class="form-control validate" placeholder="MrCoolStreamer">
     </div>
 
     <hr>
@@ -48,7 +48,7 @@
         <label for="command">Custom Command
             <small>(so, soclip, playclip. No need to include the ! symbol)</small>
         </label>
-        <input type="text" id="command" class="form-control" value="so" placeholder="so" size="50">
+        <input type="text" id="command" class="form-control validate" value="so" placeholder="so" size="50">
     </div>
     <br/>
     <div class="form-check">
@@ -174,7 +174,13 @@ video {
         if (document.getElementById("showRecentClip").checked) {
             document.getElementById("showClip").checked = false;
         }
+
     }
+
+    // Check if any input fields have changed
+    $(":text,textarea,:checkbox,input[type=range]").on('change', function (e) {
+        $("#overlaylink").addClass("hide");
+    });
 
     //show chat message
     document.getElementById("showMsg").addEventListener("click", function (e) {
@@ -230,7 +236,6 @@ video {
         if (showMsg && !ref) {
             alert('Twitch access token is required if show chat message is checked!');
         }
-
 
         localStorage.setItem("TwitchSORef", ref);
         localStorage.setItem("TwitchSOMainAccount", mainAccount);
