@@ -47,7 +47,7 @@
     <br>
     <div class="form-label-group mb-2">
         <label for="mainAccount">Twitch Account</label>
-        <input type="text" id="mainAccount" class="form-control">
+        <input type="text" id="mainAccount" class="form-control" placeholder="MrCoolStreamer">
     </div>
     <hr>
     <h2>Options</h2>
@@ -55,12 +55,12 @@
         <label for="command">Custom Command
             <small>(so, soclip, playclip. No need to include the ! symbol)</small>
         </label>
-        <input type="text" id="command" class="form-control" placeholder="so" size="50">
+        <input type="text" id="command" class="form-control" value="so" placeholder="so" size="50">
     </div>
     <br/>
     <div class="form-label-group mb-2">
         <label for="msg">Message</label>
-        <input type="text" id="msg" class="form-control" placeholder="Go Check Out" size="250">
+        <input type="text" id="msg" class="form-control" value="Go Check Out" placeholder="Go Check Out" size="250">
     </div>
     <br>
     <div class="form-group range-slider">
@@ -113,6 +113,24 @@
     font-weight: bold;
     text-shadow: 1px 1px #000000;
 }
+
+/*Cool Glow Effect(disabled) - Uncomment the CSS*/
+/*
+#userMsg p, #userName p {
+  font-size: 80px;
+  text-align: center;
+  animation: glow 1s ease-in-out infinite alternate
+}
+
+@-webkit-keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+  }
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+  }
+}
+*/
         </textarea>
     </div>
 
@@ -194,7 +212,7 @@
 
 <div class="text-right m-4">
     <a class="btn btn-link" href="https://www.twitch.com/teklynk"
-       target="_blank">Teklynk</a>
+       target="_blank">Twitch</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
        target="_blank">Help</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>

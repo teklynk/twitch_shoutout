@@ -51,7 +51,7 @@
     <br>
     <div class="form-label-group mb-2">
         <label for="mainAccount">Twitch Account</label>
-        <input type="text" id="mainAccount" class="form-control">
+        <input type="text" id="mainAccount" class="form-control" placeholder="MrCoolStreamer">
     </div>
     <div class="form-label-group mb-2 hide" id="access_token">
         <label for="ref">Access token</label>
@@ -67,7 +67,7 @@
         <label for="command">Custom Command
             <small>(so, soclip, playclip. No need to include the ! symbol)</small>
         </label>
-        <input type="text" id="command" class="form-control" placeholder="so" size="50">
+        <input type="text" id="command" class="form-control" value="so" placeholder="so" size="50">
     </div>
     <br/>
     <div class="form-check">
@@ -253,6 +253,7 @@ video {
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
             let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&ref=" + btoa(ref);
+            fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
                 "<a style='word-break:break-all;' href='" + fullUrl + "' target='_blank'>" + fullUrl + "</a><br><span class='text-warning'>* Never share this url with anyone or show it on stream!</span></p>";
@@ -261,7 +262,7 @@ video {
 </script>
 <div class="text-right m-4">
     <a class="btn btn-link" href="https://www.twitch.com/teklynk"
-       target="_blank">Teklynk</a>
+       target="_blank">Twitch</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
        target="_blank">Help</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>

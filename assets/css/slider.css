@@ -58,11 +58,11 @@ div.slide-left-in {
 }
 
 div.slide-left-in p {
-    animation: slide-left-in 3s, slide-right-in 3s;
+    animation: slide-left-in 3s, slide-right-in 3s, glow;
 }
 
 div.slide-right-in p {
-    animation: slide-right-in 3s, slide-left-in 3s;
+    animation: slide-right-in 3s, slide-left-in 3s, glow;
 }
 
 @keyframes slide-right-in {
@@ -166,5 +166,22 @@ div.slide-right-out p {
     100% {
         opacity: 0;
         visibility: hidden;
+    }
+}
+
+.glow {
+    font-size: 80px;
+    color: #fff;
+    text-align: center;
+    animation: glow 1s ease-in-out infinite alternate
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+    }
+
+    to {
+        text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
     }
 }

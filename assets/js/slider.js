@@ -14,10 +14,13 @@ $(document).ready(function () {
     let useClips = getUrlParameter('useClips');
     let command = getUrlParameter('command');
 
+    if (!channelMessage) {
+        channelMessage = "Go Check Out"; // default
+    }
+
     if (!command) {
         command = 'so'; // default
     }
-
 
     if (!timeOut) {
         timeOut = 10; // default
@@ -67,7 +70,7 @@ $(document).ready(function () {
             return false; // Exit and Do nothing else
         }
 
-        // Ignore if video clip is playing
+        // Ignore if already displaying a shoutout
         if (document.getElementById("userMsg")) {
             return false; // Exit and Do nothing
         }
@@ -94,13 +97,14 @@ $(document).ready(function () {
                     // Timeout start
                     let timer = 0;
 
-                    // TODO: Refactor this logic. A lot of duplicate code here.
+                    // TODO: Refactor this logic. A lot of duplicated code here.
 
                     // Remove slider elements after timeout has been reached
                     let startTimer = setInterval(function () {
                         timer++; // Increment timer
 
-                        if (timer > 1 && useClips === 'true' && localStorage.getItem('TwitchSOVideoState') !== 'active') {
+                        // If using CLIPS duration settings
+                        if (timer > 5 && useClips === 'true' && localStorage.getItem('TwitchSOVideoState') !== 'active') {
                             // Slide in animation
                             document.getElementById("userMsg").classList.remove("slide-left-in");
                             document.getElementById("userImage").getElementsByClassName("image")[0].classList.remove("fade-in-image");
@@ -123,6 +127,7 @@ $(document).ready(function () {
                             }, 1000);
                         }
 
+                        // If using duration settings
                         if (useClips === 'false' && timer === parseInt(timeOut)) {
                             // Slide in animation
                             document.getElementById("userMsg").classList.remove("slide-left-in");
@@ -155,6 +160,11 @@ $(document).ready(function () {
                     $("<div id='userMsg' class='slide-left-in'><p>" + userMsg + "</p></div>").appendTo("#container");
                     $("<div id='userImage'><img class='image fade-in-image' src='" + userImage + "' alt=''/></div>").appendTo("#container");
                     $("<div id='userName' class='slide-right-in'><p>" + userDisplayName + "</p></div>").appendTo("#container");
+
+                } else {
+
+                    return false;
+
                 }
             });
         }
