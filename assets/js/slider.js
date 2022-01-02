@@ -14,10 +14,6 @@ $(document).ready(function () {
     let useClips = getUrlParameter('useClips');
     let command = getUrlParameter('command');
 
-    if (!channelMessage) {
-        channelMessage = "Go Check Out"; // default
-    }
-
     if (!command) {
         command = 'so'; // default
     }
