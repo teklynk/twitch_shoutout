@@ -127,6 +127,8 @@ $(document).ready(function () {
             if (message.startsWith('!' + command)) {
                 getChannel = message.substr(command.length + 1);
                 getChannel = getChannel.replace('@', '');
+                getChannel = getChannel.trim();
+                console.log(getChannel);
             } else {
                 return false; // Exit and Do nothing else
             }
