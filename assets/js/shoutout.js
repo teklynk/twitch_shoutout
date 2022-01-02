@@ -35,6 +35,18 @@ $(document).ready(function () {
         timeOut = 10; // default
     }
 
+    if (!modsOnly) {
+        modsOnly = 'true'; // default
+    }
+
+    if (!showText) {
+        showText = 'true'; // default
+    }
+
+    if (!showMsg) {
+        showMsg = 'false'; // default
+    }
+
     if (channelName === '') {
         alert('channel is not set in the URL');
     }
