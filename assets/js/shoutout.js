@@ -205,7 +205,9 @@ $(document).ready(function () {
 
                                     if (timer === parseInt(timeOut)) {
                                         document.getElementById("clip").remove();
-                                        document.getElementById("text-container").remove();
+                                        if (document.getElementById("text-container")) {
+                                            document.getElementById("text-container").remove();
+                                        }
                                         timer = 0; // reset timer to zero
                                         clearInterval(startTimer);
                                         localStorage.setItem('TwitchSOVideoState', ''); // remove 'active' state
@@ -216,7 +218,9 @@ $(document).ready(function () {
                                 // Remove video element after it has finished playing
                                 document.getElementById("clip").onended = function (e) {
                                     document.getElementById("clip").remove();
-                                    document.getElementById("text-container").remove();
+                                    if (document.getElementById("text-container")) {
+                                        document.getElementById("text-container").remove();
+                                    }
                                     timer = 0; // reset timer to zero
                                     clearInterval(startTimer);
                                     localStorage.setItem('TwitchSOVideoState', ''); // remove 'active' state
