@@ -134,6 +134,7 @@ $(document).ready(function () {
                 getChannel = message.substr(command.length + 1);
                 getChannel = getChannel.replace('@', '');
                 getChannel = getChannel.trim();
+                getChannel = getChannel.toLowerCase();
                 console.log(getChannel);
             } else {
                 return false; // Exit and Do nothing else
