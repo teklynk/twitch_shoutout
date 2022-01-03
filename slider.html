@@ -118,6 +118,7 @@
 /*
 #userMsg p, #userName p {
   font-size: 80px;
+  padding: 80px;
   text-align: center;
   animation: glow 1s ease-in-out infinite alternate
 }
@@ -178,6 +179,11 @@
             }
         }, false);
     }
+
+    // Check if any input fields have changed
+    $(":text,textarea,:checkbox,input[type=range]").on('change', function (e) {
+        $("#overlaylink").addClass("hide");
+    });
 
     document.getElementById("generate_button").addEventListener("click", function (e) {
         let mainAccount = document.getElementById("mainAccount").value;
