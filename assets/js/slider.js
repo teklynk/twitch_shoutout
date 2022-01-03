@@ -19,7 +19,7 @@ $(document).ready(function () {
     }
 
     if (!timeOut) {
-        timeOut = 10; // default
+        timeOut = 20; // default
     }
 
     if (!useClips) {
