@@ -57,11 +57,17 @@ $(document).ready(function () {
     // Triggers on message
     client.on('chat', (channel, user, message, self) => {
 
+        // Ignore echoed messages.
+        if (self) return;
+
         let getChannel;
 
         if (message.startsWith('!' + command)) {
             getChannel = message.substr(command.length + 1);
             getChannel = getChannel.replace('@', '');
+            getChannel = getChannel.trim();
+            getChannel = getChannel.toLowerCase();
+            console.log(getChannel);
         } else {
             return false; // Exit and Do nothing else
         }

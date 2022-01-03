@@ -124,9 +124,15 @@ $(document).ready(function () {
             let getChannel;
             let titleText;
 
+            // Ignore echoed messages.
+            if (self) return;
+
             if (message.startsWith('!' + command)) {
                 getChannel = message.substr(command.length + 1);
                 getChannel = getChannel.replace('@', '');
+                getChannel = getChannel.trim();
+                getChannel = getChannel.toLowerCase();
+                console.log(getChannel);
             } else {
                 return false; // Exit and Do nothing else
             }
