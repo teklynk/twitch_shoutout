@@ -120,6 +120,12 @@ $(document).ready(function () {
 
     // triggers on message
     client.on('chat', (channel, user, message, self) => {
+
+        // Ignore echoed messages.
+        if (self) {
+            return false;
+        }
+
         if (user['message-type'] === 'chat' && message.startsWith('!')) {
             let getChannel;
             let titleText;
@@ -169,6 +175,8 @@ $(document).ready(function () {
                                 // Remove existing video element
                                 if (document.getElementById("clip")) {
                                     document.getElementById("clip").remove();
+                                }
+                                if (document.getElementById("text-container")) {
                                     document.getElementById("text-container").remove();
                                 }
 
@@ -206,7 +214,10 @@ $(document).ready(function () {
                                     localStorage.setItem('TwitchSOVideoState', 'active'); // set 'active' state
 
                                     if (timer === parseInt(timeOut)) {
-                                        document.getElementById("clip").remove();
+                                        // Remove existing video element
+                                        if (document.getElementById("clip")) {
+                                            document.getElementById("clip").remove();
+                                        }
                                         if (document.getElementById("text-container")) {
                                             document.getElementById("text-container").remove();
                                         }
@@ -219,7 +230,10 @@ $(document).ready(function () {
 
                                 // Remove video element after it has finished playing
                                 document.getElementById("clip").onended = function (e) {
-                                    document.getElementById("clip").remove();
+                                    // Remove existing video element
+                                    if (document.getElementById("clip")) {
+                                        document.getElementById("clip").remove();
+                                    }
                                     if (document.getElementById("text-container")) {
                                         document.getElementById("text-container").remove();
                                     }
