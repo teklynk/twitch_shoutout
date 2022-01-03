@@ -56,7 +56,7 @@ $(document).ready(function () {
 
     // Twitch API get last game played from a user
     let getDetails = function (SOChannel, callback) {
-        let urlG = "https://twitchapi2.teklynk.com/getuserstatus.php?channel=" + SOChannel + "";
+        let urlG = "https://twitchapi.teklynk.com/getuserstatus.php?channel=" + SOChannel + "";
         let xhrG = new XMLHttpRequest();
         xhrG.open("GET", urlG);
         xhrG.onreadystatechange = function () {
@@ -72,7 +72,7 @@ $(document).ready(function () {
 
     // Twitch API get clips for !so command
     let getClips = function (SOChannel, limit, callback) {
-        let urlC = "https://twitchapi2.teklynk.com/getuserclips.php?channel=" + SOChannel + "&limit=" + limit;
+        let urlC = "https://twitchapi.teklynk.com/getuserclips.php?channel=" + SOChannel + "&limit=" + limit;
         let xhrC = new XMLHttpRequest();
         xhrC.open("GET", urlC);
         xhrC.onreadystatechange = function () {
