@@ -144,6 +144,9 @@ $(document).ready(function () {
             let getChannel;
             let titleText;
 
+            // Ignore echoed messages.
+            if (self) return;
+
             if (message.startsWith('!' + command)) {
                 getChannel = message.substr(command.length + 1);
                 getChannel = getChannel.replace('@', '');
