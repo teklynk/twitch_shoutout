@@ -8,8 +8,10 @@ This is a Twitch Shout-Out generator, browser source overlay for OBS. This proje
 
 ### Chat command:
 
-!so MrCoolStreamer **OR** !so @MrCoolStreamer.
+**!so MrCoolStreamer** ***OR*** **!so @MrCoolStreamer** ***OR*** use a custom command.
 
+You can also shout-out multiple channels like: **!so MrCoolStreamer WillStreamForBeer RetroGamer GamerGamingGames**.
+If you have timeOut=20, it will play a shoutout every 20 seconds for each person in the !so command.
 ### Options
 
 **Show chat message:** Displays a chat message like: "Go check out MrCoolStreamer! They were playing: Retro - Super

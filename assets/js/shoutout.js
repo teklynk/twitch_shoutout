@@ -7,6 +7,8 @@ $(document).ready(function () {
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
+    let cmdArray = [];
+
     let client = '';
 
     let channelName = getUrlParameter('channel').toLowerCase();
@@ -97,6 +99,18 @@ $(document).ready(function () {
         }
     }
 
+    function arrayPlusDelay(array, delegate, delay) {
+        // initialize all calls right away
+        array.forEach(function (el, i) {
+            setTimeout(function () {
+                // each loop, call passed in function
+                delegate(array[i]);
+
+                // stagger the timeout for each loop by the index
+            }, i * delay);
+        })
+    }
+
     // If Auth token is set, then connect to chat using oauth, else connect anonymously.
     if (ref) {
         client = new tmi.Client({
@@ -120,12 +134,15 @@ $(document).ready(function () {
 
     // triggers on message
     client.on('chat', (channel, user, message, self) => {
+
+        // Ignore echoed messages.
+        if (self) {
+            return false;
+        }
+
         if (user['message-type'] === 'chat' && message.startsWith('!')) {
             let getChannel;
             let titleText;
-
-            // Ignore echoed messages.
-            if (self) return;
 
             if (message.startsWith('!' + command)) {
                 getChannel = message.substr(command.length + 1);
@@ -133,17 +150,32 @@ $(document).ready(function () {
                 getChannel = getChannel.trim();
                 getChannel = getChannel.toLowerCase();
                 console.log(getChannel);
+
+                // Create an array of channel names
+                cmdArray = message.split(' ');
+                cmdArray = cmdArray.slice(1);
+
             } else {
                 return false; // Exit and Do nothing else
             }
 
             if (modsOnly === 'true' && (user.mod || user.username === channelName)) {
-                doShoutOut(); // Mods only
+                // If is array, then iterate over each channel name. Uses the timeOut value from the URL.
+                if (cmdArray.length > 1) {
+                    console.log(cmdArray);
+                    arrayPlusDelay(cmdArray, function (obj) {
+                        console.log('isArray: ' + obj);
+                        doShoutOut(obj);
+                    }, parseInt(timeOut) * 1000 + 1000); // + 1 seconds, just to be sure that elements are completely removed
+                } else {
+                    console.log(getChannel);
+                    doShoutOut(getChannel); // Mods only
+                }
             } else if (modsOnly === 'false' || user.username === channelName) {
-                doShoutOut(); // Everyone
+                doShoutOut(getChannel); // Everyone
             }
 
-            function doShoutOut() {
+            function doShoutOut(getChannel) {
 
                 getDetails(getChannel, function (info) {
 
@@ -212,6 +244,7 @@ $(document).ready(function () {
                                     localStorage.setItem('TwitchSOVideoState', 'active'); // set 'active' state
 
                                     if (timer === parseInt(timeOut)) {
+                                        // Remove existing video element
                                         if (document.getElementById("clip")) {
                                             document.getElementById("clip").remove();
                                         }
@@ -227,6 +260,7 @@ $(document).ready(function () {
 
                                 // Remove video element after it has finished playing
                                 document.getElementById("clip").onended = function (e) {
+                                    // Remove existing video element
                                     if (document.getElementById("clip")) {
                                         document.getElementById("clip").remove();
                                     }
