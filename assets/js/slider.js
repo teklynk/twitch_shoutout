@@ -25,8 +25,12 @@ $(document).ready(function () {
     let modsOnly = getUrlParameter('modsOnly');
     let useClips = getUrlParameter('useClips');
     let command = getUrlParameter('command');
+    let ref = getUrlParameter('ref');
+    let showMsg = getUrlParameter('showMsg');
 
     let cmdArray = [];
+
+    let client = '';
 
     if (!command) {
         command = 'so'; // default
@@ -42,6 +46,10 @@ $(document).ready(function () {
 
     if (!modsOnly) {
         modsOnly = 'true'; // default
+    }
+
+    if (!showMsg) {
+        showMsg = 'false'; // default
     }
 
     // Twitch API get user info for !so command
@@ -60,14 +68,46 @@ $(document).ready(function () {
         xhrU.send();
     };
 
-    let client = new tmi.Client({
-        options: {
-            debug: true,
-            skipUpdatingEmotesets: true
-        },
-        connection: {reconnect: true},
-        channels: [channelName]
-    });
+    // Twitch API get last game played from a user
+    let getStatus = function (SOChannel, callback) {
+        let urlG = "https://twitchapi.teklynk.com/getuserstatus.php?channel=" + SOChannel + "";
+        let xhrG = new XMLHttpRequest();
+        xhrG.open("GET", urlG);
+        xhrG.onreadystatechange = function () {
+            if (xhrG.readyState === 4) {
+                callback(JSON.parse(xhrG.responseText));
+                return true;
+            } else {
+                return false;
+            }
+        };
+        xhrG.send();
+    };
+
+    // If Auth token is set, then connect to chat using oauth, else connect anonymously.
+    if (ref) {
+        client = new tmi.Client({
+            options: {
+                debug: true,
+                skipUpdatingEmotesets: true
+            },
+            connection: {reconnect: true},
+            identity: {
+                username: channelName,
+                password: 'oauth:' + atob(ref)
+            },
+            channels: [channelName]
+        });
+    } else {
+        client = new tmi.Client({
+            options: {
+                debug: true,
+                skipUpdatingEmotesets: true
+            },
+            connection: {reconnect: true},
+            channels: [channelName]
+        });
+    }
 
     client.connect().catch(console.error);
 
@@ -125,8 +165,15 @@ $(document).ready(function () {
                 if (info.data.length > 0) {
 
                     // Ignore if already displaying a shoutout
-                    if (document.getElementById("userMsg")) {
+                    if (document.getElementById("userMsg") || document.getElementById("userImage") || document.getElementById("userName")) {
                         return false; // Exit and Do nothing
+                    }
+
+                    // Say message in chat
+                    if (showMsg === 'true') {
+                        getStatus(getChannel, function (info) {
+                            client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                        });
                     }
 
                     // Remove existing elements on load

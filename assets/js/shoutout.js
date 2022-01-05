@@ -153,7 +153,7 @@ $(document).ready(function () {
             if (message.startsWith('!' + command)) {
 
                 // Ignore if video clip is playing
-                if (document.getElementById("clip")) {
+                if (document.getElementById("clip") || document.getElementById("text-container")) {
                     return false; // Exit and Do nothing
                 }
 
@@ -193,6 +193,11 @@ $(document).ready(function () {
                     // If user exists
                     if (info.data) {
 
+                        // Ignore if video clip is playing
+                        if (document.getElementById("clip") || document.getElementById("text-container")) {
+                            return false; // Exit and Do nothing
+                        }
+
                         if (showMsg === 'true') {
                             // Say message in chat
                             client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
@@ -200,11 +205,6 @@ $(document).ready(function () {
 
                         // Show Clip
                         if (showClip === 'true' || showRecentClip === 'true') {
-
-                            // Ignore if video clip is playing
-                            if (document.getElementById("clip")) {
-                                return false; // Exit and Do nothing
-                            }
 
                             getClips(getChannel, '20', function (info) {
 
