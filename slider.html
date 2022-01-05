@@ -45,6 +45,13 @@
         </li>
     </ul>
     <br>
+    <div class="card">
+        <div class="card-body">
+            <h2>Shout-Out Slider Overlay</h2>
+            <p>Displays the channel name, channel avatar and message of the channel that is shouted out.</p>
+        </div>
+    </div>
+    <br>
     <div class="form-label-group mb-2">
         <label for="mainAccount">Twitch Account</label>
         <input type="text" id="mainAccount" class="form-control" placeholder="MrCoolStreamer">
@@ -62,18 +69,11 @@
     </div>
     <br>
     <div class="form-group range-slider">
-        <label for="timeOut">Max Duration Time</label>
+        <label for="timeOut">Max Duration Time (How long the overlay stays on screen)</label>
         <input type="range" max="120" min="1" step="1" class="form-control range-slider-range" id="timeOut"
                value="10" style="height: 0;">
         <small class="text-muted range-slider-value"></small>
         <small class="text-muted range-slider-value">&nbsp;Seconds</small>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="useClips">
-        <label class="form-check-label" for="useClips">
-            Use with the clips overlay
-            <small>(If checked, The overlay will rely on the video clip overlays duration settings.)</small>
-        </label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="modsOnly" checked>
@@ -84,30 +84,29 @@
     <br/>
     <div class="form-group purple-border">
         <label for="customCss">Custom CSS
-            <small>(Copy and paste into the OBS browser source Custom CSS section and modify as needed)</small>
+            <small>(Copy and paste into the OBS browser source Custom CSS section and modify as needed. <a
+                    href="https://www.w3schools.com/Css/" target="_blank">CSS Tutorial</a>)
+            </small>
         </label>
         <textarea class="form-control" id="customCss" rows="3" style="height: 200px;" readonly>
 #userImage img {
-    width: 100px;
+    width: 10vw;
     border-radius: 100%;
-    box-shadow: 2px 2px 2px #000000;
-    border: solid 1px #760a99;
+    border: solid 4px #760a99;
 }
 
 #userMsg p {
-    font-family: Basic, Helvetica, sans-serif;
     text-transform: uppercase;
     color: #ffffff;
-    font-size: 24pt;
+    font-size: 4vw;
     font-weight: bold;
     text-shadow: 1px 1px #000000;
 }
 
 #userName p {
-    font-family: Basic, Helvetica, sans-serif;
     text-transform: uppercase;
     color: #760a99;
-    font-size: 24pt;
+    font-size: 5vw;
     font-weight: bold;
     text-shadow: 1px 1px #000000;
 }
@@ -115,19 +114,19 @@
 /*Cool Glow Effect(disabled) - Uncomment the CSS*/
 /*
 #userMsg p, #userName p {
-  font-size: 80px;
-  padding: 80px;
-  text-align: center;
-  animation: glow 1s ease-in-out infinite alternate
+    font-size: 24px;
+    padding: 80px;
+    text-align: center;
+    animation: glow 1s ease-in-out infinite alternate
 }
 
 @-webkit-keyframes glow {
-  from {
+    from {
     text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
-  }
-  to {
+    }
+    to {
     text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
-  }
+    }
 }
 */
         </textarea>
@@ -162,20 +161,6 @@
         rangeSlider();
 
         document.getElementById("mainAccount").value = localStorage.getItem("TwitchSOSliderMainAccount");
-
-        if (document.getElementById("useClips").checked) {
-            document.getElementById("timeOut").setAttribute('disabled', 'disabled');
-        } else {
-            document.getElementById("timeOut").removeAttribute('disabled');
-        }
-
-        document.getElementById("useClips").addEventListener("click", function (e) {
-            if (document.getElementById("useClips").checked) {
-                document.getElementById("timeOut").setAttribute('disabled', 'disabled');
-            } else {
-                document.getElementById("timeOut").removeAttribute('disabled');
-            }
-        }, false);
     }
 
     // Check if any input fields have changed
@@ -188,7 +173,6 @@
         let msg = document.getElementById("msg").value;
         let timeOut = document.getElementById("timeOut").value;
         let modsOnly = document.getElementById("modsOnly").checked;
-        let useClips = document.getElementById("useClips").checked;
         let command = document.getElementById("command").value;
 
         if (!mainAccount) {
@@ -204,7 +188,7 @@
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutoutslider.html?channel=" + mainAccount.toLowerCase() + "&useClips=" + useClips + "&msg=" + msg + "&modsOnly=" + modsOnly + "&command=" + command + "&timeOut=" + timeOut;
+            let fullUrl = srcURL + "shoutoutslider.html?channel=" + mainAccount.toLowerCase() + "&msg=" + msg + "&modsOnly=" + modsOnly + "&command=" + command + "&timeOut=" + timeOut;
             fullUrl = fullUrl.replace("slider.htmlshoutoutslider.html", "shoutoutslider.html");
             fullUrl = fullUrl.replace("slidershoutoutslider.html", "shoutoutslider.html");
             document.getElementById("overlaylink").classList.remove("hide");

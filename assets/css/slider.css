@@ -23,10 +23,9 @@ p {
 }
 
 #userImage img {
-    width: 150px;
+    width: 10vw;
     border-radius: 100%;
-    box-shadow: 2px 2px 2px #000000;
-    border: solid 1px #760a99;
+    border: solid 4px #760a99;
 }
 
 #userMsg p {
@@ -40,7 +39,7 @@ p {
 #userName p {
     text-transform: uppercase;
     color: #760a99;
-    font-size: 4vw;
+    font-size: 5vw;
     font-weight: bold;
     text-shadow: 1px 1px #000000;
 }
@@ -102,12 +101,12 @@ div.slide-left-out {
 }
 
 div.slide-left-out p {
-    animation: slide-left-out 3s, slide-right-out 3s;
+    animation: slide-left-out 2s, slide-right-out 2s;
     visibility: hidden;
 }
 
 div.slide-right-out p {
-    animation: slide-right-out 3s, slide-left-out 3s;
+    animation: slide-right-out 2s, slide-left-out 2s;
     visibility: hidden;
 }
 

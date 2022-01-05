@@ -7,6 +7,29 @@ $(document).ready(function () {
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
+    function arrayPlusDelay(array, delegate, delay) {
+        // initialize all calls right away
+        array.forEach(function (el, i) {
+            setTimeout(function () {
+                // each loop, call passed in function
+                delegate(array[i]);
+
+                // stagger the timeout for each loop by the index
+            }, i * delay);
+        })
+    }
+
+    // Sort function
+    function sortByProperty(property) {
+        return function (a, b) {
+            if (a[property] < b[property])
+                return 1;
+            else if (a[property] > b[property])
+                return -1;
+            return 0;
+        }
+    }
+
     let cmdArray = [];
 
     let client = '';
@@ -53,11 +76,8 @@ $(document).ready(function () {
         alert('channel is not set in the URL');
     }
 
-    // Default - remove 'active' state on initial load... in case it is stuck on 'active'
-    localStorage.setItem('TwitchSOVideoState', '');
-
     // Twitch API get last game played from a user
-    let getDetails = function (SOChannel, callback) {
+    let getStatus = function (SOChannel, callback) {
         let urlG = "https://twitchapi.teklynk.com/getuserstatus.php?channel=" + SOChannel + "";
         let xhrG = new XMLHttpRequest();
         xhrG.open("GET", urlG);
@@ -88,33 +108,13 @@ $(document).ready(function () {
         xhrC.send();
     };
 
-    // Sort function
-    function sortByProperty(property) {
-        return function (a, b) {
-            if (a[property] < b[property])
-                return 1;
-            else if (a[property] > b[property])
-                return -1;
-            return 0;
-        }
-    }
-
-    function arrayPlusDelay(array, delegate, delay) {
-        // initialize all calls right away
-        array.forEach(function (el, i) {
-            setTimeout(function () {
-                // each loop, call passed in function
-                delegate(array[i]);
-
-                // stagger the timeout for each loop by the index
-            }, i * delay);
-        })
-    }
-
     // If Auth token is set, then connect to chat using oauth, else connect anonymously.
     if (ref) {
         client = new tmi.Client({
-            options: {debug: true},
+            options: {
+                debug: true,
+                skipUpdatingEmotesets: true
+            },
             connection: {reconnect: true},
             identity: {
                 username: channelName,
@@ -124,7 +124,10 @@ $(document).ready(function () {
         });
     } else {
         client = new tmi.Client({
-            options: {debug: true},
+            options: {
+                debug: true,
+                skipUpdatingEmotesets: true
+            },
             connection: {reconnect: true},
             channels: [channelName]
         });
@@ -148,6 +151,12 @@ $(document).ready(function () {
             if (self) return;
 
             if (message.startsWith('!' + command)) {
+
+                // Ignore if video clip is playing
+                if (document.getElementById("clip")) {
+                    return false; // Exit and Do nothing
+                }
+
                 getChannel = message.substr(command.length + 1);
                 getChannel = getChannel.replace('@', '');
                 getChannel = getChannel.trim();
@@ -167,7 +176,7 @@ $(document).ready(function () {
                 if (cmdArray.length > 1) {
                     console.log(cmdArray);
                     arrayPlusDelay(cmdArray, function (obj) {
-                        console.log('isArray: ' + obj);
+                        console.log('In Array: ' + obj);
                         doShoutOut(obj);
                     }, parseInt(timeOut) * 1000 + 1000); // + 1 seconds, just to be sure that elements are completely removed
                 } else {
@@ -180,73 +189,89 @@ $(document).ready(function () {
 
             function doShoutOut(getChannel) {
 
-                getDetails(getChannel, function (info) {
+                getStatus(getChannel, function (info) {
+                    // If user exists
+                    if (info.data) {
 
-                    if (showMsg === 'true') {
-                        // Say message in chat
-                        client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
-                    }
-
-                    // Show Clip
-                    if (showClip === 'true' || showRecentClip === 'true') {
-
-                        // Ignore if video clip is playing
-                        if (document.getElementById("clip")) {
-                            return false; // Exit and Do nothing
+                        if (showMsg === 'true') {
+                            // Say message in chat
+                            client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
                         }
 
-                        getClips(getChannel, '20', function (info) {
+                        // Show Clip
+                        if (showClip === 'true' || showRecentClip === 'true') {
 
-                            // If clips exist
-                            if (info.data.length > 0) {
+                            // Ignore if video clip is playing
+                            if (document.getElementById("clip")) {
+                                return false; // Exit and Do nothing
+                            }
 
-                                console.log('clips exist!');
+                            getClips(getChannel, '20', function (info) {
 
-                                // Sort array by created_at
-                                info.data.sort(sortByProperty('created_at'));
+                                // If clips exist
+                                if (info.data.length > 0) {
 
-                                // Remove existing video element
-                                if (document.getElementById("clip")) {
-                                    document.getElementById("clip").remove();
-                                }
-                                if (document.getElementById("text-container")) {
-                                    document.getElementById("text-container").remove();
-                                }
+                                    console.log('clips exist!');
 
-                                // Default value = most recent index after sorted
-                                let indexClip = 0;
+                                    // Sort array by created_at
+                                    info.data.sort(sortByProperty('created_at'));
 
-                                // Random clip logic
-                                if (showClip === 'true') {
-                                    let numOfClips = info.data.length;
-                                    indexClip = Math.floor(Math.random() * numOfClips);
-                                }
+                                    // Remove existing video element
+                                    if (document.getElementById("clip")) {
+                                        document.getElementById("clip").remove();
+                                    }
+                                    if (document.getElementById("text-container")) {
+                                        document.getElementById("text-container").remove();
+                                    }
 
-                                // Parse thumbnail image to build the clip url
-                                let thumbPart = info.data[indexClip]['thumbnail_url'].split("-preview-");
-                                thumbPart = thumbPart[0] + ".mp4";
+                                    // Default value = most recent index after sorted
+                                    let indexClip = 0;
 
-                                // Text on top of clip
-                                if (showText === 'true') {
-                                    titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
-                                } else {
-                                    titleText = '';
-                                }
+                                    // Random clip logic
+                                    if (showClip === 'true') {
+                                        let numOfClips = info.data.length;
+                                        indexClip = Math.floor(Math.random() * numOfClips);
+                                    }
 
-                                // Video Clip
-                                $(titleText + "<video id='clip' class='video fade' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
+                                    // Parse thumbnail image to build the clip url
+                                    let thumbPart = info.data[indexClip]['thumbnail_url'].split("-preview-");
+                                    thumbPart = thumbPart[0] + ".mp4";
 
-                                // Timeout start
-                                let timer = 0;
+                                    // Text on top of clip
+                                    if (showText === 'true') {
+                                        titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
+                                    } else {
+                                        titleText = '';
+                                    }
 
-                                // Remove video after timeout has been reached
-                                let startTimer = setInterval(function () {
-                                    timer++; // Increment timer
+                                    // Video Clip
+                                    $(titleText + "<video id='clip' class='video fade' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
 
-                                    // Save video state to localStorage - Other overlays can use this value to check if the video has finished playing, as long as the overlays are on the same domain or localhost.
-                                    localStorage.setItem('TwitchSOVideoState', 'active'); // set 'active' state
+                                    // Timeout start
+                                    let timer = 0;
 
-                                    if (timer === parseInt(timeOut)) {
+                                    // Remove video after timeout has been reached
+                                    let startTimer = setInterval(function () {
+                                        timer++; // Increment timer
+
+                                        console.log(timer);
+
+                                        if (timer === parseInt(timeOut)) {
+                                            // Remove existing video element
+                                            if (document.getElementById("clip")) {
+                                                document.getElementById("clip").remove();
+                                            }
+                                            if (document.getElementById("text-container")) {
+                                                document.getElementById("text-container").remove();
+                                            }
+                                            timer = 0; // reset timer to zero
+                                            clearInterval(startTimer);
+                                        }
+
+                                    }, 1000);
+
+                                    // Remove video element after it has finished playing
+                                    document.getElementById("clip").onended = function (e) {
                                         // Remove existing video element
                                         if (document.getElementById("clip")) {
                                             document.getElementById("clip").remove();
@@ -256,35 +281,22 @@ $(document).ready(function () {
                                         }
                                         timer = 0; // reset timer to zero
                                         clearInterval(startTimer);
-                                        localStorage.setItem('TwitchSOVideoState', ''); // remove 'active' state
-                                    }
+                                    };
 
-                                }, 1000);
+                                } else {
 
-                                // Remove video element after it has finished playing
-                                document.getElementById("clip").onended = function (e) {
-                                    // Remove existing video element
-                                    if (document.getElementById("clip")) {
-                                        document.getElementById("clip").remove();
-                                    }
-                                    if (document.getElementById("text-container")) {
-                                        document.getElementById("text-container").remove();
-                                    }
-                                    timer = 0; // reset timer to zero
-                                    clearInterval(startTimer);
-                                    localStorage.setItem('TwitchSOVideoState', ''); // remove 'active' state
-                                };
+                                    console.log('no clips found!');
+                                    return false; // Exit and Do nothing
 
-                            } else {
+                                }
+                            });
+                        }
 
-                                console.log('no clips found!');
+                    } else {
 
-                                return false; // Exit and Do nothing
-
-                            }
-                        });
+                        console.log(getChannel + ': Does not exist!');
+                        return false;
                     }
-
                 });
             }
 

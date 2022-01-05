@@ -45,6 +45,13 @@
         </li>
     </ul>
     <br>
+    <div class="card">
+        <div class="card-body">
+            <h2>Shout-Out Clip Player Overlay</h2>
+            <p>Play a random clip from the streamers channel that is shouted out.</p>
+        </div>
+    </div>
+    <br>
     <div class="form-label-group mb-2">
         <label for="mainAccount">Twitch Account</label>
         <input type="text" id="mainAccount" class="form-control validate" placeholder="MrCoolStreamer">
@@ -94,7 +101,8 @@
         <div class="form-label-group mb-4 hide" id="access_token">
             <small class="text-warning">* Requires Twitch Access Token</small>
             <div class="mb-2">
-                <a href="https://twitchtokengenerator.com/" target="_blank">Generate access token here</a>
+                <a href="https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=gl1cjo1kdgsmj7lwjajhnb2lireyus&redirect_uri=http://localhost/twitch_shoutout/&scope=chat:read+chat:edit&force_verify=true"
+                   target="_blank"><img src="assets/images/connect.png"></a>
             </div>
             <label for="ref">Access token</label>
             <input type="password" id="ref" class="form-control">
@@ -114,7 +122,9 @@
     <br/>
     <div class="form-group purple-border">
         <label for="customCss">Custom CSS
-            <small> (Copy and paste into the OBS browser source Custom CSS section and modify as needed)</small>
+            <small> (Copy and paste into the OBS browser source Custom CSS section and modify as needed. <a
+                    href="https://www.w3schools.com/Css/" target="_blank">CSS Tutorial</a>)
+            </small>
         </label>
         <textarea class="form-control" id="customCss" rows="3" style="height: 200px;" readonly>
 video {
@@ -149,6 +159,18 @@ video {
 <script>
     function onInit() {
 
+        let url = window.location.href;
+
+        if (url.indexOf('#access_token') !== -1) {
+            let access_token = new URL(url).hash.split('&').filter(function (el) {
+                if (el.match('access_token') !== null) return true;
+            })[0].split('=')[1];
+            document.getElementById("ref").value = access_token;
+            localStorage.setItem("TwitchSORef", access_token);
+        } else {
+            document.getElementById("ref").value = localStorage.getItem("TwitchSORef");
+        }
+
         let rangeSlider = function rangeSlider() {
             let slider = $('.range-slider'),
                 range = $('.range-slider-range'),
@@ -169,7 +191,6 @@ video {
 
         rangeSlider();
 
-        document.getElementById("ref").value = localStorage.getItem("TwitchSORef");
         document.getElementById("mainAccount").value = localStorage.getItem("TwitchSOMainAccount");
 
         if (document.getElementById("showClip").checked) {
@@ -242,7 +263,6 @@ video {
             alert('Twitch access token is required if show chat message is checked!');
         }
 
-        localStorage.setItem("TwitchSORef", ref);
         localStorage.setItem("TwitchSOMainAccount", mainAccount);
 
         //build overlay url

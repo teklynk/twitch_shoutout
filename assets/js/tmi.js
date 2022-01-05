@@ -1745,7 +1745,7 @@
                         if (_this9._updateEmotesetsTimerDelay > 0) {
                             clearTimeout(_this9._updateEmotesetsTimer);
                             _this9._updateEmotesetsTimer = setTimeout(function () {
-                                return _this9._updateEmoteset();
+                                return _this9._updateEmoteset(sets);
                             }, _this9._updateEmotesetsTimerDelay);
                         }
                     };
