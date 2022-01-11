@@ -44,6 +44,8 @@ $(document).ready(function () {
 
     let showText = getUrlParameter('showText');
 
+    let showImage = getUrlParameter('showImage');
+
     let ref = getUrlParameter('ref');
 
     let modsOnly = getUrlParameter('modsOnly');
@@ -72,9 +74,29 @@ $(document).ready(function () {
         showMsg = 'false'; // default
     }
 
+    if (!showImage) {
+        showImage = 'false'; // default
+    }
+
     if (channelName === '') {
         alert('channel is not set in the URL');
     }
+
+    // Twitch API get user info for !so command
+    let getInfo = function (SOChannel, callback) {
+        let urlU = "https://twitchapi.teklynk.com/getuserinfo.php?channel=" + SOChannel;
+        let xhrU = new XMLHttpRequest();
+        xhrU.open("GET", urlU);
+        xhrU.onreadystatechange = function () {
+            if (xhrU.readyState === 4) {
+                callback(JSON.parse(xhrU.responseText));
+                return true;
+            } else {
+                return false;
+            }
+        };
+        xhrU.send();
+    };
 
     // Twitch API get last game played from a user
     let getStatus = function (SOChannel, callback) {
@@ -286,8 +308,56 @@ $(document).ready(function () {
                                 } else {
 
                                     console.log('no clips found!');
-                                    return false; // Exit and Do nothing
 
+                                    if (showImage === 'true') {
+
+                                        console.log('show profile image!');
+
+                                        getInfo(getChannel, function (info) {
+                                            let userImage = info.data[0]['profile_image_url'];
+
+                                            // Text on top of clip
+                                            if (showText === 'true') {
+                                                titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['display_name'] + "</span></div>"
+                                            } else {
+                                                titleText = '';
+                                            }
+
+                                            // Profile Image
+                                            $(titleText + "<img id='profile' class='fade img-fluid' src='" + userImage + "'>").appendTo("#container");
+
+                                            // Timeout start
+                                            let timer = 0;
+
+                                            // Remove Profile Image after timeout has been reached
+                                            let startTimer = setInterval(function () {
+                                                timer++; // Increment timer
+
+                                                console.log(timer);
+
+                                                if (timer === parseInt(timeOut)) {
+                                                    // Remove existing profile image element
+                                                    if (document.getElementById("profile")) {
+                                                        document.getElementById("profile").remove();
+                                                    }
+                                                    if (document.getElementById("clip")) {
+                                                        document.getElementById("clip").remove();
+                                                    }
+                                                    if (document.getElementById("text-container")) {
+                                                        document.getElementById("text-container").remove();
+                                                    }
+                                                    timer = 0; // reset timer to zero
+                                                    clearInterval(startTimer);
+                                                }
+
+                                            }, 1000);
+                                        });
+
+                                    } else {
+
+                                        return false; // Exit and Do nothing
+
+                                    }
                                 }
                             });
                         }

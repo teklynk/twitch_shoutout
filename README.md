@@ -22,6 +22,8 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **Show the most recent clip:** This will show the most recent popular clip.
 
+**Show profile image:** This will show the users profile image if no clips exist.
+
 **Show text on top of clip:** Displays a title on top of the video clip "Go check out MrCoolStreamer".
 
 **Mods only:** Limit the !so to mods and streamer.
@@ -42,6 +44,8 @@ You can not shout-out a user while a clip is playing. You will need to wait for 
 
 **showRecentClip=true/false**  Shows the most recent popular clip.
 
+**showImage=true/false**  Shows profile image if no clips exist.
+
 **showMsg=true/false**  Shows a message in chat. ie: "Go check out {channel}! - They were playing: {game} - {title} - https://twitch.tv/channelname"
 
 **showText=true/false**  Shows "Go check out {channel}" on top of the clip.
@@ -50,9 +54,11 @@ You can not shout-out a user while a clip is playing. You will need to wait for 
 
 **timeOut=seconds**  The MAX number of seconds that the clip will play for. Shorter clips will simply end before the timeout and the timeout will reset to zero.
 
-**ref=base64**  Auth token - This is the "obfuscated" auth token. Please do not share the url with others.
+**ref=base64**  Auth token - This is the "obfuscated" auth token. This is only needed if displaying a shout-out message in chat. Please do not share the url with others.
 
 **command=string**  Custom command option: ie: so, soclip, playclip. No need to include the ! symbol.
+
+**Example:** http://localhost/shoutout.html?channel=teklynk&showClip=true&showRecentClip=false&showMsg=false&showText=true&showImage=true&modsOnly=true&timeOut=10&command=so&ref=xyz123abcl456mnop
 
 ### Twitch oAuth token
 
