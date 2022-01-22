@@ -194,11 +194,13 @@ $(document).ready(function () {
                 getChannel = getChannel.replace('@', '');
                 getChannel = getChannel.trim();
                 getChannel = getChannel.toLowerCase();
+
                 console.log(getChannel);
 
                 // Create an array of channel names
                 cmdArray = message.split(' ');
                 cmdArray = cmdArray.slice(1);
+                cmdArray = cmdArray.filter(String);
 
             } else {
                 return false; // Exit and Do nothing else
@@ -212,9 +214,11 @@ $(document).ready(function () {
                         obj = obj.replace('@', '');
                         obj = obj.trim();
                         obj = obj.toLowerCase();
+
                         console.log('In Array: ' + obj);
 
                         doShoutOut(obj);
+                        
                     }, parseInt(timeOut) * 1000 + 1000); // + 1 seconds, just to be sure that elements are completely removed
                 } else {
                     console.log(getChannel);
