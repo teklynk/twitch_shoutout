@@ -169,9 +169,6 @@ $(document).ready(function () {
             let getChannel;
             let titleText;
 
-            // Ignore echoed messages.
-            if (self) return;
-
             if (message.startsWith('!' + command)) {
 
                 // Ignore if video clip is playing
@@ -198,7 +195,11 @@ $(document).ready(function () {
                 if (cmdArray.length > 1) {
                     console.log(cmdArray);
                     arrayPlusDelay(cmdArray, function (obj) {
+                        obj = obj.replace('@', '');
+                        obj = obj.trim();
+                        obj = obj.toLowerCase();
                         console.log('In Array: ' + obj);
+
                         doShoutOut(obj);
                     }, parseInt(timeOut) * 1000 + 1000); // + 1 seconds, just to be sure that elements are completely removed
                 } else {
