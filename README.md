@@ -10,8 +10,11 @@ This is a Twitch Shout-Out generator, browser source overlay for OBS. This proje
 
 **!so MrCoolStreamer** ***OR*** **!so @MrCoolStreamer** ***OR*** use a custom command.
 
-You can also shout-out multiple channels like: **!so MrCoolStreamer WillStreamForBeer RetroGamer GamerGamingGames**.
+You can also shout-out multiple channels like: **!so @MrCoolStreamer @WillStreamForBeer @RetroGamer @GamerGamingGames**.
 If you have timeOut=20, it will play a shoutout every 20 seconds for each person in the !so command.
+
+This can also be used to play your own clips one after the other. Keep your viewers entertained on your BRB or starting soon scenes. **!so teklynk teklynk teklynk teklynk** Be sure to disable text overlay and chat message. You may want to set this as a seperate browser source with a different shout-out command like: **!brb teklynk teklynk teklynk teklynk**
+
 ### Options
 
 **Show chat message:** Displays a chat message like: "Go check out MrCoolStreamer! They were playing: Retro - Super
@@ -33,6 +36,8 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 **Custom Command:** If not set, the default is: !so.
 
 **Lower Video Quality:** Will pull a lower quality video clip. Some clips may not have a lower quality available.
+
+**Shout-out multiple channels with one command:** !so @MrCoolStreamer @WillStreamForBeer @RetroGamer @GamerGamingGames OR !so RetroGamer RetroGamer RetroGamer RetroGamer.
 
 ### Notes
 

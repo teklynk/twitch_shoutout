@@ -242,6 +242,7 @@ video {
 
     document.getElementById("generate_button").addEventListener("click", function (e) {
         let mainAccount = document.getElementById("mainAccount").value;
+        let ref = document.getElementById("ref").value;
         let showClip = document.getElementById("showClip").checked;
         let showRecentClip = document.getElementById("showRecentClip").checked;
         let modsOnly = document.getElementById("modsOnly").checked;
@@ -264,8 +265,6 @@ video {
             alert('Shout-out command is not set!');
         }
 
-        let ref = document.getElementById("ref").value;
-
         if (!showMsg) {
             ref = '';
         }
@@ -275,6 +274,7 @@ video {
         }
 
         localStorage.setItem("TwitchSOMainAccount", mainAccount);
+        localStorage.setItem("TwitchSORef", ref);
 
         //build overlay url
         if (mainAccount) {

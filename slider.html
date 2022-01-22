@@ -80,10 +80,10 @@
         <label class="form-check-label" for="showMsg">
             Show chat message: "Go check out {channel}! - They were playing: {game} - {title} -
             https://twitch.tv/channelname"
+            <small class="text-warning">* Requires Twitch Access Token</small>
         </label>
 
-        <div class="form-label-group mb-4 hide" id="access_token">
-            <small class="text-warning">* Requires Twitch Access Token</small>
+        <div class="form-label-group mb-4 mt-2 hide" id="access_token">
             <div class="mb-2">
                 <a href="https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=gl1cjo1kdgsmj7lwjajhnb2lireyus&redirect_uri=https://twitch-shoutout.pages.dev/slider.html&scope=chat:read+chat:edit&force_verify=true"
                    target="_self"><img src="assets/images/connect.png"></a>
@@ -219,13 +219,12 @@
 
     document.getElementById("generate_button").addEventListener("click", function (e) {
         let mainAccount = document.getElementById("mainAccount").value;
+        let ref = document.getElementById("ref").value;
         let msg = document.getElementById("msg").value;
         let timeOut = document.getElementById("timeOut").value;
         let modsOnly = document.getElementById("modsOnly").checked;
         let command = document.getElementById("command").value;
         let showMsg = document.getElementById("showMsg").checked;
-
-        let ref = document.getElementById("ref").value;
 
         if (!showMsg) {
             ref = '';
@@ -240,6 +239,7 @@
         }
 
         localStorage.setItem("TwitchSOSliderMainAccount", mainAccount);
+        localStorage.setItem("TwitchSORef", ref);
 
         //build overlay url
         if (mainAccount) {
@@ -255,8 +255,6 @@
 </script>
 
 <div class="text-right m-4">
-    <a class="btn btn-link" href="https://www.twitch.com/teklynk"
-       target="_blank">Twitch</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
        target="_blank">Help</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
