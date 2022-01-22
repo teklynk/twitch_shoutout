@@ -32,7 +32,11 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **Custom Command:** If not set, the default is: !so.
 
+**Lower Video Quality:** Will pull a lower quality video clip. Some clips may not have a lower quality available.
+
 ### Notes
+
+Enable browser source hardware acceleration in Settings -> Advanced in OBS.
 
 You can not shout-out a user while a clip is playing. You will need to wait for the clip to finish before doing another shout-out command.
 
@@ -43,6 +47,8 @@ You can not shout-out a user while a clip is playing. You will need to wait for 
 **showClip=true/false**  Shows a random popular clip.
 
 **showRecentClip=true/false**  Shows the most recent popular clip.
+
+**lowQuality=true/false** Pulls a lower quality video clip... if one is available.
 
 **showImage=true/false**  Shows profile image if no clips exist.
 

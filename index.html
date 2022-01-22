@@ -81,7 +81,13 @@
             Show the user profile image if clips do not exist
         </label>
     </div>
-    <br>
+    <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" value="" id="quality">
+        <label class="form-check-label" for="quality">
+            Use lower quality video clips 
+            <small class="text-warning">* Some clips may not have a lower quality available.</small>
+        </label>
+    </div>
     <div class="form-group range-slider">
         <label for="timeOut">Max Duration Time
             <small>(How long should the clip play?)</small>
@@ -101,12 +107,11 @@
         <input class="form-check-input" type="checkbox" value="" id="showMsg">
         <label class="form-check-label" for="showMsg">
             Show chat message: "Go check out {channel}! - They were playing: {game} - {title} -
-            https://twitch.tv/channelname"
-        </label>
-
-        <div class="form-label-group mb-4 hide" id="access_token">
+            https://twitch.tv/channelname" 
             <small class="text-warning">* Requires Twitch Access Token</small>
-            <div class="mb-2">
+        </label>
+        <div class="form-label-group mb-4 hide" id="access_token">
+            <div class="mb-2 mt-2">
                 <a href="https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=gl1cjo1kdgsmj7lwjajhnb2lireyus&redirect_uri=https://twitch-shoutout.pages.dev/&scope=chat:read+chat:edit&force_verify=true"
                    target="_self"><img src="assets/images/connect.png"></a>
             </div>
@@ -118,13 +123,12 @@
         </span>
         </div>
     </div>
-    <div class="form-check">
+    <div class="form-check mb-2">
         <input class="form-check-input" type="checkbox" value="" id="modsOnly" checked>
         <label class="form-check-label" for="modsOnly">
             Mods only
         </label>
     </div>
-    <br/>
     <div class="form-group purple-border">
         <label for="customCss">Custom CSS
             <small> (Copy and paste into the OBS browser source Custom CSS section and modify as needed. <a
@@ -246,6 +250,7 @@ video {
         let showText = document.getElementById("showText").checked;
         let timeOut = document.getElementById("timeOut").value;
         let command = document.getElementById("command").value;
+        let quality = document.getElementById("quality").checked;
 
         if (!mainAccount) {
             alert('Twitch username is not set');
@@ -274,7 +279,7 @@ video {
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
@@ -283,8 +288,6 @@ video {
     });
 </script>
 <div class="text-right m-4">
-    <a class="btn btn-link" href="https://www.twitch.com/teklynk"
-       target="_blank">Twitch</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
        target="_blank">Help</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>

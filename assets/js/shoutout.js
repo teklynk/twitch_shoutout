@@ -34,6 +34,8 @@ $(document).ready(function () {
 
     let client = '';
 
+    let quality = '';
+
     let channelName = getUrlParameter('channel').toLowerCase();
 
     let showClip = getUrlParameter('showClip');
@@ -53,6 +55,8 @@ $(document).ready(function () {
     let timeOut = getUrlParameter('timeOut');
 
     let command = getUrlParameter('command');
+
+    let lowQuality = getUrlParameter('lowQuality');
 
     if (!command) {
         command = 'so'; // default
@@ -78,8 +82,18 @@ $(document).ready(function () {
         showImage = 'false'; // default
     }
 
+    if (!lowQuality) {
+        lowQuality = 'false'; // default
+    }
+
     if (channelName === '') {
         alert('channel is not set in the URL');
+    }
+
+    if (lowQuality === 'true') {
+        quality = '-360';
+    } else {
+        quality = '';
     }
 
     // Twitch API get user info for !so command
@@ -258,7 +272,7 @@ $(document).ready(function () {
 
                                     // Parse thumbnail image to build the clip url
                                     let thumbPart = info.data[indexClip]['thumbnail_url'].split("-preview-");
-                                    thumbPart = thumbPart[0] + ".mp4";
+                                    thumbPart = thumbPart[0] + quality + ".mp4";
 
                                     // Text on top of clip
                                     if (showText === 'true') {
