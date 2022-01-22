@@ -1,12 +1,12 @@
 # Twitch Shout-out overlay
 
-### What is this?
+## What is this?
 
 This is a Twitch Shout-Out generator, browser source overlay for OBS. This project uses [TMIJS](https://tmijs.com/), javascript, html, css. It is client-side code that can run locally (localhost) or on your own server. Bug reports and issues can be posted here: [https://github.com/teklynk/twitch_shoutout/issues](https://github.com/teklynk/twitch_shoutout/issues) Future development can be tracked here: [https://github.com/teklynk/twitch_shoutout/projects/1](https://github.com/teklynk/twitch_shoutout/projects/1) 
 
 ### [Try it here](https://twitch-shoutout.pages.dev/)
 
-### Chat command:
+## Chat command:
 
 **!so MrCoolStreamer** ***OR*** **!so @MrCoolStreamer** ***OR*** use a custom command.
 
@@ -15,7 +15,7 @@ If you have timeOut=20, it will play a shoutout every 20 seconds for each person
 
 This can also be used to play your own clips one after the other. Keep your viewers entertained on your BRB or starting soon scenes. **!so teklynk teklynk teklynk teklynk** Be sure to disable text overlay and chat message. You may want to set this as a seperate browser source with a different shout-out command like: **!brb teklynk teklynk teklynk teklynk**
 
-### Options
+## Options
 
 **Show chat message:** Displays a chat message like: "Go check out MrCoolStreamer! They were playing: Retro - Super
 Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
@@ -39,13 +39,13 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **Shout-out multiple channels with one command:** !so @MrCoolStreamer @WillStreamForBeer @RetroGamer @GamerGamingGames OR !so RetroGamer RetroGamer RetroGamer RetroGamer.
 
-### Notes
+## Notes
 
-Enable browser source hardware acceleration in Settings -> Advanced in OBS.
+* Enable OBS browser source hardware acceleration in Settings -> Advanced in OBS.
 
-You can not shout-out a user while a clip is playing. You will need to wait for the clip to finish before doing another shout-out command.
+* You can not shout-out a user while a clip is playing. You will need to wait for the clip to finish before doing another shout-out command.
 
-### URL Parameters
+## URL Parameters
 
 **channel=Your channel name** 
 
@@ -71,7 +71,7 @@ You can not shout-out a user while a clip is playing. You will need to wait for 
 
 **Example:** http://localhost/shoutout.html?channel=teklynk&showClip=true&showRecentClip=false&showMsg=false&showText=true&showImage=true&modsOnly=true&timeOut=10&command=so&ref=xyz123abcl456mnop
 
-### Twitch oAuth token
+## Twitch oAuth token
 
 This overlay requires a Twitch Access token if you want to send a shout-out message in chat.
 
@@ -82,7 +82,7 @@ Tokens can be generated here: [https://twitchtokengenerator.com/](https://twitch
 If you want your bot account to reply in chat after the !so command, I suggest creating tokens using your bots account.
 To do this, you will need to sign in to Twitch using your bot account before visiting twitchtokengenerator.
 
-### Custom CSS
+## Custom CSS
 
 Add this CSS to the OBS browser source and modify as needed.
 
