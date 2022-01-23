@@ -36,6 +36,8 @@ $(document).ready(function () {
 
     let quality = '';
 
+    let lowQualityVideo = '';
+
     let channelName = getUrlParameter('channel').toLowerCase();
 
     let showClip = getUrlParameter('showClip');
@@ -88,12 +90,6 @@ $(document).ready(function () {
 
     if (channelName === '') {
         alert('channel is not set in the URL');
-    }
-
-    if (lowQuality === 'true') {
-        quality = '-360';
-    } else {
-        quality = '';
     }
 
     // Twitch API get user info for !so command
@@ -276,7 +272,14 @@ $(document).ready(function () {
 
                                     // Parse thumbnail image to build the clip url
                                     let thumbPart = info.data[indexClip]['thumbnail_url'].split("-preview-");
-                                    thumbPart = thumbPart[0] + quality + ".mp4";
+                                    thumbPart = thumbPart[0] + ".mp4";
+
+                                    // Low clip quality mode
+                                    if (lowQuality === 'true') {
+                                        lowQualityVideo = "<source src='" + thumbPart.replace('.mp4', '-360.mp4') + "' type='video/mp4'>";
+                                    } else {
+                                        lowQualityVideo = '';
+                                    }
 
                                     // Text on top of clip
                                     if (showText === 'true') {
@@ -286,7 +289,7 @@ $(document).ready(function () {
                                     }
 
                                     // Video Clip
-                                    $(titleText + "<video id='clip' class='video fade' width='100%' height='100%' autoplay src='" + thumbPart + "'><source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
+                                    $(titleText + "<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
 
                                     // Timeout start
                                     let timer = 0;
