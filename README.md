@@ -2,7 +2,11 @@
 
 ## What is this?
 
-This is a Twitch Shout-Out generator, browser source overlay for OBS. This project uses [TMIJS](https://tmijs.com/), javascript, html, css. It is client-side code that can run locally (localhost) or on your own server. Bug reports and issues can be posted here: [https://github.com/teklynk/twitch_shoutout/issues](https://github.com/teklynk/twitch_shoutout/issues) Future development can be tracked here: [https://github.com/teklynk/twitch_shoutout/projects/1](https://github.com/teklynk/twitch_shoutout/projects/1) 
+This is a Twitch Shout-Out generator, browser source overlay for OBS. This project uses [TMIJS](https://tmijs.com/), javascript, html, css. It is client-side code that can run locally (localhost) or on your own server. 
+
+Bug reports and issues can be posted here: [https://github.com/teklynk/twitch_shoutout/issues](https://github.com/teklynk/twitch_shoutout/issues) 
+
+Future development can be tracked here: [https://github.com/teklynk/twitch_shoutout/projects/1](https://github.com/teklynk/twitch_shoutout/projects/1) 
 
 ### [Try it here](https://twitch-shoutout.pages.dev/)
 
