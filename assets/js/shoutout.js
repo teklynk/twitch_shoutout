@@ -240,6 +240,8 @@ $(document).ready(function () {
                             if (info.data[0]['game_name']) {
                                 // Say message in chat
                                 client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                            } else {
+                                client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! - https://twitch.tv/" + info.data[0]['broadcaster_login']);
                             }
                         }
 
