@@ -1,5 +1,5 @@
 $(document).ready(function () {
-
+    // Get values from URL string
     function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
         let regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -236,8 +236,11 @@ $(document).ready(function () {
                         }
 
                         if (showMsg === 'true') {
-                            // Say message in chat
-                            client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                            // If user has streamed anything then say message
+                            if (info.data[0]['game_name']) {
+                                // Say message in chat
+                                client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                            }
                         }
 
                         // Show Clip
@@ -250,7 +253,7 @@ $(document).ready(function () {
 
                                     console.log('clips exist!');
 
-                                    // Sort array by created_at
+                                    // Sort clips array by created_at
                                     info.data.sort(sortByProperty('created_at'));
 
                                     // Remove existing video element
