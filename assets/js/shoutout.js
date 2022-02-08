@@ -38,7 +38,7 @@ $(document).ready(function () {
 
     let lowQualityVideo = '';
 
-    let channelName = getUrlParameter('channel').toLowerCase();
+    let channelName = getUrlParameter('channel').toLowerCase().trim();
 
     let showClip = getUrlParameter('showClip');
 
@@ -56,9 +56,11 @@ $(document).ready(function () {
 
     let timeOut = getUrlParameter('timeOut');
 
-    let command = getUrlParameter('command');
+    let command = getUrlParameter('command').trim();
 
     let lowQuality = getUrlParameter('lowQuality');
+
+    let customMsg = getUrlParameter('customMsg').trim();
 
     if (!command) {
         command = 'so'; // default
@@ -238,10 +240,20 @@ $(document).ready(function () {
                         if (showMsg === 'true') {
                             // If user has streamed anything then say message
                             if (info.data[0]['game_name']) {
-                                // Say message in chat
-                                client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                                if (customMsg) {
+                                    customMsg = customMsg.replace("{channel}", info.data[0]['broadcaster_name']);
+                                    customMsg = customMsg.replace("{game}", info.data[0]['game_name']);
+                                    customMsg = customMsg.replace("{title}", info.data[0]['title']);
+                                    customMsg = customMsg.replace("{url}", "https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                                    // Say custom message in chat
+                                    client.say(channelName, customMsg);
+                                } else {
+                                    // Say default message in chat
+                                    client.say(channelName, "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                                }
+                                // Say generic message in chat
                             } else {
-                                client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! - https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                                client.say(channelName, "Go check out " + info.data[0]['broadcaster_name'] + "! - https://twitch.tv/" + info.data[0]['broadcaster_login']);
                             }
                         }
 
