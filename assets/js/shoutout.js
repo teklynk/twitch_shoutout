@@ -304,7 +304,7 @@ $(document).ready(function () {
                                     if (showText === 'true') {
                                         if (customTitle) {
                                             customTitle = customTitle.replace("{channel}", info.data[0]['broadcaster_name']);
-                                            customTitle = customTitle.replace("{url}", "https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                                            customTitle = customTitle.replace("{url}", "twitch.tv/" + info.data[0]['broadcaster_name'].toLowerCase());
                                             titleText = "<div id='text-container'><span class='title-text'>" + customTitle + "</span></div>"
                                         } else {
                                             titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
