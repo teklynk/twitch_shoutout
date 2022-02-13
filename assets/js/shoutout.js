@@ -62,6 +62,8 @@ $(document).ready(function () {
 
     let customMsg = getUrlParameter('customMsg').trim();
 
+    let customTitle = getUrlParameter('customTitle').trim();
+
     if (!command) {
         command = 'so'; // default
     }
@@ -216,7 +218,7 @@ $(document).ready(function () {
                         console.log('In Array: ' + obj);
 
                         doShoutOut(obj);
-                        
+
                     }, parseInt(timeOut) * 1000 + 1000); // + 1 seconds, just to be sure that elements are completely removed
                 } else {
                     console.log(getChannel);
@@ -253,7 +255,7 @@ $(document).ready(function () {
                                 }
                                 // Say generic message in chat
                             } else {
-                                client.say(channelName, "Go check out " + info.data[0]['broadcaster_name'] + "! - https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                                client.say(channelName, "Go check out " + info.data[0]['broadcaster_name'] + "! https://twitch.tv/" + info.data[0]['broadcaster_login']);
                             }
                         }
 
@@ -300,7 +302,13 @@ $(document).ready(function () {
 
                                     // Text on top of clip
                                     if (showText === 'true') {
-                                        titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
+                                        if (customTitle) {
+                                            customTitle = customTitle.replace("{channel}", info.data[0]['broadcaster_name']);
+                                            customTitle = customTitle.replace("{url}", "https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                                            titleText = "<div id='text-container'><span class='title-text'>" + customTitle + "</span></div>"
+                                        } else {
+                                            titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
+                                        }
                                     } else {
                                         titleText = '';
                                     }

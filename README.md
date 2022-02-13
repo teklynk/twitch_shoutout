@@ -73,7 +73,11 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **command=string**  Custom command option: ie: so, soclip, playclip. No need to include the ! symbol.
 
-**Example:** http://localhost/shoutout.html?channel=teklynk&showClip=true&showRecentClip=false&showMsg=false&showText=true&showImage=true&modsOnly=true&timeOut=10&command=so&ref=xyz123abcl456mnop
+**customMsg=string** Custom message to display in chat. {channel}, {game}, {title}, {url} are variables that can be used in the custom message.
+
+**customTitle=string** Custom title to display on overlay. {channel}, {url} are variables that can be used in the custom title.
+
+**Example:** http://localhost/twitch_shoutout/shoutout.html?channel=mrcoolstreamer&showClip=true&showRecentClip=false&showMsg=true&showText=true&showImage=true&modsOnly=true&timeOut=10&command=so&lowQuality=true&customMsg={channel}%20is%20awesome!%20Last%20seen%20playing%20{game}%20-%20{title}%20{url}&customTitle=Check%20out%20this%20cool%20streamer%20{channel}%20{url}&ref=abcd1234xyz
 
 ## Twitch oAuth token
 

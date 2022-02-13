@@ -104,6 +104,15 @@
         <label class="form-check-label" for="showText">
             Show: "Go check out {channel}" on top of the clip
         </label>
+        <div class="form-label-group mb-4 hide" id="customTitle_block">
+            <div class="form-label-group mb-4 mt-2">
+                <label for="customTitle">Custom Title
+                    <small>(Optional)</small>
+                </label>
+                <input type="text" id="customTitle" class="form-control" value=""
+                       placeholder="Go check out {channel} {url}" size="50">
+            </div>
+        </div>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showMsg">
@@ -116,7 +125,7 @@
                 <label for="customMsg">Custom Message
                     <small>(Optional)</small>
                 </label>
-                <input type="text" id="customMsg" class="form-control validate" value=""
+                <input type="text" id="customMsg" class="form-control" value=""
                        placeholder="Go check out {channel}! - They were playing: {game} - {title} - {url}" size="50">
             </div>
             <div class="mb-2 mt-2">
@@ -210,6 +219,7 @@ video {
 
         document.getElementById("mainAccount").value = localStorage.getItem("TwitchSOMainAccount");
         document.getElementById("customMsg").value = localStorage.getItem("TwitchSOCustomMsg");
+        document.getElementById("customTitle").value = localStorage.getItem("TwitchSOCustomTitle");
 
         if (document.getElementById("showClip").checked) {
             document.getElementById("showRecentClip").checked = false;
@@ -219,6 +229,14 @@ video {
             document.getElementById("showClip").checked = false;
         }
 
+        if (document.getElementById("showText").checked) {
+            document.getElementById("customTitle_block").classList.toggle('hide');
+        }
+
+        if (document.getElementById("showMsg").checked) {
+            document.getElementById("access_token").classList.toggle('hide');
+        }
+        ;
     }
 
     // Check if any input fields have changed
@@ -229,6 +247,10 @@ video {
     //show chat message
     document.getElementById("showMsg").addEventListener("click", function (e) {
         document.getElementById("access_token").classList.toggle('hide');
+    }, false);
+
+    document.getElementById("showText").addEventListener("click", function (e) {
+        document.getElementById("customTitle_block").classList.toggle('hide');
     }, false);
 
     document.getElementById("showClip").addEventListener("click", function (e) {
@@ -253,6 +275,7 @@ video {
         let mainAccount = document.getElementById("mainAccount").value;
         let ref = document.getElementById("ref").value.trim();
         let customMsg = document.getElementById("customMsg").value.trim();
+        let customTitle = document.getElementById("customTitle").value.trim();
         let showClip = document.getElementById("showClip").checked;
         let showRecentClip = document.getElementById("showRecentClip").checked;
         let modsOnly = document.getElementById("modsOnly").checked;
@@ -286,11 +309,12 @@ video {
         localStorage.setItem("TwitchSOMainAccount", mainAccount);
         localStorage.setItem("TwitchSORef", ref);
         localStorage.setItem("TwitchSOCustomMsg", customMsg);
+        localStorage.setItem("TwitchSOCustomTitle", customTitle);
 
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + customMsg + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + customMsg + "&customTitle=" + customTitle + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
