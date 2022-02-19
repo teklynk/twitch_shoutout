@@ -34,8 +34,6 @@ $(document).ready(function () {
 
     let client = '';
 
-    let quality = '';
-
     let lowQualityVideo = '';
 
     let channelName = getUrlParameter('channel').toLowerCase().trim();
@@ -244,13 +242,10 @@ $(document).ready(function () {
                             if (info.data[0]['game_name']) {
                                 if (customMsg) {
                                     customMsg = getUrlParameter('customMsg').trim();
-                                    console.log('doShoutOut: ' + info.data[0]['broadcaster_name']);
-                                    console.log('customMsg: ' + customMsg);
                                     customMsg = customMsg.replace("{channel}", info.data[0]['broadcaster_name']);
                                     customMsg = customMsg.replace("{game}", info.data[0]['game_name']);
                                     customMsg = customMsg.replace("{title}", info.data[0]['title']);
                                     customMsg = customMsg.replace("{url}", "https://twitch.tv/" + info.data[0]['broadcaster_login']);
-                                    console.log('Say: ' + customMsg);
                                     // Say custom message in chat
                                     client.say(channelName, customMsg);
                                 } else {
