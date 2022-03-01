@@ -240,7 +240,14 @@ video {
 
     // Check if any input fields have changed
     $(":text,textarea,:checkbox,input[type=range]").on('change', function (e) {
+
         $("#overlaylink").addClass("hide");
+
+        // Save the state of changes to localstorage so that they are not lost
+        localStorage.setItem("TwitchSOMainAccount", document.getElementById("mainAccount").value);
+        localStorage.setItem("TwitchSORef", document.getElementById("ref").value.trim());
+        localStorage.setItem("TwitchSOCustomMsg", document.getElementById("customMsg").value.trim());
+        localStorage.setItem("TwitchSOCustomTitle", document.getElementById("customTitle").value.trim());
     });
 
     //show chat message
@@ -304,11 +311,6 @@ video {
         if (showMsg && !ref) {
             alert('Twitch access token is required if show chat message is checked!');
         }
-
-        localStorage.setItem("TwitchSOMainAccount", mainAccount);
-        localStorage.setItem("TwitchSORef", ref);
-        localStorage.setItem("TwitchSOCustomMsg", customMsg);
-        localStorage.setItem("TwitchSOCustomTitle", customTitle);
 
         //build overlay url
         if (mainAccount) {
