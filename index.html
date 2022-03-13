@@ -91,13 +91,22 @@
         </label>
     </div>
     <div class="form-group range-slider">
+        <label for="limit">Number of clips to pull
+            <small>(Max is 100)</small>
+        </label>
+        <input type="range" max="100" min="1" step="1" class="form-control range-slider-range" id="limit"
+               value="20" style="height: 0;">
+        <small class="text-muted range-slider-value" id="clip-limit"></small>
+        <small class="text-muted range-slider-value">Clips</small>
+    </div>
+    <div class="form-group range-slider">
         <label for="timeOut">Max Duration Time
             <small>(How long should the clip play?)</small>
         </label>
         <input type="range" max="120" min="1" step="1" class="form-control range-slider-range" id="timeOut"
                value="10" style="height: 0;">
         <small class="text-muted range-slider-value"></small>
-        <small class="text-muted range-slider-value">&nbsp;Seconds</small>
+        <small class="text-muted range-slider-value">Seconds</small>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showText" checked>
@@ -261,10 +270,16 @@ video {
 
     document.getElementById("showClip").addEventListener("click", function (e) {
         document.getElementById("showRecentClip").checked = false;
+        document.getElementById("limit").disabled = false;
+        document.getElementById("limit").value = 20;
+        document.getElementById("clip-limit").innerText = "20";
     }, false);
 
     document.getElementById("showRecentClip").addEventListener("click", function (e) {
         document.getElementById("showClip").checked = false;
+        document.getElementById("limit").disabled = true;
+        document.getElementById("limit").value = 1;
+        document.getElementById("clip-limit").innerText = "1";
     }, false);
 
     document.getElementById("show_ref").addEventListener("click", function (e) {
@@ -291,6 +306,7 @@ video {
         let timeOut = document.getElementById("timeOut").value;
         let command = document.getElementById("command").value.trim();
         let quality = document.getElementById("quality").checked;
+        let limit = document.getElementById("limit").value.trim();
 
         if (!mainAccount) {
             alert('Twitch username is not set');
@@ -315,7 +331,7 @@ video {
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + customMsg + "&customTitle=" + customTitle + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + customMsg + "&customTitle=" + customTitle + "&limit=" + limit + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +

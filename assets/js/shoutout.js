@@ -62,6 +62,12 @@ $(document).ready(function () {
 
     let customTitle = getUrlParameter('customTitle').trim();
 
+    let limit = getUrlParameter('limit').trim();
+
+    if (!limit) {
+        limit = "20"; //default
+    }
+
     if (!command) {
         command = 'so'; // default
     }
@@ -261,7 +267,7 @@ $(document).ready(function () {
                         // Show Clip
                         if (showClip === 'true' || showRecentClip === 'true') {
 
-                            getClips(getChannel, '20', function (info) {
+                            getClips(getChannel, limit, function (info) {
 
                                 // If clips exist
                                 if (info.data.length > 0) {
