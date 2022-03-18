@@ -18,28 +18,36 @@ $(document).ready(function () {
     }
 
     // URL values
-    let channel = getUrlParameter('channel').toLowerCase().trim();
-    let mainAccount = getUrlParameter('mainAccount').toLowerCase().trim();
+    let mainAccount = getUrlParameter('channel').toLowerCase().trim();
     let limit = getUrlParameter('limit').trim();
-    let shuffle = getUrlParameter('shuffle').trim();
+    let shuffle = "true";
     let showText = getUrlParameter('showText').trim();
-    let so = getUrlParameter('so').trim();
+    let customTitle = getUrlParameter('customTitle').trim();
+    let command = getUrlParameter('command').trim();
+    let showMsg = getUrlParameter('showMsg').trim();
     let ref = getUrlParameter('ref').trim();
     let customMsg = getUrlParameter('customMsg').trim();
-    let command = getUrlParameter('command').trim();
+    let timeOut = getUrlParameter('timeOut');
+    let modsOnly = getUrlParameter('modsOnly');
     let randomClip = 0; // Default random clip index
     let clip_index = 0; // Default clip index
+    let client = '';
+    let chatmessage = '';
+    let curr_clip = '';
+    let titleText = '';
+    let timer = 0;
+    let startTimer;
+
+    if (!modsOnly) {
+        modsOnly = 'true'; // default
+    }
 
     if (!command) {
         command = 'so'; // default
     }
 
-    if (!shuffle) {
-        shuffle = "false"; //default
-    }
-
-    if (!so) {
-        so = "false"; //default
+    if (!showMsg) {
+        showMsg = "false"; //default
     }
 
     if (!showText) {
@@ -47,91 +55,105 @@ $(document).ready(function () {
     }
 
     if (!limit) {
-        limit = "50"; //default
+        limit = "20"; //default
     }
 
-    if (!channel) {
-        alert('channel is not set in the url');
+    if (!timeOut) {
+        timeOut = 10; // default
     }
 
-    if (so === 'true' && ref === '') {
+    if (showMsg === 'true' && ref === '') {
         alert('Twitch access token not set');
     }
 
-    let client = '';
-
     // If shoutout and Auth token set, then connect to chat using oauth.
-    //if (so === 'true' && ref) {
+    if (showMsg === 'true' && ref) {
 
-    // If Auth token is set, then connect to chat using oauth, else connect anonymously.
-    if (so === 'true' && ref) {
         client = new tmi.Client({
             options: {
                 debug: true,
                 skipUpdatingEmotesets: true
             },
-            connection: {reconnect: true},
+            connection: {
+                reconnect: true,
+                secure: true,
+            },
             identity: {
-                username: channel,
+                username: mainAccount,
                 password: 'oauth:' + atob(ref)
             },
-            channels: [channel]
+            channels: [mainAccount]
         });
-    } else {
-        client = new tmi.Client({
-            options: {
-                debug: true,
-                skipUpdatingEmotesets: true
-            },
-            connection: {reconnect: true},
-            channels: [channel]
-        });
-    }
 
-    client.connect().catch(console.error);
-    //}
+        client.connect().catch(console.error);
 
-    // Convert string to an array/list
-    channel = channel.split(' ');
+        // triggers on message
+        client.on('chat', (channel, user, message, self) => {
 
-    let channel_index = channel.length;
-
-    // Randomly grab a channel from the list to start from
-    if (shuffle === 'true' && channel.length > 0) {
-        clip_index = Math.floor((Math.random() * channel.length - 1) + 1);
-    } else {
-        clip_index = 0;
-    }
-
-    // Create new video element
-    let curr_clip = document.createElement('video');
-    $(curr_clip).appendTo('#container');
-
-    // triggers on message
-    client.on('chat', (channel, user, message, self) => {
-
-        // Ignore echoed messages.
-        if (self) {
-            return false;
-        }
-
-        // Only do this if doing a shoutout message, else, play clip right away
-        if (so === 'true' && ref) {
-            if (message.startsWith('!' + command)) {
-                // wait 3 seconds for TMI to connect to Twitch before loading clip and doing a shoutout
-                setTimeout(function () {
-                    // Play a clip
-                    loadClip(channel[clip_index]);
-                }, 3000);
+            // Ignore echoed messages.
+            if (self) {
+                return false;
             }
-        } else {
-            loadClip(channel[clip_index]);
-        }
 
-    });
+            // Clean message
+            chatmessage = message.replace(/(<([^>]+)>)/ig, "").trim();
+
+            // alert message
+            if (user['message-type'] === 'chat') {
+
+                if (chatmessage.startsWith("!" + command)) {
+
+                    // Remove characters and spaces. Lowercase the string
+                    chatmessage = chatmessage.replace('@', '').trim().toLowerCase();
+
+                    // Convert string to an array/list - split on spaces
+                    // Skip first item in array because the first item is the chat command and not a channel name
+                    chatmessage = chatmessage.split(' ').slice(1).filter(String);
+
+                    // Ignore chat command if already playing a video
+                    if ($('video').length) {
+
+                        console.log('Can not shout-out while a clip is playing!');
+                        return false;
+
+                    } else {
+                        // Set clip index to 1 if only doing 1 shout-out else force start at index 0
+                        if (clip_index === chatmessage.length) {
+                            clip_index = 1;
+                        } else {
+                            clip_index = 0;
+                        }
+
+                        if (modsOnly === 'true' && (user.mod || user.username === mainAccount)) {
+                            loadClip(chatmessage[0]);
+                        } else if (modsOnly === 'false' || user.username === mainAccount) {
+                            loadClip(chatmessage[0]);
+                        }
+                    }
+
+                } else {
+
+                    return false;
+                }
+
+            }
+        });
+    }
 
     // Get and play the clip
     function loadClip(channelName) {
+
+        // Set clip index to 1 if only doing 1 shout-out else increment index
+        if (clip_index === chatmessage.length) {
+            clip_index = 1;
+        } else {
+            clip_index++;
+        }
+
+        // Debug
+        console.log('clip_index loadClip: ' + clip_index);
+        console.log('message length loadClip: ' + chatmessage.length);
+
         // Json data - Ajax call
         let clips_json = JSON.parse($.getJSON({
             'url': "https://twitchapi.teklynk.com/getuserclips.php?channel=" + channelName + "&limit=" + limit + "",
@@ -155,10 +177,30 @@ $(document).ready(function () {
             randomClip = 0;
         }
 
-        // Show channel name on top of video
+        // Remove old video element and text - resets everything
+        document.getElementById('container').innerHTML = "";
+
+        // Text on top of clip
         if (showText === 'true') {
-            $("<div id='text-container'><span class='title-text'>" + clips_json.data[0]['broadcaster_name'] + "</span></div>").appendTo('#container');
+            if (customTitle) {
+                customTitle = getUrlParameter('customTitle').trim();
+                customTitle = customTitle.replace("{channel}", clips_json.data[0]['broadcaster_name']);
+                customTitle = customTitle.replace("{url}", "twitch.tv/" + clips_json.data[0]['broadcaster_name'].toLowerCase());
+                titleText = "<div id='text-container'><span class='title-text'>" + customTitle + "</span></div>";
+            } else {
+                titleText = "<div id='text-container'><span class='title-text'>Go check out " + clips_json.data[0]['broadcaster_name'] + "</span></div>"
+            }
+
+            $(titleText).appendTo('#container');
+
+        } else {
+            titleText = '';
         }
+
+        // Create new video element
+        curr_clip = document.createElement('video');
+        // Append video element to the container div
+        $(curr_clip).appendTo('#container');
 
         // Parse thumbnail image to build the clip url
         let thumbPart = clips_json.data[randomClip]['thumbnail_url'].split("-preview-");
@@ -175,11 +217,35 @@ $(document).ready(function () {
         console.log('channelName: ' + channelName);
         console.log('clipNumber: ' + randomClip);
 
+        // Remove video after timeout has been reached and then play next clip
+        startTimer = setInterval(function () {
+            timer++; // Increment timer
+
+            console.log(timer);
+
+            if (timer === parseInt(timeOut)) {
+                // Remove existing video element
+                if ($('video').length) {
+                    $('video').remove();
+                }
+
+                if ($('#text-container').length) {
+                    $('#text-container').remove();
+                }
+
+                timer = 0; // reset timer to zero
+                clearInterval(startTimer);
+
+                nextClip();
+            }
+
+        }, 1000);
+
         // Move to the next clip if the current one finishes playing
         curr_clip.addEventListener("ended", nextClip);
 
         // Do a shout-out for each clip
-        if (so === 'true' && ref) {
+        if (showMsg === 'true' && ref) {
             let so_json = JSON.parse($.getJSON({
                 'url': "https://twitchapi.teklynk.com/getuserstatus.php?channel=" + channelName + "",
                 'async': false
@@ -199,19 +265,24 @@ $(document).ready(function () {
                 client.say(mainAccount, "Go check out " + so_json.data[0]['broadcaster_name'] + "! They were playing: " + so_json.data[0]['game_name'] + " - " + so_json.data[0]['title'] + " - https://twitch.tv/" + so_json.data[0]['broadcaster_login']);
             }
         }
+
     }
 
     function nextClip() {
-        // Remove element when the next clip plays
-        $('#text-container').remove();
 
-        if (clip_index < channel_index - 1) {
-            clip_index += 1;
-        } else {
-            clip_index = 0;
+        // Reset timer
+        timer = 0;
+        clearInterval(startTimer);
+
+        if (clip_index === chatmessage.length) {
+            // Remove video element after all shout-outs have ended
+            document.getElementById('container').innerHTML = "";
+            return false;
         }
 
-        loadClip(channel[clip_index]);
+        console.log('Play The Next Clip!');
+
+        loadClip(chatmessage[clip_index]);
 
         curr_clip.play();
     }
