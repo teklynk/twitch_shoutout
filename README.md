@@ -43,6 +43,8 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **Shout-out multiple channels with one command:** !so @MrCoolStreamer @WillStreamForBeer @RetroGamer @GamerGamingGames OR !so RetroGamer RetroGamer RetroGamer RetroGamer.
 
+**Automatically shoutout a creator when they raid you:** Viewer count must be greater than 3 to avoid auto shoutout of solo raids.
+
 ## Notes
 
 * Enable OBS browser source hardware acceleration in Settings -> Advanced in OBS.
