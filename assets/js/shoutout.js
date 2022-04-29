@@ -30,6 +30,10 @@ $(document).ready(function () {
         }
     }
 
+    let getChannel;
+
+    let titleText;
+
     let cmdArray = [];
 
     let client = '';
@@ -63,6 +67,12 @@ $(document).ready(function () {
     let customTitle = getUrlParameter('customTitle').trim();
 
     let limit = getUrlParameter('limit').trim();
+
+    let raided = getUrlParameter('raided').trim();
+
+    if (!raided) {
+        raided = "false"; //default
+    }
 
     if (!limit) {
         limit = "20"; //default
@@ -184,8 +194,6 @@ $(document).ready(function () {
         }
 
         if (user['message-type'] === 'chat' && message.startsWith('!')) {
-            let getChannel;
-            let titleText;
 
             if (message.startsWith('!' + command)) {
 
@@ -231,52 +239,109 @@ $(document).ready(function () {
             } else if (modsOnly === 'false' || user.username === channelName) {
                 doShoutOut(getChannel); // Everyone
             }
+        }
+    });
 
-            function doShoutOut(getChannel) {
+    function doShoutOut(getChannel) {
 
-                getStatus(getChannel, function (info) {
-                    // If user exists
-                    if (info.data) {
+        getStatus(getChannel, function (info) {
+            // If user exists
+            if (info.data) {
 
-                        // Ignore if video clip is playing
-                        if (document.getElementById("clip") || document.getElementById("text-container")) {
-                            return false; // Exit and Do nothing
+                // Ignore if video clip is playing
+                if (document.getElementById("clip") || document.getElementById("text-container")) {
+                    return false; // Exit and Do nothing
+                }
+
+                if (showMsg === 'true') {
+                    // If user has streamed anything then say message
+                    if (info.data[0]['game_name']) {
+                        if (customMsg) {
+                            customMsg = getUrlParameter('customMsg').trim();
+                            customMsg = customMsg.replace("{channel}", info.data[0]['broadcaster_name']);
+                            customMsg = customMsg.replace("{game}", info.data[0]['game_name']);
+                            customMsg = customMsg.replace("{title}", info.data[0]['title']);
+                            customMsg = customMsg.replace("{url}", "https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                            // Say custom message in chat
+                            client.say(channelName, customMsg);
+                        } else {
+                            // Say default message in chat
+                            client.say(channelName, "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
                         }
+                        // Say generic message in chat
+                    } else {
+                        client.say(channelName, "Go check out " + info.data[0]['broadcaster_name'] + "! https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                    }
+                }
 
-                        if (showMsg === 'true') {
-                            // If user has streamed anything then say message
-                            if (info.data[0]['game_name']) {
-                                if (customMsg) {
-                                    customMsg = getUrlParameter('customMsg').trim();
-                                    customMsg = customMsg.replace("{channel}", info.data[0]['broadcaster_name']);
-                                    customMsg = customMsg.replace("{game}", info.data[0]['game_name']);
-                                    customMsg = customMsg.replace("{title}", info.data[0]['title']);
-                                    customMsg = customMsg.replace("{url}", "https://twitch.tv/" + info.data[0]['broadcaster_login']);
-                                    // Say custom message in chat
-                                    client.say(channelName, customMsg);
-                                } else {
-                                    // Say default message in chat
-                                    client.say(channelName, "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
-                                }
-                                // Say generic message in chat
-                            } else {
-                                client.say(channelName, "Go check out " + info.data[0]['broadcaster_name'] + "! https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                // Show Clip
+                if (showClip === 'true' || showRecentClip === 'true') {
+
+                    getClips(getChannel, limit, function (info) {
+
+                        // If clips exist
+                        if (info.data.length > 0) {
+
+                            console.log('clips exist!');
+
+                            // Sort clips array by created_at
+                            info.data.sort(sortByProperty('created_at'));
+
+                            // Remove existing video element
+                            if (document.getElementById("clip")) {
+                                document.getElementById("clip").remove();
                             }
-                        }
+                            if (document.getElementById("text-container")) {
+                                document.getElementById("text-container").remove();
+                            }
 
-                        // Show Clip
-                        if (showClip === 'true' || showRecentClip === 'true') {
+                            // Default value = most recent index after sorted
+                            let indexClip = 0;
 
-                            getClips(getChannel, limit, function (info) {
+                            // Random clip logic
+                            if (showClip === 'true') {
+                                let numOfClips = info.data.length;
+                                indexClip = Math.floor(Math.random() * numOfClips);
+                            }
 
-                                // If clips exist
-                                if (info.data.length > 0) {
+                            // Parse thumbnail image to build the clip url
+                            let thumbPart = info.data[indexClip]['thumbnail_url'].split("-preview-");
+                            thumbPart = thumbPart[0] + ".mp4";
 
-                                    console.log('clips exist!');
+                            // Low clip quality mode
+                            if (lowQuality === 'true') {
+                                lowQualityVideo = "<source src='" + thumbPart.replace('.mp4', '-360.mp4') + "' type='video/mp4'>";
+                            } else {
+                                lowQualityVideo = '';
+                            }
 
-                                    // Sort clips array by created_at
-                                    info.data.sort(sortByProperty('created_at'));
+                            // Text on top of clip
+                            if (showText === 'true') {
+                                if (customTitle) {
+                                    customTitle = getUrlParameter('customTitle').trim();
+                                    customTitle = customTitle.replace("{channel}", info.data[0]['broadcaster_name']);
+                                    customTitle = customTitle.replace("{url}", "twitch.tv/" + info.data[0]['broadcaster_name'].toLowerCase());
+                                    titleText = "<div id='text-container'><span class='title-text'>" + customTitle + "</span></div>"
+                                } else {
+                                    titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
+                                }
+                            } else {
+                                titleText = '';
+                            }
 
+                            // Video Clip
+                            $(titleText + "<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
+
+                            // Timeout start
+                            let timer = 0;
+
+                            // Remove video after timeout has been reached
+                            let startTimer = setInterval(function () {
+                                timer++; // Increment timer
+
+                                console.log(timer);
+
+                                if (timer === parseInt(timeOut)) {
                                     // Remove existing video element
                                     if (document.getElementById("clip")) {
                                         document.getElementById("clip").remove();
@@ -284,55 +349,61 @@ $(document).ready(function () {
                                     if (document.getElementById("text-container")) {
                                         document.getElementById("text-container").remove();
                                     }
+                                    timer = 0; // reset timer to zero
+                                    clearInterval(startTimer);
+                                }
 
-                                    // Default value = most recent index after sorted
-                                    let indexClip = 0;
+                            }, 1000);
 
-                                    // Random clip logic
-                                    if (showClip === 'true') {
-                                        let numOfClips = info.data.length;
-                                        indexClip = Math.floor(Math.random() * numOfClips);
-                                    }
+                            // Remove video element after it has finished playing
+                            document.getElementById("clip").onended = function (e) {
+                                // Remove existing video element
+                                if (document.getElementById("clip")) {
+                                    document.getElementById("clip").remove();
+                                }
+                                if (document.getElementById("text-container")) {
+                                    document.getElementById("text-container").remove();
+                                }
+                                timer = 0; // reset timer to zero
+                                clearInterval(startTimer);
+                            };
 
-                                    // Parse thumbnail image to build the clip url
-                                    let thumbPart = info.data[indexClip]['thumbnail_url'].split("-preview-");
-                                    thumbPart = thumbPart[0] + ".mp4";
+                        } else {
 
-                                    // Low clip quality mode
-                                    if (lowQuality === 'true') {
-                                        lowQualityVideo = "<source src='" + thumbPart.replace('.mp4', '-360.mp4') + "' type='video/mp4'>";
-                                    } else {
-                                        lowQualityVideo = '';
-                                    }
+                            console.log('no clips found!');
+
+                            // Show profile image if no clips exist
+                            if (showImage === 'true') {
+
+                                console.log('show profile image!');
+
+                                getInfo(getChannel, function (info) {
+                                    let userImage = info.data[0]['profile_image_url'];
 
                                     // Text on top of clip
                                     if (showText === 'true') {
-                                        if (customTitle) {
-                                            customTitle = getUrlParameter('customTitle').trim();
-                                            customTitle = customTitle.replace("{channel}", info.data[0]['broadcaster_name']);
-                                            customTitle = customTitle.replace("{url}", "twitch.tv/" + info.data[0]['broadcaster_name'].toLowerCase());
-                                            titleText = "<div id='text-container'><span class='title-text'>" + customTitle + "</span></div>"
-                                        } else {
-                                            titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
-                                        }
+                                        titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['display_name'] + "</span></div>"
                                     } else {
                                         titleText = '';
                                     }
 
-                                    // Video Clip
-                                    $(titleText + "<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
+                                    // Profile Image
+                                    $(titleText + "<img id='profile' class='fade img-fluid' src='" + userImage + "'>").appendTo("#container");
 
                                     // Timeout start
                                     let timer = 0;
 
-                                    // Remove video after timeout has been reached
+                                    // Remove Profile Image after timeout has been reached
                                     let startTimer = setInterval(function () {
                                         timer++; // Increment timer
 
                                         console.log(timer);
 
                                         if (timer === parseInt(timeOut)) {
-                                            // Remove existing video element
+                                            // Remove existing profile image element
+                                            if (document.getElementById("profile")) {
+                                                document.getElementById("profile").remove();
+                                            }
                                             if (document.getElementById("clip")) {
                                                 document.getElementById("clip").remove();
                                             }
@@ -344,86 +415,32 @@ $(document).ready(function () {
                                         }
 
                                     }, 1000);
+                                });
 
-                                    // Remove video element after it has finished playing
-                                    document.getElementById("clip").onended = function (e) {
-                                        // Remove existing video element
-                                        if (document.getElementById("clip")) {
-                                            document.getElementById("clip").remove();
-                                        }
-                                        if (document.getElementById("text-container")) {
-                                            document.getElementById("text-container").remove();
-                                        }
-                                        timer = 0; // reset timer to zero
-                                        clearInterval(startTimer);
-                                    };
+                            } else {
 
-                                } else {
+                                return false; // Exit and Do nothing
 
-                                    console.log('no clips found!');
-
-                                    if (showImage === 'true') {
-
-                                        console.log('show profile image!');
-
-                                        getInfo(getChannel, function (info) {
-                                            let userImage = info.data[0]['profile_image_url'];
-
-                                            // Text on top of clip
-                                            if (showText === 'true') {
-                                                titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['display_name'] + "</span></div>"
-                                            } else {
-                                                titleText = '';
-                                            }
-
-                                            // Profile Image
-                                            $(titleText + "<img id='profile' class='fade img-fluid' src='" + userImage + "'>").appendTo("#container");
-
-                                            // Timeout start
-                                            let timer = 0;
-
-                                            // Remove Profile Image after timeout has been reached
-                                            let startTimer = setInterval(function () {
-                                                timer++; // Increment timer
-
-                                                console.log(timer);
-
-                                                if (timer === parseInt(timeOut)) {
-                                                    // Remove existing profile image element
-                                                    if (document.getElementById("profile")) {
-                                                        document.getElementById("profile").remove();
-                                                    }
-                                                    if (document.getElementById("clip")) {
-                                                        document.getElementById("clip").remove();
-                                                    }
-                                                    if (document.getElementById("text-container")) {
-                                                        document.getElementById("text-container").remove();
-                                                    }
-                                                    timer = 0; // reset timer to zero
-                                                    clearInterval(startTimer);
-                                                }
-
-                                            }, 1000);
-                                        });
-
-                                    } else {
-
-                                        return false; // Exit and Do nothing
-
-                                    }
-                                }
-                            });
+                            }
                         }
+                    });
+                }
 
-                    } else {
+            } else {
 
-                        console.log(getChannel + ': Does not exist!');
-                        return false;
-                    }
-                });
+                // If user/channel does not exist
+                console.log(getChannel + ': Does not exist!');
+                return false;
             }
+        });
+    }
 
-        }
-    });
+    // Automatically shout-out channel on raid
+    if (raided === "true") {
+        client.on("raided", (channel, username, viewers) => {
+            console.log(username + ': is raiding!');
+            doShoutOut(username);
+        });
+    }
 
 });

@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Twitch Shout-out</title>
+    <title>Twitch Shout-out Clips Player</title>
+    <meta name="description" content="Twitch Shout out clip player. !so channelname. This will display a random clip and say a shout out message in chat.">
+    <meta name="keywords" content="Twitch, shoutout, chat bot, overlay">
     <script src="assets/js/jquery-3.6.0.min.js"></script>
     <script src="assets/js/bootstrap.bundle.js"></script>
     <link rel="stylesheet" href="assets/css/bootstrap452.min.css">
@@ -62,9 +64,9 @@
             <p>Play a random clip from the streamers channel that is shouted out.</p>
             <h3>Notes:</h3>
             <ul>
+                <li><span class="text-info">NEW FEATURES:</span> Automatically do a shout-out on Raid events.</li>
                 <li>You can not do a shout-out while another shout-out is playing. The command will simply be ignored.</li>
                 <li>Multi-Shout-Out (!so @teklynk @mrcoolgamer @streambean) works on a timer using the "Max Duration Time" and will play a shout-out every X seconds.</li>
-                <li>If you would like to play the full clip, set the "Max Duration Time" to the max (120 secs).</li>
                 <li>The most recent "popular" clip may not be the most recent clip. "Popular" is based on the number of views that the clip has.</li>
                 <li>If you do not want to play clips but still want to "Show chat message", uncheck "Show a random popular clip" and "Show the most recent popular clip".</li>
             </ul>
@@ -98,6 +100,12 @@
         <input class="form-check-input" type="checkbox" value="" id="showImage">
         <label class="form-check-label" for="showImage">
             Show the user profile image if clips do not exist
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="raided">
+        <label class="form-check-label" for="raided">
+            Enable this to automatically shoutout a creator when they raid you. <small class="text-info">* NEW *</small>
         </label>
     </div>
     <div class="form-check mb-2">
@@ -331,6 +339,7 @@ video {
         let command = document.getElementById("command").value.trim();
         let quality = document.getElementById("quality").checked;
         let limit = document.getElementById("limit").value.trim();
+        let raided = document.getElementById("raided").checked;
 
         if (!mainAccount) {
             alert('Twitch username is not set');
@@ -355,7 +364,7 @@ video {
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + customMsg + "&customTitle=" + customTitle + "&limit=" + limit + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + customMsg + "&customTitle=" + customTitle + "&limit=" + limit + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +

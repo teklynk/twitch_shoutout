@@ -19,14 +19,20 @@ $(document).ready(function () {
         })
     }
 
+    let getChannel;
     let channelName = getUrlParameter('channel').toLowerCase();
-    let channelMessage = getUrlParameter('msg');
-    let timeOut = getUrlParameter('timeOut');
-    let modsOnly = getUrlParameter('modsOnly');
-    let useClips = getUrlParameter('useClips');
-    let command = getUrlParameter('command');
-    let ref = getUrlParameter('ref');
-    let showMsg = getUrlParameter('showMsg');
+    let channelMessage = getUrlParameter('msg').trim();
+    let timeOut = getUrlParameter('timeOut').trim();
+    let modsOnly = getUrlParameter('modsOnly').trim();
+    let useClips = getUrlParameter('useClips').trim();
+    let command = getUrlParameter('command').trim();
+    let ref = getUrlParameter('ref').trim();
+    let showMsg = getUrlParameter('showMsg').trim();
+    let raided = getUrlParameter('raided').trim();
+
+    if (!raided) {
+        raided = "false"; //default
+    }
 
     let cmdArray = [];
 
@@ -119,8 +125,6 @@ $(document).ready(function () {
             return false;
         }
 
-        let getChannel;
-
         if (message.startsWith('!' + command)) {
 
             // Ignore if already displaying a shoutout
@@ -162,104 +166,113 @@ $(document).ready(function () {
             doShoutOutSlider(getChannel); // Everyone
         }
 
-        function doShoutOutSlider(getChannel) {
+    });
 
-            getInfo(getChannel, function (info) {
-                // If user exists
-                if (info.data.length > 0) {
+    function doShoutOutSlider(getChannel) {
 
-                    // Ignore if already displaying a shoutout
-                    if (document.getElementById("userMsg") || document.getElementById("userImage") || document.getElementById("userName")) {
-                        return false; // Exit and Do nothing
-                    }
+        getInfo(getChannel, function (info) {
+            // If user exists
+            if (info.data.length > 0) {
 
-                    // Say message in chat
-                    if (showMsg === 'true') {
-                        getStatus(getChannel, function (info) {
-                            client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
-                        });
-                    }
+                // Ignore if already displaying a shoutout
+                if (document.getElementById("userMsg") || document.getElementById("userImage") || document.getElementById("userName")) {
+                    return false; // Exit and Do nothing
+                }
 
-                    // Remove existing elements on load
-                    if (document.getElementById("userMsg")) {
-                        document.getElementById("userMsg").remove();
-                    }
-                    if (document.getElementById("userImage")) {
-                        document.getElementById("userImage").remove();
-                    }
-                    if (document.getElementById("userName")) {
-                        document.getElementById("userName").remove();
-                    }
+                // Say message in chat
+                if (showMsg === 'true') {
+                    getStatus(getChannel, function (info) {
+                        client.say(channelName.toLowerCase(), "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                    });
+                }
 
-                    // Timeout start
-                    let timer = 0;
+                // Remove existing elements on load
+                if (document.getElementById("userMsg")) {
+                    document.getElementById("userMsg").remove();
+                }
+                if (document.getElementById("userImage")) {
+                    document.getElementById("userImage").remove();
+                }
+                if (document.getElementById("userName")) {
+                    document.getElementById("userName").remove();
+                }
 
-                    // Remove slider elements after timeout has been reached
-                    let startTimer = setInterval(function () {
-                        timer++; // Increment timer
+                // Timeout start
+                let timer = 0;
 
-                        console.log(timer);
+                // Remove slider elements after timeout has been reached
+                let startTimer = setInterval(function () {
+                    timer++; // Increment timer
 
-                        // If using duration settings
-                        if (useClips === 'false' && timer === parseInt(timeOut) && document.getElementById("userMsg")) {
+                    console.log(timer);
 
-                            //TODO: Add more animation options and move to a function (slide-top-bottom, slide-bottom-top, slide-left, slide-right)
-                            // Slide in animation
-                            if (document.getElementById("userMsg")) {
-                                document.getElementById("userMsg").classList.remove("slide-left-in");
-                            }
-                            if (document.getElementById("userImage")) {
-                                document.getElementById("userImage").getElementsByClassName("image")[0].classList.remove("fade-in-image");
-                            }
-                            if (document.getElementById("userName")) {
-                                document.getElementById("userName").classList.remove("slide-right-in");
-                            }
+                    // If using duration settings
+                    if (useClips === 'false' && timer === parseInt(timeOut) && document.getElementById("userMsg")) {
 
-                            // Slide out animation
-                            if (document.getElementById("userMsg")) {
-                                document.getElementById("userMsg").classList.add("slide-right-out");
-                            }
-                            if (document.getElementById("userImage")) {
-                                document.getElementById("userImage").getElementsByClassName("image")[0].classList.add("fade-out-image");
-                            }
-                            if (document.getElementById("userName")) {
-                                document.getElementById("userName").classList.add("slide-left-out");
-                            }
-
-                            // Completely remove elements after 1 second and animation has completed
-                            setTimeout(function () {
-                                if (document.getElementById("userMsg")) {
-                                    document.getElementById("userMsg").remove();
-                                }
-                                if (document.getElementById("userImage")) {
-                                    document.getElementById("userImage").remove();
-                                }
-                                if (document.getElementById("userName")) {
-                                    document.getElementById("userName").remove();
-                                }
-                                timer = 0; // Reset timer to zero
-                                clearInterval(startTimer);
-                            }, 500);
+                        //TODO: Add more animation options and move to a function (slide-top-bottom, slide-bottom-top, slide-left, slide-right)
+                        // Slide in animation
+                        if (document.getElementById("userMsg")) {
+                            document.getElementById("userMsg").classList.remove("slide-left-in");
+                        }
+                        if (document.getElementById("userImage")) {
+                            document.getElementById("userImage").getElementsByClassName("image")[0].classList.remove("fade-in-image");
+                        }
+                        if (document.getElementById("userName")) {
+                            document.getElementById("userName").classList.remove("slide-right-in");
                         }
 
-                    }, 1000);
+                        // Slide out animation
+                        if (document.getElementById("userMsg")) {
+                            document.getElementById("userMsg").classList.add("slide-right-out");
+                        }
+                        if (document.getElementById("userImage")) {
+                            document.getElementById("userImage").getElementsByClassName("image")[0].classList.add("fade-out-image");
+                        }
+                        if (document.getElementById("userName")) {
+                            document.getElementById("userName").classList.add("slide-left-out");
+                        }
 
-                    let userImage = info.data[0]['profile_image_url'];
-                    let userDisplayName = info.data[0]['display_name'];
-                    let userMsg = decodeURI(channelMessage);
+                        // Completely remove elements after 1 second and animation has completed
+                        setTimeout(function () {
+                            if (document.getElementById("userMsg")) {
+                                document.getElementById("userMsg").remove();
+                            }
+                            if (document.getElementById("userImage")) {
+                                document.getElementById("userImage").remove();
+                            }
+                            if (document.getElementById("userName")) {
+                                document.getElementById("userName").remove();
+                            }
+                            timer = 0; // Reset timer to zero
+                            clearInterval(startTimer);
+                        }, 500);
+                    }
 
-                    $("<div id='userMsg' class='slide-left-in'><p>" + userMsg + "</p></div>").appendTo("#container");
-                    $("<div id='userImage'><img class='image fade-in-image' src='" + userImage + "' alt=''/></div>").appendTo("#container");
-                    $("<div id='userName' class='slide-right-in'><p>" + userDisplayName + "</p></div>").appendTo("#container");
+                }, 1000);
 
-                } else {
+                let userImage = info.data[0]['profile_image_url'];
+                let userDisplayName = info.data[0]['display_name'];
+                let userMsg = decodeURI(channelMessage);
 
-                    console.log(getChannel + ': Does not exist!');
-                    return false;
+                $("<div id='userMsg' class='slide-left-in'><p>" + userMsg + "</p></div>").appendTo("#container");
+                $("<div id='userImage'><img class='image fade-in-image' src='" + userImage + "' alt=''/></div>").appendTo("#container");
+                $("<div id='userName' class='slide-right-in'><p>" + userDisplayName + "</p></div>").appendTo("#container");
 
-                }
-            });
-        }
+            } else {
 
-    })
+                // If user/channel does not exists
+                console.log(getChannel + ': Does not exist!');
+                return false;
+
+            }
+        });
+    }
+
+    // Automatically shout-out channel on raid
+    if (raided === "true") {
+        client.on("raided", (channel, username, viewers) => {
+            console.log(username + ': is raiding!');
+            doShoutOutSlider(username);
+        });
+    }
 });
