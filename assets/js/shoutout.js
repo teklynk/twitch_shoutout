@@ -438,8 +438,11 @@ $(document).ready(function () {
     // Automatically shout-out channel on raid
     if (raided === "true") {
         client.on("raided", (channel, username, viewers) => {
-            console.log(username + ': is raiding!');
-            doShoutOut(username);
+            // Checks if raid viewer count is greater than 3 to avoid solo raids
+            if (viewers > 3) {
+                console.log(username + ': is raiding!');
+                doShoutOut(username);
+            }
         });
     }
 
