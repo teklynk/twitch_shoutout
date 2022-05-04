@@ -139,7 +139,7 @@ $(document).ready(function () {
             console.log(getChannel);
 
             // Create an array of channel names
-            cmdArray = message.split(' ');
+            cmdArray = message.split('@'); //split channel name using the @ symbol
             cmdArray = cmdArray.slice(1);
         } else {
             return false; // Exit and Do nothing else
