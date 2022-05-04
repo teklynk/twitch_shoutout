@@ -266,6 +266,7 @@ video {
         document.getElementById("mainAccount").value = localStorage.getItem("TwitchSOMainAccount");
         document.getElementById("customMsg").value = localStorage.getItem("TwitchSOCustomMsg");
         document.getElementById("customTitle").value = localStorage.getItem("TwitchSOCustomTitle");
+        document.getElementById("ref").value = localStorage.getItem("TwitchSORef");
 
         if (document.getElementById("showClip").checked) {
             document.getElementById("showRecentClip").checked = false;
@@ -285,12 +286,12 @@ video {
     }
 
     // Check if any input fields have changed
-    $(":text,textarea,:checkbox,input[type=range]").on('change', function (e) {
+    $(":text,:password,textarea,:checkbox,input[type=range]").on('change', function (e) {
 
         $("#overlaylink").addClass("hide");
 
         // Save the state of changes to localstorage so that they are not lost
-        localStorage.setItem("TwitchSOMainAccount", document.getElementById("mainAccount").value);
+        localStorage.setItem("TwitchSOMainAccount", document.getElementById("mainAccount").value.trim());
         localStorage.setItem("TwitchSORef", document.getElementById("ref").value.trim());
         localStorage.setItem("TwitchSOCustomMsg", document.getElementById("customMsg").value.trim());
         localStorage.setItem("TwitchSOCustomTitle", document.getElementById("customTitle").value.trim());
@@ -376,6 +377,8 @@ video {
                 "<a style='word-break:break-all;' href='" + fullUrl + "' target='_blank'>" + fullUrl + "</a><br><span class='text-warning'><small>* Never share this url with anyone or show it on stream!</small></span></p>";
         }
     });
+
+
 </script>
 
 <div class="text-right m-4">
