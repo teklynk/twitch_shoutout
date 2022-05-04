@@ -4,8 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Twitch Shout-out</title>
-    <meta name="description" content="Twitch Shout out. !so channelname. This will display the users profile image and say a shout out message in chat.">
-    <meta name="keywords" content="Twitch, shoutout, chat bot, overlay">
+    <meta name="description" content="Twitch Shout out clip player. !so channelname. This will display a random clip and say a shout out message in chat." />
+    <meta name="keywords" content="Twitch, shoutout, chat bot, overlay" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Twitch Shout-out Clips Player" />
+    <meta property="og:description" content="Twitch Shout out clip player. !so channelname. This will display a random clip and say a shout out message in chat." />
+    <meta property="og:url" content="" />
+    <meta property="og:site_name" content="Twitch Shout-out Clips Player" />
     <script src="assets/js/jquery-3.6.0.min.js"></script>
     <script src="assets/js/bootstrap.bundle.js"></script>
     <link rel="stylesheet" href="assets/css/bootstrap452.min.css">
@@ -212,11 +217,17 @@
         rangeSlider();
 
         document.getElementById("mainAccount").value = localStorage.getItem("TwitchSOSliderMainAccount");
+        document.getElementById("msg").value = localStorage.getItem("TwitchSOSliderMsg");
+        document.getElementById("command").value = localStorage.getItem("TwitchSOSliderCmd");
     }
 
     // Check if any input fields have changed
-    $(":text,textarea,:checkbox,input[type=range]").on('change', function (e) {
+    $(":text,:password,textarea,:checkbox,input[type=range]").on('change', function (e) {
         $("#overlaylink").addClass("hide");
+
+        localStorage.setItem("TwitchSORef", document.getElementById("ref").value.trim());
+        localStorage.setItem("TwitchSOSliderMsg", document.getElementById("msg").value.trim());
+        localStorage.setItem("TwitchSOSliderCmd", document.getElementById("command").value.trim());
     });
 
     //show chat message
