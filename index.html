@@ -113,6 +113,14 @@
             Automatically shoutout a creator when they raid you with more than 3 viewers. <small class="text-info">* NEW *</small>
         </label>
     </div>
+    <div class="form-group range-slider hide" id="so_delay">
+        <label for="delay">Delay automatic shoutout
+        </label>
+        <input type="range" max="30" min="1" step="1" class="form-control range-slider-range" id="delay"
+               value="10" style="height: 0;">
+        <small class="text-muted range-slider-value"></small>
+        <small class="text-muted range-slider-value">Seconds</small>
+    </div>
     <div class="form-check mb-2">
         <input class="form-check-input" type="checkbox" value="" id="quality">
         <label class="form-check-label" for="quality">
@@ -283,6 +291,10 @@ video {
         if (document.getElementById("showMsg").checked) {
             document.getElementById("access_token").classList.toggle('hide');
         }
+
+        if (document.getElementById("raided").checked) {
+            document.getElementById("so_delay").classList.toggle('hide');
+        }
     }
 
     // Check if any input fields have changed
@@ -304,6 +316,10 @@ video {
 
     document.getElementById("showText").addEventListener("click", function (e) {
         document.getElementById("customTitle_block").classList.toggle('hide');
+    }, false);
+
+    document.getElementById("raided").addEventListener("click", function (e) {
+        document.getElementById("so_delay").classList.toggle('hide');
     }, false);
 
     document.getElementById("showClip").addEventListener("click", function (e) {
@@ -331,7 +347,7 @@ video {
     }, false);
 
     document.getElementById("generate_button").addEventListener("click", function (e) {
-        let mainAccount = document.getElementById("mainAccount").value;
+        let mainAccount = document.getElementById("mainAccount").value.trim();
         let ref = document.getElementById("ref").value.trim();
         let customMsg = document.getElementById("customMsg").value.trim();
         let customTitle = document.getElementById("customTitle").value.trim();
@@ -341,11 +357,12 @@ video {
         let showMsg = document.getElementById("showMsg").checked;
         let showImage = document.getElementById("showImage").checked;
         let showText = document.getElementById("showText").checked;
-        let timeOut = document.getElementById("timeOut").value;
+        let timeOut = document.getElementById("timeOut").value.trim();
         let command = document.getElementById("command").value.trim();
         let quality = document.getElementById("quality").checked;
         let limit = document.getElementById("limit").value.trim();
         let raided = document.getElementById("raided").checked;
+        let delay = document.getElementById("delay").value.trim();
 
         if (!mainAccount) {
             alert('Twitch username is not set');
@@ -370,7 +387,7 @@ video {
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + customMsg + "&customTitle=" + customTitle + "&limit=" + limit + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&delay=" + delay + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + customMsg + "&customTitle=" + customTitle + "&limit=" + limit + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +

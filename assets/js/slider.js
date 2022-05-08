@@ -29,9 +29,14 @@ $(document).ready(function () {
     let ref = getUrlParameter('ref').trim();
     let showMsg = getUrlParameter('showMsg').trim();
     let raided = getUrlParameter('raided').trim();
+    let delay = getUrlParameter('delay').trim();
 
     if (!raided) {
         raided = "false"; //default
+    }
+
+    if (!delay) {
+        delay = "10"; //default
     }
 
     let cmdArray = [];
@@ -273,11 +278,12 @@ $(document).ready(function () {
         client.on("raided", (channel, username, viewers) => {
             // Checks if raid viewer count is greater than 3 to avoid solo raids
             if (viewers > 3) {
-                // 10 second delay before doing the slider to allow for other raid alerts to fire off
+                // delay before doing the slider to allow for other raid alerts to fire off
                 setTimeout(function () {
                     console.log(username + ': is raiding!');
+                    console.log(delay + ' second: delay');
                     doShoutOutSlider(username);
-                }, 10000);
+                }, parseInt(delay) * 1000);
             }
         });
     }

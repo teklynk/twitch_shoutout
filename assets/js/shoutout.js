@@ -70,8 +70,14 @@ $(document).ready(function () {
 
     let raided = getUrlParameter('raided').trim();
 
+    let delay = getUrlParameter('delay').trim();
+
     if (!raided) {
         raided = "false"; //default
+    }
+
+    if (!delay) {
+        delay = "10"; //default
     }
 
     if (!limit) {
@@ -440,11 +446,12 @@ $(document).ready(function () {
         client.on("raided", (channel, username, viewers) => {
             // Checks if raid viewer count is greater than 3 to avoid solo raids
             if (viewers > 3) {
-                // 10 second delay before doing the shout-out to allow for other raid alerts to fire off
+                // Delay before doing the shout-out to allow for other raid alerts to fire off
                 setTimeout(function () {
                     console.log(username + ': is raiding!');
+                    console.log(delay + ' second: delay');
                     doShoutOut(username);
-                }, 10000);
+                }, parseInt(delay) * 1000);
             }
         });
     }
