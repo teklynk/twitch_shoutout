@@ -440,8 +440,11 @@ $(document).ready(function () {
         client.on("raided", (channel, username, viewers) => {
             // Checks if raid viewer count is greater than 3 to avoid solo raids
             if (viewers > 3) {
-                console.log(username + ': is raiding!');
-                doShoutOut(username);
+                // 10 second delay before doing the shout-out to allow for other raid alerts to fire off
+                setTimeout(function () {
+                    console.log(username + ': is raiding!');
+                    doShoutOut(username);
+                }, 10000);
             }
         });
     }
