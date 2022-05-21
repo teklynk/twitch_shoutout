@@ -15,7 +15,7 @@ Future development can be tracked here: [https://github.com/teklynk/twitch_shout
 **!so @MrCoolStreamer** ***OR*** **!so MrCoolStreamer** ***OR*** use a custom command.
 
 You can also shout-out multiple channels like: **!so @MrCoolStreamer @WillStreamForBeer @RetroGamer @GamerGamingGames**.
-If you have timeOut=20, it will play a shoutout every 20 seconds for each person in the !so command.
+If you have timeOut=20, it will play a shout-out every 20 seconds for each person in the !so command.
 
 This can also be used to keep your viewers entertained on your BRB or starting soon scenes. **!so @teklynk @teklynk @teklynk @teklynk** Be sure to disable text overlay and chat message. You may want to set this as a seperate browser source with a different shout-out command like: **!brb @teklynk @teklynk @teklynk @teklynk**
 
@@ -43,7 +43,7 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **Shout-out multiple channels with one command:** !so @MrCoolStreamer @WillStreamForBeer @RetroGamer @GamerGamingGames.
 
-**Automatically shoutout a creator when they raid you:** Viewer count must be greater than 3 to avoid auto shoutout of solo raids.
+**Automatically shout-out a creator when they raid you:** Viewer count can be adjusted to avoid solo raids.
 
 ## Notes
 
@@ -79,11 +79,13 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **customTitle=string** Custom title to display on overlay. {channel}, {url} are variables that can be used in the custom title.
 
-**raided=true/false** Enable this to automatically shoutout a creator when they raid you.
+**raided=true/false** Enable this to automatically shout-out a creator when they raid you.
 
-**delay=integer** Sets a delay for automatic shoutouts.
+**delay=integer** Sets a delay for automatic shout-outs.
 
-**Example:** http://localhost/twitch_shoutout/shoutout.html?channel=mrcoolstreamer&showClip=true&showRecentClip=false&showMsg=true&showText=true&showImage=true&modsOnly=true&timeOut=10&raided=true&delay=10&command=so&lowQuality=true&customMsg={channel}%20is%20awesome!%20Last%20seen%20playing%20{game}%20-%20{title}%20{url}&customTitle=Check%20out%20this%20cool%20streamer%20{channel}%20{url}&ref=abcd1234xyz
+**raidCount=integer** Max number of raiders for automatic shout-outs.
+
+**Example:** http://localhost/twitch_shoutout/shoutout.html?channel=mrcoolstreamer&showClip=true&showRecentClip=false&showMsg=true&showText=true&showImage=true&modsOnly=true&timeOut=10&raided=true&delay=10&raidCount=3&command=so&lowQuality=true&customMsg={channel}%20is%20awesome!%20Last%20seen%20playing%20{game}%20-%20{title}%20{url}&customTitle=Check%20out%20this%20cool%20streamer%20{channel}%20{url}&ref=abcd1234xyz
 
 ## Twitch oAuth token
 
