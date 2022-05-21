@@ -29,10 +29,15 @@ $(document).ready(function () {
     let ref = getUrlParameter('ref').trim();
     let showMsg = getUrlParameter('showMsg').trim();
     let raided = getUrlParameter('raided').trim();
+    let raidCount = getUrlParameter('raidCount').trim();
     let delay = getUrlParameter('delay').trim();
 
     if (!raided) {
         raided = "false"; //default
+    }
+
+    if (!raidCount) {
+        raidCount = "3"; //default
     }
 
     if (!delay) {
@@ -276,8 +281,8 @@ $(document).ready(function () {
     // Automatically shout-out channel on raid
     if (raided === "true") {
         client.on("raided", (channel, username, viewers) => {
-            // Checks if raid viewer count is greater than 3 to avoid solo raids
-            if (viewers > 3) {
+            // Checks if raid viewer count - default is 3
+            if (viewers >= parseInt(raidCount)) {
                 // delay before doing the slider to allow for other raid alerts to fire off
                 setTimeout(function () {
                     console.log(username + ': is raiding!');

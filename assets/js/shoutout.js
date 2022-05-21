@@ -450,7 +450,7 @@ $(document).ready(function () {
     // Automatically shout-out channel on raid
     if (raided === "true") {
         client.on("raided", (channel, username, viewers) => {
-            // Checks if raid viewer count is greater than 3 to avoid solo raids
+            // Checks if raid viewer count - default is 3
             if (viewers >= parseInt(raidCount)) {
                 // Delay before doing the shout-out to allow for other raid alerts to fire off
                 setTimeout(function () {

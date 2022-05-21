@@ -96,10 +96,18 @@
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="raided">
         <label class="form-check-label" for="raided">
-            Automatically shoutout a creator when they raid you with more than 3 viewers. <small class="text-info">* NEW *</small>
+            Automatically shoutout a creator when they raid you. <small class="text-info">* NEW *</small>
         </label>
     </div>
-    <div class="form-group range-slider hide" id="so_delay">
+    <div class="form-group range-slider hide ml-4 mr-4 mt-2" id="so_count">
+        <label for="delay">Max raid party size
+        </label>
+        <input type="range" max="30" min="0" step="1" class="form-control range-slider-range" id="raidCount"
+               value="3" style="height: 0;">
+        <small class="text-muted range-slider-value"></small>
+        <small class="text-muted range-slider-value">Users</small>
+    </div>
+    <div class="form-group range-slider hide ml-4 mr-4" id="so_delay">
         <label for="delay">Delay automatic shoutout
         </label>
         <input type="range" max="30" min="1" step="1" class="form-control range-slider-range" id="delay"
@@ -245,6 +253,7 @@
 
     document.getElementById("raided").addEventListener("click", function (e) {
         document.getElementById("so_delay").classList.toggle('hide');
+        document.getElementById("so_count").classList.toggle('hide');
     }, false);
 
     document.getElementById("show_ref").addEventListener("click", function (e) {
@@ -267,6 +276,7 @@
         let showMsg = document.getElementById("showMsg").checked;
         let raided = document.getElementById("raided").checked;
         let delay = document.getElementById("delay").value.trim();
+        let raidCount = document.getElementById("raidCount").value.trim();
 
         if (!showMsg) {
             ref = '';
@@ -286,7 +296,7 @@
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutoutslider.html?channel=" + mainAccount.toLowerCase() + "&msg=" + msg + "&showMsg=" + showMsg + "&modsOnly=" + modsOnly + "&raided=" + raided + "&delay=" + delay + "&command=" + command + "&timeOut=" + timeOut + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutoutslider.html?channel=" + mainAccount.toLowerCase() + "&msg=" + msg + "&showMsg=" + showMsg + "&modsOnly=" + modsOnly + "&raided=" + raided + "&delay=" + delay + "&raidCount=" + raidCount + "&command=" + command + "&timeOut=" + timeOut + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("slider.htmlshoutoutslider.html", "shoutoutslider.html");
             fullUrl = fullUrl.replace("slidershoutoutslider.html", "shoutoutslider.html");
             document.getElementById("overlaylink").classList.remove("hide");
