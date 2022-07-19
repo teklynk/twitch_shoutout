@@ -207,6 +207,12 @@ $(document).ready(function () {
 
         if (user['message-type'] === 'chat' && message.startsWith('!')) {
 
+            // Stop the clips player
+            if (message === "!stopclip" && modsOnly === 'true' && (user.mod || user.username === channelName)) {
+                // Reload browser source
+                window.location.reload();
+            }
+
             if (message.startsWith('!' + command)) {
 
                 // Ignore if video clip is playing

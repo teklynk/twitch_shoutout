@@ -12,12 +12,16 @@ Future development can be tracked here: [https://github.com/teklynk/twitch_shout
 
 ## Chat command:
 
-**!so @MrCoolStreamer** ***OR*** **!so MrCoolStreamer** ***OR*** use a custom command.
+**!so @MrCoolStreamer** **OR** **!so MrCoolStreamer** **OR** use a custom command.
 
 You can also shout-out multiple channels like: **!so @MrCoolStreamer @WillStreamForBeer @RetroGamer @GamerGamingGames**.
 If you have timeOut=20, it will play a shout-out every 20 seconds for each person in the !so command.
 
 This can also be used to keep your viewers entertained on your BRB or starting soon scenes. **!so @teklynk @teklynk @teklynk @teklynk** Be sure to disable text overlay and chat message. You may want to set this as a seperate browser source with a different shout-out command like: **!brb @teklynk @teklynk @teklynk @teklynk**
+
+**NEW FEATURES**
+
+**!stopclip** to stop/reload the browser source in case a clip is just way too long, cringey or playing at an inappropriate time.
 
 ## Options
 
