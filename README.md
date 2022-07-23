@@ -21,6 +21,8 @@ This can also be used to keep your viewers entertained on your BRB or starting s
 
 **NEW FEATURES**
 
+VIPs can now be allowed to do !so commands.
+
 **!stopclip** to stop/reload the browser source in case a clip is just way too long, cringey or playing at an inappropriate time. Limited to Mods and Streamer.
 
 ## Options
@@ -37,7 +39,9 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **Show text on top of clip:** Displays a title on top of the video clip "Go check out MrCoolStreamer".
 
-**Mods only:** Limit the !so to mods and streamer.
+**Mods permissions:** Allow the !so to mods.
+
+**VIPs permissions:** Allow the !so to VIPs.
 
 **Duration:** Max amount of time that the clip plays for.
 
@@ -73,7 +77,9 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **showText=true/false**  Shows "Go check out {channel}" on top of the clip.
 
-**modsOnly=true/false**  Limits !so to mods only. If false, everyone can use the !so command.
+**modsOnly=true/false**  Allow !so to mods. If modsOnly and vipsOnly are false,  everyone can use the !so command.
+
+**vipsOnly=true/false**  Allow !so to vips. If modsOnly and vipsOnly are false, everyone can use the !so command.
 
 **timeOut=seconds**  The MAX number of seconds that the clip will play for. Shorter clips will simply end before the timeout and the timeout will reset to zero.
 
@@ -91,7 +97,7 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **raidCount=integer** Max number of raiders for automatic shout-outs.
 
-**Example:** http://localhost/twitch_shoutout/shoutout.html?channel=mrcoolstreamer&showClip=true&showRecentClip=false&showMsg=true&showText=true&showImage=true&modsOnly=true&timeOut=10&raided=true&delay=10&raidCount=3&command=so&lowQuality=true&customMsg={channel}%20is%20awesome!%20Last%20seen%20playing%20{game}%20-%20{title}%20{url}&customTitle=Check%20out%20this%20cool%20streamer%20{channel}%20{url}&ref=abcd1234xyz
+**Example:** http://localhost/twitch_shoutout/shoutout.html?channel=mrcoolstreamer&showClip=true&showRecentClip=false&showMsg=true&showText=true&showImage=true&modsOnly=true&vipsOnly=false&timeOut=30&raided=true&delay=10&raidCount=3&command=so&lowQuality=true&customMsg={channel}%20is%20awesome!%20Last%20seen%20playing%20{game}%20-%20{title}%20{url}&customTitle=Check%20out%20this%20cool%20streamer%20{channel}%20{url}&ref=abcd1234xyz
 
 ## Twitch oAuth token
 

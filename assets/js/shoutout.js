@@ -56,6 +56,8 @@ $(document).ready(function () {
 
     let modsOnly = getUrlParameter('modsOnly');
 
+    let vipsOnly = getUrlParameter('vipsOnly');
+
     let timeOut = getUrlParameter('timeOut');
 
     let command = getUrlParameter('command').trim();
@@ -100,6 +102,10 @@ $(document).ready(function () {
 
     if (!modsOnly) {
         modsOnly = 'true'; // default
+    }
+
+    if (!vipsOnly) {
+        vipsOnly = 'true'; // default
     }
 
     if (!showText) {
@@ -236,26 +242,60 @@ $(document).ready(function () {
                 return false; // Exit and Do nothing else
             }
 
-            if (modsOnly === 'true' && (user.mod || user.username === channelName)) {
-                // If is array, then iterate over each channel name. Uses the timeOut value from the URL.
-                if (cmdArray.length > 1) {
-                    console.log(cmdArray);
-                    arrayPlusDelay(cmdArray, function (obj) {
-                        obj = obj.replace('@', '');
-                        obj = obj.trim();
-                        obj = obj.toLowerCase();
+            if (modsOnly === 'true' && user.mod || user.username === channelName) {
 
-                        console.log('In Array: ' + obj);
+                // Lookup VIPs for the channel
+                client.vips(channelName).then((data) => {
 
-                        doShoutOut(obj);
+                    let isVip = false; // default value
+                    console.log(data); // array of vip usernames
 
-                    }, parseInt(timeOut) * 1000 + 1000); // + 1 seconds, just to be sure that elements are completely removed
-                } else {
-                    console.log(getChannel);
-                    doShoutOut(getChannel); // Mods only
-                }
-            } else if (modsOnly === 'false' || user.username === channelName) {
-                doShoutOut(getChannel); // Everyone
+                    // If username found in the data array of vip's
+                    if (data.lastIndexOf(user.username) !== -1) {
+                        isVip = true;
+                    }
+
+                    // If is array, then iterate over each channel name. Uses the timeOut value from the URL. Requires @ symbol for each channel name.
+                    // Example: !so @teklynk @tekbot_v1 @streamergod @coolstreamer
+                    if (cmdArray.length > 1) {
+
+                        console.log(cmdArray);
+
+                        arrayPlusDelay(cmdArray, function (obj) {
+                            obj = obj.replace('@', '');
+                            obj = obj.trim();
+                            obj = obj.toLowerCase();
+
+                            console.log('In Array: ' + obj);
+
+                            if (vipsOnly === 'true' && isVip === true) {
+                                console.log('Permissions: VIPs and Streamer only');
+                                doShoutOut(obj); // VIPs only and Streamer only
+                            } else {
+                                console.log('Permissions: Mods and Streamer only');
+                                doShoutOut(obj); // Mods and Streamer only
+                            }
+
+                        }, parseInt(timeOut) * 1000 + 1000); // + 1 seconds, just to be sure that elements are completely removed
+
+                    } else {
+
+                        console.log(getChannel);
+
+                        if (vipsOnly === 'true' && isVip === true) {
+                            console.log('Permissions: VIPs and Streamer only');
+                            doShoutOut(getChannel); // VIPs only and Streamer only
+                        } else {
+                            console.log('Permissions: Mods and Streamer only');
+                            doShoutOut(getChannel); // Mods and Streamer only
+                        }
+                    }
+                });
+
+                // Everyone can shout-out
+            } else if (modsOnly === 'false' && vipsOnly === 'false') {
+                console.log('Permissions: Everyone and Streamer');
+                doShoutOut(getChannel); // Everyone and Streamer
             }
         }
     });

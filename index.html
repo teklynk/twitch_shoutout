@@ -2,15 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>Twitch Shout-out Clips Player</title>
-    <meta name="description" content="Twitch Shout out clip player. !so channelname. This will display a random clip and say a shout out message in chat." />
-    <meta name="keywords" content="Twitch, shoutout, chat bot, overlay" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Twitch Shout-out Clips Player" />
-    <meta property="og:description" content="Twitch Shout out clip player. !so channelname. This will display a random clip and say a shout out message in chat." />
-    <meta property="og:url" content="" />
-    <meta property="og:site_name" content="Twitch Shout-out Clips Player" />
+    <meta name="description"
+          content="Twitch Shout out clip player. !so channelname. This will display a random clip and say a shout out message in chat."/>
+    <meta name="keywords" content="Twitch, shoutout, chat bot, overlay"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="Twitch Shout-out Clips Player"/>
+    <meta property="og:description"
+          content="Twitch Shout out clip player. !so channelname. This will display a random clip and say a shout out message in chat."/>
+    <meta property="og:url" content=""/>
+    <meta property="og:site_name" content="Twitch Shout-out Clips Player"/>
     <script src="assets/js/jquery-3.6.0.min.js"></script>
     <script src="assets/js/bootstrap.bundle.js"></script>
     <link rel="stylesheet" href="assets/css/bootstrap452.min.css">
@@ -69,13 +71,25 @@
             <p>Play a random clip from the streamers channel that is shouted out.</p>
             <h3>Notes:</h3>
             <ul>
-                <li><span class="text-info">NEW FEATURES:</span> Automatically do a shout-out on Raid events.</li>
-                <li><strong>!stopclip</strong> to stop/reload the browser source in case a clip is just way too long, cringey or playing at an inappropriate time. Limited to Mods and Streamer.</li>
-                <li>You can not do a shout-out while another shout-out is playing. The command will simply be ignored.</li>
-                <li>Multi-Shout-Out (!so @teklynk @mrcoolgamer @streambean) works on a timer using the "Max Duration Time" and will play a shout-out every X seconds.</li>
-                <li>The most recent "popular" clip may not be the most recent clip. "Popular" is based on the number of views that the clip has.</li>
-                <li>If you do not want to play clips but still want to "Show chat message", uncheck "Show a random popular clip" and "Show the most recent popular clip".</li>
-                <li>Be sure to set "Shutdown source when not visible", "Control audio via OBS", "Refresh browser when scene becomes active" on the OBS Browser Source properties.
+                <li><strong>VIPs</strong> can now be allowed to do shout-outs.
+                </li>
+                <li><strong>!stopclip</strong> to stop/reload the browser source in case a clip is just way too long,
+                    cringey or playing at an inappropriate time. Limited to Mods and Streamer.
+                </li>
+                <li>Automatically do a shout-out on Raid events.</li>
+                <li>You can not do a shout-out while another shout-out is playing. The command will simply be ignored.
+                </li>
+                <li>Multi-Shout-Out (!so @teklynk @mrcoolgamer @streambean) works on a timer using the "Max Duration
+                    Time" and will play a shout-out every X seconds.
+                </li>
+                <li>The most recent "popular" clip may not be the most recent clip. "Popular" is based on the number of
+                    views that the clip has.
+                </li>
+                <li>If you do not want to play clips but still want to "Show chat message", uncheck "Show a random
+                    popular clip" and "Show the most recent popular clip".
+                </li>
+                <li>Be sure to set "Shutdown source when not visible", "Control audio via OBS", "Refresh browser when
+                    scene becomes active" on the OBS Browser Source properties.
                 </li>
             </ul>
         </div>
@@ -113,7 +127,8 @@
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="raided">
         <label class="form-check-label" for="raided">
-            Automatically shoutout a creator when they raid you. <small class="text-info">* NEW *</small>
+            Automatically shoutout a creator when they raid you.
+            <small class="text-info">* NEW *</small>
         </label>
     </div>
     <div class="form-group range-slider hide ml-4 mr-4 mt-2" id="so_count">
@@ -203,7 +218,13 @@
     <div class="form-check mb-2">
         <input class="form-check-input" type="checkbox" value="" id="modsOnly" checked>
         <label class="form-check-label" for="modsOnly">
-            Mods only
+            Mods allowed
+        </label>
+    </div>
+    <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" value="" id="vipsOnly">
+        <label class="form-check-label" for="vipsOnly">
+            VIPs allowed
         </label>
     </div>
     <div class="form-group purple-border">
@@ -348,6 +369,15 @@ video {
         document.getElementById("clip-limit").innerText = "1";
     }, false);
 
+    document.getElementById("vipsOnly").addEventListener("click", function (e) {
+        if (document.getElementById("vipsOnly").checked) {
+            document.getElementById("modsOnly").checked = true;
+            document.getElementById("modsOnly").disabled = true;
+        } else {
+            document.getElementById("modsOnly").disabled = false;
+        }
+    }, false);
+
     document.getElementById("show_ref").addEventListener("click", function (e) {
         if (document.getElementById("show_ref").innerText === "hide") {
             document.getElementById("show_ref").innerText = "show";
@@ -366,6 +396,7 @@ video {
         let showClip = document.getElementById("showClip").checked;
         let showRecentClip = document.getElementById("showRecentClip").checked;
         let modsOnly = document.getElementById("modsOnly").checked;
+        let vipsOnly = document.getElementById("vipsOnly").checked;
         let showMsg = document.getElementById("showMsg").checked;
         let showImage = document.getElementById("showImage").checked;
         let showText = document.getElementById("showText").checked;
@@ -400,7 +431,7 @@ video {
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&raidCount=" + raidCount + "&delay=" + delay + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + customMsg + "&customTitle=" + customTitle + "&limit=" + limit + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + showMsg + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&raidCount=" + raidCount + "&delay=" + delay + "&modsOnly=" + modsOnly + "&vipsOnly=" + vipsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + customMsg + "&customTitle=" + customTitle + "&limit=" + limit + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
