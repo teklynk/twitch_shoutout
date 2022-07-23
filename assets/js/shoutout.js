@@ -105,7 +105,7 @@ $(document).ready(function () {
     }
 
     if (!vipsOnly) {
-        vipsOnly = 'true'; // default
+        vipsOnly = 'false'; // default
     }
 
     if (!showText) {
