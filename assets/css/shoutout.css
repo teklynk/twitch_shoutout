@@ -7,6 +7,10 @@ html, body {
     margin: 0;
 }
 
+.hide {
+    display: none;
+}
+
 .img-fluid {
     max-width: 100%;
     height: auto;
@@ -28,12 +32,14 @@ video {
     height: auto;
     max-height: 100%;
     border-radius: 10px;
+    z-index: 1;
 }
 
 #text-container {
     width: 100%;
     margin: 40px 0;
     position: absolute;
+    z-index: 2;
 }
 
 .title-text {

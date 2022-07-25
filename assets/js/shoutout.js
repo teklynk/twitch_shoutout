@@ -339,16 +339,24 @@ $(document).ready(function () {
                                     customTitle = getUrlParameter('customTitle').trim();
                                     customTitle = customTitle.replace("{channel}", info.data[0]['broadcaster_name']);
                                     customTitle = customTitle.replace("{url}", "twitch.tv/" + info.data[0]['broadcaster_name'].toLowerCase());
-                                    titleText = "<div id='text-container'><span class='title-text'>" + customTitle + "</span></div>"
+                                    titleText = "<div id='text-container' class='hide'><span class='title-text'>" + customTitle + "</span></div>"
                                 } else {
-                                    titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
+                                    titleText = "<div id='text-container' class='hide'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
                                 }
                             } else {
                                 titleText = '';
                             }
 
+                            // Render text-container
+                            $(titleText).appendTo("#container");
+
+                            // Remove the hide class from text-container after a delay
+                            setTimeout(function () {
+                                $("#text-container").removeClass("hide");
+                            }, 500); // wait time
+
                             // Video Clip
-                            $(titleText + "<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
+                            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
 
                             // Timeout start
                             let timer = 0;
