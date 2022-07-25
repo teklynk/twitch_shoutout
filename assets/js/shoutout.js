@@ -353,7 +353,7 @@ $(document).ready(function () {
                             // Remove the hide class from text-container after a delay
                             setTimeout(function () {
                                 $("#text-container").removeClass("hide");
-                            }, 500); // wait time
+                            }, 600); // wait time
 
                             // Video Clip
                             $("<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
