@@ -222,7 +222,7 @@ $(document).ready(function () {
 
                 replay = true;
 
-                if (localStorage.getItem('twitchSOChannel') && localStorage.getItem('twitchSOChannel')) {
+                if (localStorage.getItem('twitchSOChannel') && localStorage.getItem('twitchSOClipUrl')) {
                     doShoutOut(localStorage.getItem('twitchSOChannel'), true);
                 } else {
                     return false; // Exit and Do nothing
