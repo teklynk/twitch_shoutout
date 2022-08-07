@@ -21,7 +21,9 @@ This can also be used to keep your viewers entertained on your BRB or starting s
 
 **NEW FEATURES**
 
-**!stopclip** to stop/reload the browser source in case a clip is just way too long, cringey or playing at an inappropriate time. Limited to Mods and Streamer.
+**!stopclip** to stop/reload the browser source in case a clip is just way too long, cringey or playing at an inappropriate time. Limited to Mods and Streamer. Can also use (!sostop, !stopso, !stopclip, !clipstop, !clipreload).
+
+**!replayso, !soreplay, !clipreplay, !replayclip** will replay the previous shout-out clip. Maybe you just have to see that clip again :)
 
 ## Options
 
