@@ -346,19 +346,18 @@ $(document).ready(function () {
                                 indexClip = Math.floor(Math.random() * numOfClips);
                             }
 
-                            // Parse thumbnail image to build the clip url
-                            let thumbPart = info.data[indexClip]['thumbnail_url'].split("-preview-");
-                            thumbPart = thumbPart[0] + ".mp4";
+                            // Get and set variable clip_url from json
+                            let clip_url = info.data[0]['clip_url'];
 
                             // If chat command = !clipreplay
                             if (replayClip === true) {
-                                thumbPart = localStorage.getItem('twitchSOClipUrl');
-                                console.log('Replaying: ' + thumbPart);
+                                clip_url = localStorage.getItem('twitchSOClipUrl');
+                                console.log('Replaying: ' + clip_url);
                             }
 
                             // Low clip quality mode
                             if (lowQuality === 'true') {
-                                lowQualityVideo = "<source src='" + thumbPart.replace('.mp4', '-360.mp4') + "' type='video/mp4'>";
+                                lowQualityVideo = "<source src='" + clip_url.replace('.mp4', '-360.mp4') + "' type='video/mp4'>";
                             } else {
                                 lowQualityVideo = '';
                             }
@@ -386,7 +385,7 @@ $(document).ready(function () {
                             }, 600); // wait time
 
                             // Video Clip
-                            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source src='" + thumbPart + "' type='video/mp4'></video>").appendTo("#container");
+                            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
 
                             // Timeout start
                             let timer = 0;
@@ -425,7 +424,7 @@ $(document).ready(function () {
                             };
 
                             // Save clip url to localstorage so that it can be replayed if needed
-                            localStorage.setItem('twitchSOClipUrl', thumbPart);
+                            localStorage.setItem('twitchSOClipUrl', clip_url);
                             localStorage.setItem('twitchSOChannel', getChannel);
 
                         } else {
