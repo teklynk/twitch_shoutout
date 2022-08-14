@@ -347,7 +347,7 @@ $(document).ready(function () {
                             }
 
                             // Get and set variable clip_url from json
-                            let clip_url = info.data[0]['clip_url'];
+                            let clip_url = info.data[indexClip]['clip_url'];
 
                             // If chat command = !clipreplay
                             if (replayClip === true) {
