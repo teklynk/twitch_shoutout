@@ -124,6 +124,8 @@ $(document).ready(function () {
 
     let replay = false; // set variable. default value
 
+    let watch = false; // set variable. default value
+
     // Twitch API get user info for !so command
     let getInfo = function (SOChannel, callback) {
         let urlU = "https://twitchapi.teklynk.com/getuserinfo.php?channel=" + SOChannel;
@@ -172,6 +174,28 @@ $(document).ready(function () {
         xhrC.send();
     };
 
+    // Twitch API get clip for !watchclip command
+    let getClipUrl = function (thisChannel, id, callback) {
+        let urlV = "https://twitchapi.teklynk.com/getuserclips.php?channel=" + thisChannel + "&limit=100&id=" + id;
+        let xhrV = new XMLHttpRequest();
+        xhrV.open("GET", urlV);
+        xhrV.onreadystatechange = function () {
+            if (xhrV.readyState === 4) {
+                callback(JSON.parse(xhrV.responseText));
+                return true;
+            } else {
+                return false;
+            }
+        };
+        xhrV.send();
+    };
+
+    // Returns the urls as an array from a chat message(string)
+    function detectURLs(chatmsg) {
+        let urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+        return chatmsg.match(urlRegex)
+    }
+
     // If Auth token is set, then connect to chat using oauth, else connect anonymously.
     if (ref) {
         client = new tmi.Client({
@@ -207,6 +231,31 @@ $(document).ready(function () {
             return false;
         }
 
+        // If message contains a clip url
+        if (message.startsWith('https://clips.twitch.tv/')) {
+
+            // get the url from the chat message
+            let chatClipUrl = detectURLs(message);
+
+            // parse url into an array
+            let urlArr = chatClipUrl[0].split('/');
+
+            // extract the clip id/slug from the url
+            let clip_Id = urlArr[3];
+
+            // remove everything in the url after the '?'
+            clip_Id = clip_Id.split('?')[0];
+
+            // get the clip_url from the api - can only pull a clip from your own channel
+            getClipUrl(channelName, clip_Id, function (info) {
+                if (info.data) {
+                    // save the clip url to localstorage
+                    localStorage.setItem('twitchSOWatchClip', info.data[0]['clip_url']);
+                }
+            })
+
+        }
+
         if (user['message-type'] === 'chat' && message.startsWith('!') && (user.mod || user.username === channelName)) {
 
             // Hard-coded commands to control the clips
@@ -220,15 +269,30 @@ $(document).ready(function () {
 
                 console.log("Replaying SO");
 
+                watch = false;
                 replay = true;
 
                 if (localStorage.getItem('twitchSOChannel') && localStorage.getItem('twitchSOClipUrl')) {
-                    doShoutOut(localStorage.getItem('twitchSOChannel'), true);
+                    doShoutOut(localStorage.getItem('twitchSOChannel'), true, false);
+                }
+
+            // Watch a clip from chat
+            } else if (message === "!watchclip") {
+
+                console.log("Watching a clip from chat");
+
+                watch = true;
+                replay = false;
+
+                if (localStorage.getItem('twitchSOWatchClip')) {
+                    doShoutOut(channelName, false, true);
                 }
 
             } else {
 
+                watch = false;
                 replay = false;
+
             }
 
             // If message starts with custom command + space. !so teklynk
@@ -279,7 +343,7 @@ $(document).ready(function () {
         }
     });
 
-    function doShoutOut(getChannel, replayClip = false) {
+    function doShoutOut(getChannel, replayClip = false, watchClip = false) {
 
         getStatus(getChannel, function (info) {
             // If user exists
@@ -291,10 +355,9 @@ $(document).ready(function () {
                 }
 
                 if (showMsg === 'true') {
-                    if (replay === true) {
-                        // If replaying clip, say nothing.
+                    if (replay === true || watch === true) {
+                        // If replaying or watching a clip, say nothing.
                         client.say(channelName,"");
-                        console.log('got this far');
                     } else {
                         // If user has streamed anything then say message
                         if (info.data[0]['game_name']) {
@@ -351,10 +414,14 @@ $(document).ready(function () {
                             // Get and set variable clip_url from json
                             let clip_url = info.data[indexClip]['clip_url'];
 
-                            // If chat command = !clipreplay
+                            // If chat command = !replayclip
                             if (replayClip === true) {
                                 clip_url = localStorage.getItem('twitchSOClipUrl');
                                 console.log('Replaying: ' + clip_url);
+                            // If chat command = !watchclip
+                            } else if (watchClip === true) {
+                                clip_url = localStorage.getItem('twitchSOWatchClip');
+                                console.log('Watching: ' + clip_url);
                             }
 
                             // Low clip quality mode
@@ -375,6 +442,10 @@ $(document).ready(function () {
                                     titleText = "<div id='text-container' class='hide'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
                                 }
                             } else {
+                                titleText = '';
+                            }
+
+                            if (watchClip === true) {
                                 titleText = '';
                             }
 
@@ -425,9 +496,11 @@ $(document).ready(function () {
                                 clearInterval(startTimer);
                             };
 
-                            // Save clip url to localstorage so that it can be replayed if needed
-                            localStorage.setItem('twitchSOClipUrl', clip_url);
-                            localStorage.setItem('twitchSOChannel', getChannel);
+                            if (watch === false) {
+                                // Save clip url to localstorage so that it can be replayed if needed
+                                localStorage.setItem('twitchSOClipUrl', clip_url);
+                                localStorage.setItem('twitchSOChannel', getChannel);
+                            }
 
                         } else {
 
