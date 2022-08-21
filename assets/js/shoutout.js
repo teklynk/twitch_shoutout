@@ -175,8 +175,8 @@ $(document).ready(function () {
     };
 
     // Twitch API get clip for !watchclip command
-    let getClipUrl = function (thisChannel, id, callback) {
-        let urlV = "https://twitchapi.teklynk.com/getuserclips.php?channel=" + thisChannel + "&limit=100&id=" + id;
+    let getClipUrl = function (id, callback) {
+        let urlV = "https://twitchapi.teklynk.com/getuserclips.php?id=" + id;
         let xhrV = new XMLHttpRequest();
         xhrV.open("GET", urlV);
         xhrV.onreadystatechange = function () {
@@ -234,6 +234,9 @@ $(document).ready(function () {
         // If message contains a clip url
         if (message.startsWith('https://clips.twitch.tv/')) {
 
+            // Remove trailing spaces from message
+            message = message.trim();
+
             // get the url from the chat message
             let chatClipUrl = detectURLs(message);
 
@@ -246,13 +249,13 @@ $(document).ready(function () {
             // remove everything in the url after the '?'
             clip_Id = clip_Id.split('?')[0];
 
-            // get the clip_url from the api - can only pull a clip from your own channel
-            getClipUrl(channelName, clip_Id, function (info) {
-                if (info.data) {
+            // get the clip_url from the api
+            getClipUrl(clip_Id, function (info) {
+                if (info.data[0]['clip_url']) {
                     // save the clip url to localstorage
                     localStorage.setItem('twitchSOWatchClip', info.data[0]['clip_url']);
                 }
-            })
+            });
 
         }
 

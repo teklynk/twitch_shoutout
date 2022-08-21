@@ -21,7 +21,7 @@ This can also be used to keep your viewers entertained on your BRB or starting s
 
 **NEW FEATURES**
 
-**!watchclip** Play a clip that was posted into chat. This will only play clips from your own channel.
+**!watchclip** Play a clip that was posted into chat.
 
 **!stopclip** to stop/reload the browser source in case a clip is just way too long, cringey or playing at an inappropriate time. Limited to Mods and Streamer. Can also use (!sostop, !stopso, !stopclip, !clipstop, !clipreload).
 
