@@ -122,7 +122,7 @@ $(document).ready(function () {
         alert('channel is not set in the URL');
     }
 
-    let replay = false;
+    let replay = false; // set variable. default value
 
     // Twitch API get user info for !so command
     let getInfo = function (SOChannel, callback) {
@@ -224,10 +224,11 @@ $(document).ready(function () {
 
                 if (localStorage.getItem('twitchSOChannel') && localStorage.getItem('twitchSOClipUrl')) {
                     doShoutOut(localStorage.getItem('twitchSOChannel'), true);
-                } else {
-                    return false; // Exit and Do nothing
                 }
 
+            } else {
+
+                replay = false;
             }
 
             // If message starts with custom command + space. !so teklynk
@@ -293,6 +294,7 @@ $(document).ready(function () {
                     if (replay === true) {
                         // If replaying clip, say nothing.
                         client.say(channelName,"");
+                        console.log('got this far');
                     } else {
                         // If user has streamed anything then say message
                         if (info.data[0]['game_name']) {
