@@ -51,7 +51,7 @@
             <h1 class="h3 pt-4 pl-lg-4 text-center">Twitch Shout-out</h1>
         </div>
         <div class="col-2 text-center">
-            <img src="assets/images/robot.gif" style="width: 60px;" alt="">
+            <img src="assets/images/robot.gif" style="width: 60px;" alt="tekbot_v1" title="Hi, I'm tekbot_v1" id="tekbotImg" onmouseover="onHover();" onmouseout="offHover();">
         </div>
     </div>
     <ul class="nav nav-tabs" id="mainNav" role="tablist">
@@ -410,16 +410,23 @@ video {
                 "<a style='word-break:break-all;' href='" + fullUrl + "' target='_blank'>" + fullUrl + "</a><br><span class='text-warning'><small>* Never share this url with anyone or show it on stream!</small></span></p>";
         }
     });
-
-
 </script>
-
 <div class="text-right m-4">
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
        target="_blank">Help</a>
     <a class="btn btn-link" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
+    <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
+    <script type='text/javascript'>kofiwidget2.init('Donate', '#191d21', 'O4O0BWF2E');kofiwidget2.draw();</script> 
 </div>
 <script>
+    // tekbot_v1 mouse hover action
+    function onHover() {
+        $("#tekbotImg").attr('src', 'assets/images/robot_loop.gif');
+    }
+    function offHover() {
+        $("#tekbotImg").attr('src', 'assets/images/robot.gif');
+    }
+
     // Json data - Ajax call
     let nav_json = JSON.parse($.getJSON({
         'url': "https://twitchapi.teklynk.com/getnav.php",
@@ -430,5 +437,21 @@ video {
         $('<a class="dropdown-item" href="' + val.url + '">' + val.name + '</a>').appendTo('#main-nav');
     });
 </script>
+<style>
+    .btn-container {
+        min-width: auto !important;
+        padding-left: 20px;
+    }
+    span.kofitext {
+        color: #adb5bd !important;
+    }
+    a.kofi-button {
+        border-radius: none;
+        box-shadow: none !important;
+        min-width: auto !important;
+        padding: 0 !important;
+        line-height: unset !important;
+    }
+</style>
 </body>
 </html>
