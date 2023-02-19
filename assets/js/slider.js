@@ -262,7 +262,7 @@ $(document).ready(function () {
 
                 let userImage = info.data[0]['profile_image_url'];
                 let userDisplayName = info.data[0]['display_name'];
-                let userMsg = decodeURI(channelMessage);
+                let userMsg = decodeURIComponent(channelMessage);
 
                 $("<div id='userMsg' class='slide-left-in'><p>" + userMsg + "</p></div>").appendTo("#container");
                 $("<div id='userImage'><img class='image fade-in-image' src='" + userImage + "' alt=''/></div>").appendTo("#container");

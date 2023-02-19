@@ -296,7 +296,7 @@
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutoutslider.html?channel=" + mainAccount.toLowerCase() + "&msg=" + msg + "&showMsg=" + showMsg + "&modsOnly=" + modsOnly + "&raided=" + raided + "&delay=" + delay + "&raidCount=" + raidCount + "&command=" + command + "&timeOut=" + timeOut + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutoutslider.html?channel=" + mainAccount.toLowerCase() + "&msg=" + encodeURIComponent(msg) + "&showMsg=" + showMsg + "&modsOnly=" + modsOnly + "&raided=" + raided + "&delay=" + delay + "&raidCount=" + raidCount + "&command=" + command + "&timeOut=" + timeOut + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("slider.htmlshoutoutslider.html", "shoutoutslider.html");
             fullUrl = fullUrl.replace("slidershoutoutslider.html", "shoutoutslider.html");
             document.getElementById("overlaylink").classList.remove("hide");

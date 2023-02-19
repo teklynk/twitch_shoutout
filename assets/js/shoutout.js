@@ -371,7 +371,7 @@ $(document).ready(function () {
                                 customMsg = customMsg.replace("{title}", info.data[0]['title']);
                                 customMsg = customMsg.replace("{url}", "https://twitch.tv/" + info.data[0]['broadcaster_login']);
                                 // Say custom message in chat
-                                client.say(channelName, customMsg);
+                                client.say(channelName, decodeURIComponent(customMsg));
                             } else {
                                 // Say default message in chat
                                 client.say(channelName, "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
@@ -440,7 +440,7 @@ $(document).ready(function () {
                                     customTitle = getUrlParameter('customTitle').trim();
                                     customTitle = customTitle.replace("{channel}", info.data[0]['broadcaster_name']);
                                     customTitle = customTitle.replace("{url}", "twitch.tv/" + info.data[0]['broadcaster_name'].toLowerCase());
-                                    titleText = "<div id='text-container' class='hide'><span class='title-text'>" + customTitle + "</span></div>"
+                                    titleText = "<div id='text-container' class='hide'><span class='title-text'>" + decodeURIComponent(customTitle) + "</span></div>"
                                 } else {
                                     titleText = "<div id='text-container' class='hide'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
                                 }
