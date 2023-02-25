@@ -69,10 +69,11 @@
             <p>Play a random clip from the streamers channel that is shouted out.</p>
             <h3>Notes:</h3>
             <ul>
-                <li><span class="text-info"><strong>NEW FEATURES:</strong></span></li>
+                <li><span class="text-info"><strong>FEATURES:</strong></span></li>
                 <li><strong>!watchclip</strong> Play a clip that was posted into chat.</li>
                 <li><strong>!replayso, !soreplay, !clipreplay, !replayclip</strong> will replay the previous shout-out clip. Maybe you just have to see that clip again :)</li>
                 <li><strong>!stopclip</strong> to stop/reload the browser source in case a clip is just way too long, cringey or playing at an inappropriate time. Limited to Mods and Streamer. Can also use (!sostop, !stopclip, !clipstop, !clipreload)</li>
+                <li><strong>Date Range option:</strong> This will grab a clip from within the last 5days, 10day, 30days... If no clips exist, then no clip will play. You can enable the "Show the user profile image" to display the users avatar in place of a non-existent clip.</li>
                 <li>Automatically do a shout-out on Raid events.</li>
                 <li>You can not do a shout-out while another shout-out is playing. The command will simply be ignored.</li>
                 <li>Multi-Shout-Out (!so @teklynk @mrcoolgamer @streambean) works on a timer using the "Max Duration Time" and will play a shout-out every X seconds.</li>
@@ -98,7 +99,7 @@
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showClip" checked>
         <label class="form-check-label" for="showClip">
-            Show a random popular clip
+            Show clip
         </label>
     </div>
     <div class="form-check">
@@ -116,7 +117,7 @@
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="raided">
         <label class="form-check-label" for="raided">
-            Automatically shoutout a creator when they raid you. <small class="text-info">* NEW *</small>
+            Automatically shoutout a creator when they raid you.
         </label>
     </div>
     <div class="form-group range-slider hide ml-4 mr-4 mt-2" id="so_count">
@@ -152,6 +153,14 @@
                value="20" style="height: 0;">
         <small class="text-muted range-slider-value" id="clip-limit"></small>
         <small class="text-muted range-slider-value">Clips</small>
+    </div>
+    <div class="form-group range-slider mt-4">
+        <label for="dateRange">Only show clips from within a Date Range <small>(Optional)</small> <small class="text-warning">* 0 Day(s) = OFF</small>
+        </label>
+        <input type="range" max="365" min="0" step="1" class="form-control range-slider-range" id="dateRange"
+               value="0" style="height: 0;">
+        <small class="text-muted range-slider-value" id="date-limit"></small>
+        <small class="text-muted range-slider-value">Day(s)</small>
     </div>
     <div class="form-group range-slider">
         <label for="timeOut">Max Duration Time
@@ -342,13 +351,16 @@ video {
         document.getElementById("limit").disabled = false;
         document.getElementById("limit").value = 20;
         document.getElementById("clip-limit").innerText = "20";
+        document.getElementById("dateRange").disabled = false;
     }, false);
 
     document.getElementById("showRecentClip").addEventListener("click", function (e) {
         document.getElementById("showClip").checked = false;
         document.getElementById("limit").disabled = true;
         document.getElementById("limit").value = 1;
-        document.getElementById("clip-limit").innerText = "1";
+        document.getElementById("dateRange").value = 0;
+        document.getElementById("dateRange").disabled = true;
+        document.getElementById("date-limit").innerText = "0";
     }, false);
 
     document.getElementById("show_ref").addEventListener("click", function (e) {
@@ -376,16 +388,13 @@ video {
         let command = document.getElementById("command").value.trim();
         let quality = document.getElementById("quality").checked;
         let limit = document.getElementById("limit").value.trim();
+        let dateRange = document.getElementById("dateRange").value.trim();
         let raided = document.getElementById("raided").checked;
         let raidCount = document.getElementById("raidCount").value.trim();
         let delay = document.getElementById("delay").value.trim();
 
         if (!mainAccount) {
             alert('Twitch username is not set');
-        }
-
-        if (!showClip && !showRecentClip) {
-            alert('Clip option is not set. Video clip will not play!');
         }
 
         if (!command) {
@@ -403,7 +412,7 @@ video {
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + encodeURIComponent(showMsg) + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&raidCount=" + raidCount + "&delay=" + delay + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + encodeURIComponent(customMsg) + "&customTitle=" + encodeURIComponent(customTitle) + "&limit=" + limit + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + encodeURIComponent(showMsg) + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&raidCount=" + raidCount + "&delay=" + delay + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + encodeURIComponent(customMsg) + "&customTitle=" + encodeURIComponent(customTitle) + "&limit=" + limit + "&dateRange=" + dateRange + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +

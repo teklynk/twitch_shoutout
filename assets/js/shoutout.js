@@ -68,6 +68,8 @@ $(document).ready(function () {
 
     let limit = getUrlParameter('limit').trim();
 
+    let dateRange = getUrlParameter('dateRange').trim();
+
     let raided = getUrlParameter('raided').trim();
 
     let raidCount = getUrlParameter('raidCount').trim();
@@ -122,6 +124,23 @@ $(document).ready(function () {
         alert('channel is not set in the URL');
     }
 
+    if (!dateRange || dateRange === "0") {
+        dateRange = ""; //default
+    } else {
+        // Get client current date
+        let todayDate = new Date();
+
+        // subtract dateRange from todayDate
+        let startDate = new Date(new Date().setDate(todayDate.getDate() - parseInt(dateRange)));
+
+        // format dates
+        startDate = startDate.toISOString().slice(0, 10);
+        todayDate = todayDate.toISOString().slice(0, 10);
+        
+        // set the daterange url parameter for the api endpoint
+        dateRange = "&start_date=" + startDate + "T00:00:00Z&end_date=" + todayDate + "T00:00:00Z";
+    }
+
     let replay = false; // set variable. default value
 
     let watch = false; // set variable. default value
@@ -160,7 +179,7 @@ $(document).ready(function () {
 
     // Twitch API get clips for !so command
     let getClips = function (SOChannel, limit, callback) {
-        let urlC = "https://twitchapi.teklynk.com/getuserclips.php?channel=" + SOChannel + "&limit=" + limit;
+        let urlC = "https://twitchapi.teklynk.com/getuserclips.php?channel=" + SOChannel + "&limit=" + limit + "" + dateRange;
         let xhrC = new XMLHttpRequest();
         xhrC.open("GET", urlC);
         xhrC.onreadystatechange = function () {
@@ -536,7 +555,8 @@ $(document).ready(function () {
 
                                         console.log(timer);
 
-                                        if (timer === parseInt(timeOut)) {
+                                        // hardcoded timer value. This timer is idependent of the timeOut url param.
+                                        if (timer === 5) {
                                             // Remove existing profile image element
                                             if (document.getElementById("profile")) {
                                                 document.getElementById("profile").remove();
