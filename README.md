@@ -211,7 +211,7 @@ video {
 }
 
 #details-container {
-    top: 42vw;
+    top: 36vw;
     border-radius: 25px;
     transform: skew(6deg, -6deg);
     margin-left: 0;
