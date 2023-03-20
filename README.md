@@ -77,6 +77,10 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 
 **showText=true/false**  Shows "Go check out {channel}" on top of the clip.
 
+**showDetails=true/false**  Enables the clips details panel on overlay.
+
+**detailsText=string**  Displays custom details about the clips. Can include {channel},{title},{game},{creator_name},{created_at}.
+
 **modsOnly=true/false**  Limits !so to mods only. If false, everyone can use the !so command.
 
 **timeOut=seconds**  The MAX number of seconds that the clip will play for. Shorter clips will simply end before the timeout and the timeout will reset to zero.
@@ -118,12 +122,13 @@ video {
     height: auto;
     max-height: 100%;
     border-radius: 10px;
+    z-index: -1;
 }
 
 #text-container {
     width: 100%;
-    margin: 40px 0;
     position: absolute;
+    top: 10vw;
 }
 
 .title-text {
@@ -134,5 +139,122 @@ video {
     color: #fff;
     text-align: center;
     text-shadow: 2px 2px #000;
+}
+
+/* Profile image */
+#profile {
+    border-radius: 100%;
+}
+
+#details-container {
+    position: absolute;
+    top: 36vw;
+    background: #00000090;
+    padding: 12px 24px 12px 24px;
+    margin-right: 24px;
+    border-radius: 0px 24px 24px 0px;
+    width: auto;
+    animation: fadeout 15s forwards;
+}
+
+#details-container .details-text {
+    font-family: Basic, Helvetica, sans-serif;
+    font-weight: bold;
+    word-wrap: break-word;
+    color: #fff;
+    text-align: left;
+    text-shadow: 2px 2px #000;
+}
+
+#details-container .details-text.item-0 {
+    font-size: 3vw;
+    font-weight: bold;
+}
+
+#details-container .details-text.item-1 {
+    font-size: 2.5vw;
+    font-weight: normal;
+}
+
+#details-container .details-text.item-2 {
+    font-size: 2vw;
+    font-weight: normal;
+}
+
+#details-container .details-text.item-3 {
+    font-size: 1.5vw;
+    font-weight: normal;
+}
+
+@keyframes fadeout {
+    0%   {opacity: 1;}
+    90%  {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+@keyframes slide {
+    100% {left: 0;}
+}
+```
+## If you want to add some flare to the clips info panel and channel name, try this Fancy Slide-in, Slide-out effect.
+
+```css
+#text-container {
+    top: 0;
+    background: #00008890;
+    box-shadow: 0 10px #00000090;
+    max-width: 100%;
+    padding: 4px 0 8px 0;
+    border-radius: 25px;
+    left: -2000px;
+    animation: slide 1s ease forwards;
+}
+
+#details-container {
+    top: 42vw;
+    border-radius: 25px;
+    transform: skew(6deg, -6deg);
+    margin-left: 0;
+    background: #00008890;
+    box-shadow: 10px 10px #00000090;
+    animation: movein 1s ease forwards, moveout 1s 15s ease forwards;
+}
+
+#details-container .details-text.item-0 {
+    font-size: 3vw;
+    overflow: hidden;
+    max-width: 50ch;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#details-container .details-text.item-1 {
+    font-size: 2.5vw;
+    overflow: hidden;
+    max-width: 100ch;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#details-container .details-text.item-2 {
+    font-size: 2vw;
+}
+
+#details-container .details-text.item-3 {
+    font-size: 1.5vw;
+}
+
+@keyframes slide {
+    100% {left: 0;}
+}
+
+@keyframes movein {
+  from { left: -2000px; }
+  to   { left: 0px; }
+}
+
+@keyframes moveout {
+  from { left: 0px; }
+  to   { left: -2000px; }
 }
 ```

@@ -34,6 +34,8 @@ $(document).ready(function () {
 
     let titleText;
 
+    let clipDetailsText;
+
     let cmdArray = [];
 
     let client = '';
@@ -49,6 +51,10 @@ $(document).ready(function () {
     let showMsg = getUrlParameter('showMsg');
 
     let showText = getUrlParameter('showText');
+
+    let showDetails = getUrlParameter('showDetails').trim();
+
+    let detailsText = getUrlParameter('detailsText').trim(); 
 
     let showImage = getUrlParameter('showImage');
 
@@ -108,6 +114,10 @@ $(document).ready(function () {
         showText = 'true'; // default
     }
 
+    if (!showDetails) {
+        showDetails = "false"; //default
+    }
+
     if (!showMsg) {
         showMsg = 'false'; // default
     }
@@ -144,6 +154,16 @@ $(document).ready(function () {
     let replay = false; // set variable. default value
 
     let watch = false; // set variable. default value
+
+    // Get game details function
+    function game_title(game_id) {
+        let $jsonParse = JSON.parse($.getJSON({
+            'url': "https://twitchapi.teklynk.com/getgame.php?id=" + game_id,
+            'async': false
+        }).responseText);
+
+        return $jsonParse;
+    }
 
     // Twitch API get user info for !so command
     let getInfo = function (SOChannel, callback) {
@@ -423,6 +443,9 @@ $(document).ready(function () {
                             if (document.getElementById("text-container")) {
                                 document.getElementById("text-container").remove();
                             }
+                            if (document.getElementById("details-container")) {
+                                document.getElementById("details-container").remove();
+                            }
 
                             // Default value = most recent index after sorted
                             let indexClip = 0;
@@ -457,8 +480,12 @@ $(document).ready(function () {
                             if (showText === 'true') {
                                 if (customTitle) {
                                     customTitle = getUrlParameter('customTitle').trim();
-                                    customTitle = customTitle.replace("{channel}", info.data[0]['broadcaster_name']);
-                                    customTitle = customTitle.replace("{url}", "twitch.tv/" + info.data[0]['broadcaster_name'].toLowerCase());
+                                    if (customTitle.includes("{channel}")) {
+                                        customTitle = customTitle.replace("{channel}", info.data[indexClip]['broadcaster_name']);
+                                    }
+                                    if (customTitle.includes("{url}")) {
+                                        customTitle = customTitle.replace("{url}", "twitch.tv/" + info.data[indexClip]['broadcaster_name'].toLowerCase());
+                                    }
                                     titleText = "<div id='text-container' class='hide'><span class='title-text'>" + decodeURIComponent(customTitle) + "</span></div>"
                                 } else {
                                     titleText = "<div id='text-container' class='hide'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
@@ -471,13 +498,78 @@ $(document).ready(function () {
                                 titleText = '';
                             }
 
-                            // Render text-container
+                            // Render titleText inside text-container
                             $(titleText).appendTo("#container");
 
                             // Remove the hide class from text-container after a delay
                             setTimeout(function () {
                                 $("#text-container").removeClass("hide");
-                            }, 600); // wait time
+                                $("#details-container").removeClass("hide");
+                            }, 500); // wait time
+
+                            // Clip details panel
+                            if (showDetails === 'true') {
+                                if (detailsText) {
+                                    
+                                    detailsText = getUrlParameter('detailsText').trim();
+
+                                    // Show clip title if it exists
+                                    if (detailsText.includes("{title}")) {
+                                        if (info.data[indexClip]['title']) {
+                                            detailsText = detailsText.replace("{title}", info.data[indexClip]['title']);
+                                        } else {
+                                            detailsText = detailsText.replace("{title}", "?");
+                                        }
+                                    }
+
+                                    // Get game name/title using the game_id from the clip's json data
+                                    if (detailsText.includes("{game}")) {
+                                        // Show game title if it exists
+                                        if (info.data[indexClip]['game_id']) {
+                                            let game = game_title(info.data[indexClip]['game_id']);
+                                            detailsText = detailsText.replace("{game}", game.data[0]['name']);
+                                        } else {
+                                            detailsText = detailsText.replace("{game}", "?");
+                                        }
+                                    }
+
+                                    // Format created_at date
+                                    if (detailsText.includes("{created_at}")) {
+                                        detailsText = detailsText.replace("{created_at}", moment(info.data[indexClip]['created_at']).format("MMMM D, YYYY"));
+                                    }
+                                    if (detailsText.includes("{creator_name}")) {
+                                        detailsText = detailsText.replace("{creator_name}", info.data[indexClip]['creator_name']);
+                                    }
+                                    if (detailsText.includes("{channel}")) {
+                                        detailsText = detailsText.replace("{channel}", info.data[indexClip]['broadcaster_name']);
+                                    }
+                                    if (detailsText.includes("{url}")) {
+                                        detailsText = detailsText.replace("{url}", "twitch.tv/" + info.data[indexClip]['broadcaster_name'].toLowerCase());
+                                    }
+                                    clipDetailsText = "<div id='details-container' class='hide'><span class='details-text'>" + detailsText + "</span></div>"
+
+                                    let dText = "";
+
+                                    // split on line breaks and create an array
+                                    let separateLines = detailsText.split(/\r?\n|\r|\n/g);
+                        
+                                    // interate over separateLines array
+                                    separateLines.forEach(lineBreaks);
+        
+                                    // generate html for each linebreak/item in array
+                                    function lineBreaks(item, index) {
+                                        dText += "<div class='details-text item-" + index + "'>" + item + "</div>"; 
+                                    }
+        
+                                    $("<div id='details-container'>" + dText + "</div>").appendTo('#container');
+                                    
+                                } else {
+                                    clipDetailsText = "<div id='details-container' class='hide'><span class='details-text'>Go check out " + info.data[indexClip]['broadcaster_name'] + "</span></div>"
+                                }
+                                
+                            } else {
+                                clipDetailsText = '';
+                            }
 
                             // Video Clip
                             $("<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
@@ -499,6 +591,9 @@ $(document).ready(function () {
                                     if (document.getElementById("text-container")) {
                                         document.getElementById("text-container").remove();
                                     }
+                                    if (document.getElementById("details-container")) {
+                                        document.getElementById("details-container").remove();
+                                    }
                                     timer = 0; // reset timer to zero
                                     clearInterval(startTimer);
                                 }
@@ -513,6 +608,9 @@ $(document).ready(function () {
                                 }
                                 if (document.getElementById("text-container")) {
                                     document.getElementById("text-container").remove();
+                                }
+                                if (document.getElementById("details-container")) {
+                                    document.getElementById("details-container").remove();
                                 }
                                 timer = 0; // reset timer to zero
                                 clearInterval(startTimer);
@@ -566,6 +664,9 @@ $(document).ready(function () {
                                             }
                                             if (document.getElementById("text-container")) {
                                                 document.getElementById("text-container").remove();
+                                            }
+                                            if (document.getElementById("details-container")) {
+                                                document.getElementById("details-container").remove();
                                             }
                                             timer = 0; // reset timer to zero
                                             clearInterval(startTimer);
