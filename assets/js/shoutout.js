@@ -459,6 +459,8 @@ $(document).ready(function () {
                             // Get and set variable clip_url from json
                             let clip_url = info.data[indexClip]['clip_url'];
 
+                            let clip_poster = info.data[indexClip]['thumbnail_url'];
+
                             // If chat command = !replayclip
                             if (replayClip === true) {
                                 clip_url = localStorage.getItem('twitchSOClipUrl');
@@ -572,7 +574,7 @@ $(document).ready(function () {
                             }
 
                             // Video Clip
-                            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
+                            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source poster='" + clip_poster + "' src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
 
                             // Timeout start
                             let timer = 0;
