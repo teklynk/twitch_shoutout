@@ -574,7 +574,7 @@ $(document).ready(function () {
                             }
 
                             // Video Clip
-                            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay>" + lowQualityVideo + "<source poster='" + clip_poster + "' src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
+                            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay poster='" + clip_poster + "'>" + lowQualityVideo + "<source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
 
                             // Timeout start
                             let timer = 0;
