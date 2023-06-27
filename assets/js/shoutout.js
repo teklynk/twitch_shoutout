@@ -82,6 +82,8 @@ $(document).ready(function () {
 
     let delay = getUrlParameter('delay').trim();
 
+    let themeOption = getUrlParameter('themeOption').trim();
+
     if (!raided) {
         raided = "false"; //default
     }
@@ -154,6 +156,11 @@ $(document).ready(function () {
     let replay = false; // set variable. default value
 
     let watch = false; // set variable. default value
+
+    // Load theme css file if theme is set
+    if (parseInt(themeOption) > 0) {
+        $('head').append('<link rel="stylesheet" type="text/css" href="assets/css/theme' + themeOption + '.css">');
+    }
 
     // Get game details function
     function game_title(game_id) {
@@ -459,7 +466,7 @@ $(document).ready(function () {
                             // Get and set variable clip_url from json
                             let clip_url = info.data[indexClip]['clip_url'];
 
-                            let clip_poster = info.data[indexClip]['thumbnail_url'];
+                            let clip_poster = info.data[indexClip]['thumbnail_url'].replace('-480x272','');
 
                             // If chat command = !replayclip
                             if (replayClip === true) {
@@ -508,6 +515,9 @@ $(document).ready(function () {
                                 $("#text-container").removeClass("hide");
                                 $("#details-container").removeClass("hide");
                             }, 500); // wait time
+
+                            // Video Clip
+                            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay poster='" + clip_poster + "'>" + lowQualityVideo + "<source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
 
                             // Clip details panel
                             if (showDetails === 'true') {
@@ -572,9 +582,6 @@ $(document).ready(function () {
                             } else {
                                 clipDetailsText = '';
                             }
-
-                            // Video Clip
-                            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay poster='" + clip_poster + "'>" + lowQualityVideo + "<source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
 
                             // Timeout start
                             let timer = 0;

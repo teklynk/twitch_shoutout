@@ -228,11 +228,20 @@ Clipped by {creator_name} {created_at}"></textarea>
         </span>
         </div>
     </div>
-    <div class="form-check mb-2">
+    <div class="form-check mb-2 mt-2">
         <input class="form-check-input" type="checkbox" value="" id="modsOnly" checked>
         <label class="form-check-label" for="modsOnly">
             Mods only
         </label>
+    </div>
+    <div class="form-group mt-4">
+        <label for="themeOption">Theme options</label>
+        <select class="form-control" id="themeOption">
+            <option value="0">None</option>
+            <option value="1">Slide in fancy skewed</option>
+            <option value="2">Slide in basic</option>
+            <option value="3">Outside the box</option>
+        </select>
     </div>
     <div class="form-group purple-border">
         <label for="customCss">Custom CSS
@@ -475,6 +484,7 @@ video {
         let raided = document.getElementById("raided").checked;
         let raidCount = document.getElementById("raidCount").value.trim();
         let delay = document.getElementById("delay").value.trim();
+        let themeOption = document.getElementById("themeOption").value;
 
         if (!mainAccount) {
             alert('Twitch username is not set');
@@ -499,7 +509,7 @@ video {
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + encodeURIComponent(showMsg) + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&raidCount=" + raidCount + "&delay=" + delay + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + encodeURIComponent(customMsg) + "&customTitle=" + encodeURIComponent(customTitle) + "&showDetails=" + showDetails + "&detailsText=" + encodeURIComponent(detailsText) + "&limit=" + limit + "&dateRange=" + dateRange + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + encodeURIComponent(showMsg) + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&raidCount=" + raidCount + "&delay=" + delay + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + encodeURIComponent(customMsg) + "&customTitle=" + encodeURIComponent(customTitle) + "&showDetails=" + showDetails + "&detailsText=" + encodeURIComponent(detailsText) + "&limit=" + limit + "&dateRange=" + dateRange + "&themeOption=" + themeOption + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
