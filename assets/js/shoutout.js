@@ -504,6 +504,13 @@ $(document).ready(function () {
                             }
 
                             if (watchClip === true) {
+                                if (document.getElementById("text-container")) {
+                                    document.getElementById("text-container").remove();
+                                }
+                                if (document.getElementById("details-container")) {
+                                    document.getElementById("details-container").remove();
+                                }
+
                                 titleText = '';
                             }
 
@@ -574,6 +581,17 @@ $(document).ready(function () {
                                     }
         
                                     $("<div id='details-container'>" + dText + "</div>").appendTo('#container');
+
+                                    if (watchClip === true) {
+                                        if (document.getElementById("text-container")) {
+                                            document.getElementById("text-container").remove();
+                                        }
+                                        if (document.getElementById("details-container")) {
+                                            document.getElementById("details-container").remove();
+                                        }
+
+                                        titleText = '';
+                                    }
                                     
                                 } else {
                                     clipDetailsText = "<div id='details-container' class='hide'><span class='details-text'>Go check out " + info.data[indexClip]['broadcaster_name'] + "</span></div>"
