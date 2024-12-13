@@ -84,6 +84,8 @@ $(document).ready(function () {
 
     let themeOption = getUrlParameter('themeOption').trim();
 
+    let clip_Id = '';
+
     if (!raided) {
         raided = "false"; //default
     }
@@ -286,14 +288,21 @@ $(document).ready(function () {
             // get the url from the chat message
             let chatClipUrl = detectURLs(message);
 
+            console.log('clip_url: ' + chatClipUrl);
+
             // parse url into an array
             let urlArr = chatClipUrl[0].split('/');
 
             // extract the clip id/slug from the url
-            let clip_Id = urlArr[3];
+            if (message.includes('https://clips.twitch.tv/')) {
+                clip_Id = urlArr[3];
+                // remove everything in the url after the '?'
+                clip_Id = clip_Id.split('?')[0];
+            } else {
+                clip_Id = urlArr[5];
+            }
 
-            // remove everything in the url after the '?'
-            clip_Id = clip_Id.split('?')[0];
+            console.log('clip_Id: ' + clip_Id);
 
             // get the clip_url from the api
             getClipUrl(clip_Id, function (info) {
