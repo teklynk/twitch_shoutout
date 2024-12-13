@@ -278,7 +278,7 @@ $(document).ready(function () {
         }
 
         // If message contains a clip url
-        if (message.includes('https://clips.twitch.tv/')) {
+        if (message.includes('https://clips.twitch.tv/') || message.includes('/clip/')) {
 
             // Remove trailing spaces from message
             message = message.trim();
