@@ -487,8 +487,8 @@ $(document).ready(function () {
                                 console.log('Watching: ' + clip_url);
                             }
 
-                            // Low clip quality mode
-                            if (lowQuality === 'true') {
+                            // Low clip quality mode - Only works on older clips
+                            if (lowQuality === 'true' && clip_url.includes('https://clips-media-assets2.twitch.tv/')) {
                                 lowQualityVideo = "<source src='" + clip_url.replace('.mp4', '-360.mp4') + "' type='video/mp4'>";
                             } else {
                                 lowQualityVideo = '';
