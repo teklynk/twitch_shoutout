@@ -96,7 +96,7 @@
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="raided">
         <label class="form-check-label" for="raided">
-            Automatically shoutout a creator when they raid you. <small class="text-info">* NEW *</small>
+            Automatically shoutout a streamer when they raid you.
         </label>
     </div>
     <div class="form-group range-slider hide ml-4 mr-4 mt-2" id="so_count">
@@ -142,57 +142,6 @@
         </label>
     </div>
     <br/>
-    <div class="form-group purple-border">
-        <label for="customCss">Custom CSS
-            <small>(Copy and paste into the OBS browser source Custom CSS section and modify as needed. <a
-                    href="https://www.w3schools.com/Css/" target="_blank">CSS Tutorial</a>)
-            </small>
-        </label>
-        <textarea class="form-control" id="customCss" rows="3" style="height: 200px;" readonly>
-#userImage img {
-    width: 10vw;
-    border-radius: 100%;
-    border: solid 4px #760a99;
-}
-
-#userMsg p {
-    text-transform: uppercase;
-    color: #ffffff;
-    font-size: 4vw;
-    font-weight: bold;
-    text-shadow: 1px 1px #000000;
-}
-
-#userName p {
-    text-transform: uppercase;
-    color: #760a99;
-    font-size: 5vw;
-    font-weight: bold;
-    text-shadow: 1px 1px #000000;
-}
-
-/*Cool Glow Effect(disabled) - Uncomment the CSS*/
-/*
-#userMsg p, #userName p {
-    font-size: 24px;
-    padding: 80px;
-    text-align: center;
-    animation: glow 1s ease-in-out infinite alternate
-}
-
-@-webkit-keyframes glow {
-    from {
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
-    }
-    to {
-    text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
-    }
-}
-*/
-        </textarea>
-    </div>
-
-    <br>
     <button class="btn btn-lg btn-success btn-block" id="generate_button" type="button">Generate Overlay Link</button>
     <br>
     <div id="overlaylink" class="hide"></div>

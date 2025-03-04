@@ -82,9 +82,6 @@
                 </li>
                 <li>Automatically do a shout-out on Raid events.</li>
                 <li>You can not do a shout-out while another shout-out is playing. The command will simply be ignored.</li>
-                <li>Multi-Shout-Out (!so @teklynk @mrcoolgamer @streambean) works on a timer using the "Max Duration Time" and will play a shout-out every X seconds.</li>
-                <li>The most recent "popular" clip may not be the most recent clip. "Popular" is based on the number of views that the clip has.</li>
-                <li>If you do not want to play clips but still want to "Show chat message", uncheck "Show a random popular clip" and "Show the most recent popular clip".</li>
                 <li>Be sure to set "Shutdown source when not visible", "Control audio via OBS", "Refresh browser when scene becomes active" on the OBS Browser Source properties.
                 </li>
             </ul>
@@ -109,12 +106,6 @@
         </label>
     </div>
     <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="showRecentClip">
-        <label class="form-check-label" for="showRecentClip">
-            Show the most recent popular clip
-        </label>
-    </div>
-    <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="showImage">
         <label class="form-check-label" for="showImage">
             Show the user profile image if clips do not exist
@@ -123,7 +114,7 @@
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="raided">
         <label class="form-check-label" for="raided">
-            Automatically shoutout a creator when they raid you.
+            Automatically shoutout a streamer when they raid you.
         </label>
     </div>
     <div class="form-group range-slider hide ml-4 mr-4 mt-2" id="so_count">
@@ -141,24 +132,6 @@
                value="10" style="height: 0;">
         <small class="text-muted range-slider-value"></small>
         <small class="text-muted range-slider-value">Seconds</small>
-    </div>
-    <div class="form-check mb-2">
-        <input class="form-check-input" type="checkbox" value="" id="quality">
-        <label class="form-check-label" for="quality">
-            Use lower quality video clips
-            <small class="text-warning">* Some clips may not have a lower quality available and will fall back to a
-                higher quality clip.
-            </small>
-        </label>
-    </div>
-    <div class="form-group range-slider">
-        <label for="limit">Number of clips to pull
-            <small>(Max is 100)</small>
-        </label>
-        <input type="range" max="100" min="1" step="1" class="form-control range-slider-range" id="limit"
-               value="20" style="height: 0;">
-        <small class="text-muted range-slider-value" id="clip-limit"></small>
-        <small class="text-muted range-slider-value">Clips</small>
     </div>
     <div class="form-group range-slider mt-2">
         <label for="dateRange">Only show clips from within a Date Range <small>(Optional)</small> <small class="text-warning">* 0 Day(s) = OFF</small>
@@ -246,93 +219,6 @@ Clipped by {creator_name} {created_at}"></textarea>
             <option value="3">Outside the box</option>
         </select>
     </div>
-    <div class="form-group purple-border">
-        <label for="customCss">Custom CSS
-            <small> (Copy and paste into the OBS browser source Custom CSS section and modify as needed. <a
-                    href="https://www.w3schools.com/Css/" target="_blank">CSS Tutorial</a>)
-            </small>
-        </label>
-        <textarea class="form-control" id="customCss" rows="3" style="height: 200px;" readonly>
-video {
-    width: 100%;
-    height: auto;
-    max-height: 100%;
-    border-radius: 10px;
-    z-index: -1;
-}
-
-#text-container {
-    width: 100%;
-    position: absolute;
-    top: 10vw;
-}
-
-.title-text {
-    font-family: Basic, Helvetica, sans-serif;
-    font-weight: bold;
-    font-size: 5vw;
-    word-wrap: break-word;
-    color: #fff;
-    text-align: center;
-    text-shadow: 2px 2px #000;
-}
-
-/* Profile image */
-#profile {
-    border-radius: 100%;
-}
-
-#details-container {
-    position: absolute;
-    top: 36vw;
-    background: #00000090;
-    padding: 12px 24px 12px 24px;
-    margin-right: 24px;
-    border-radius: 0px 24px 24px 0px;
-    width: auto;
-    animation: fadeout 15s forwards;
-}
-
-#details-container .details-text {
-    font-family: Basic, Helvetica, sans-serif;
-    font-weight: bold;
-    word-wrap: break-word;
-    color: #fff;
-    text-align: left;
-    text-shadow: 2px 2px #000;
-}
-
-#details-container .details-text.item-0 {
-    font-size: 3vw;
-    font-weight: bold;
-}
-
-#details-container .details-text.item-1 {
-    font-size: 2.5vw;
-    font-weight: normal;
-}
-
-#details-container .details-text.item-2 {
-    font-size: 2vw;
-    font-weight: normal;
-}
-
-#details-container .details-text.item-3 {
-    font-size: 1.5vw;
-    font-weight: normal;
-}
-
-@keyframes fadeout {
-    0%   {opacity: 1;}
-    90%  {opacity: 1;}
-    100% {opacity: 0;}
-}
-
-@keyframes slide {
-    100% {left: 0;}
-}
-        </textarea>
-    </div>
     <br>
     <button class="btn btn-lg btn-success btn-block" id="generate_button" type="button">Generate Overlay Link</button>
     <br>
@@ -383,14 +269,6 @@ video {
         document.getElementById("customTitle").value = localStorage.getItem("TwitchSOCustomTitle");
         document.getElementById("ref").value = localStorage.getItem("TwitchSORef");
 
-        if (document.getElementById("showClip").checked) {
-            document.getElementById("showRecentClip").checked = false;
-        }
-
-        if (document.getElementById("showRecentClip").checked) {
-            document.getElementById("showClip").checked = false;
-        }
-
         if (document.getElementById("showText").checked) {
             document.getElementById("customTitle_block").classList.toggle('hide');
         }
@@ -440,20 +318,7 @@ video {
     }, false);
 
     document.getElementById("showClip").addEventListener("click", function (e) {
-        document.getElementById("showRecentClip").checked = false;
-        document.getElementById("limit").disabled = false;
-        document.getElementById("limit").value = 20;
-        document.getElementById("clip-limit").innerText = "20";
         document.getElementById("dateRange").disabled = false;
-    }, false);
-
-    document.getElementById("showRecentClip").addEventListener("click", function (e) {
-        document.getElementById("showClip").checked = false;
-        document.getElementById("limit").disabled = true;
-        document.getElementById("limit").value = 1;
-        document.getElementById("dateRange").value = 0;
-        document.getElementById("dateRange").disabled = true;
-        document.getElementById("date-limit").innerText = "0";
     }, false);
 
     document.getElementById("show_ref").addEventListener("click", function (e) {
@@ -472,7 +337,6 @@ video {
         let customMsg = document.getElementById("customMsg").value.trim();
         let customTitle = document.getElementById("customTitle").value.trim();
         let showClip = document.getElementById("showClip").checked;
-        let showRecentClip = document.getElementById("showRecentClip").checked;
         let modsOnly = document.getElementById("modsOnly").checked;
         let showMsg = document.getElementById("showMsg").checked;
         let showImage = document.getElementById("showImage").checked;
@@ -481,8 +345,6 @@ video {
         let detailsText = document.getElementById("detailsText").value.trim();
         let timeOut = document.getElementById("timeOut").value.trim();
         let command = document.getElementById("command").value.trim();
-        let quality = document.getElementById("quality").checked;
-        let limit = document.getElementById("limit").value.trim();
         let dateRange = document.getElementById("dateRange").value.trim();
         let raided = document.getElementById("raided").checked;
         let raidCount = document.getElementById("raidCount").value.trim();
@@ -512,7 +374,7 @@ video {
         //build overlay url
         if (mainAccount) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showRecentClip=" + showRecentClip + "&showMsg=" + encodeURIComponent(showMsg) + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&raidCount=" + raidCount + "&delay=" + delay + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&lowQuality=" + quality + "&customMsg=" + encodeURIComponent(customMsg) + "&customTitle=" + encodeURIComponent(customTitle) + "&showDetails=" + showDetails + "&detailsText=" + encodeURIComponent(detailsText) + "&limit=" + limit + "&dateRange=" + dateRange + "&themeOption=" + themeOption + "&ref=" + btoa(ref);
+            let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showMsg=" + encodeURIComponent(showMsg) + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&raidCount=" + raidCount + "&delay=" + delay + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&customMsg=" + encodeURIComponent(customMsg) + "&customTitle=" + encodeURIComponent(customTitle) + "&showDetails=" + showDetails + "&detailsText=" + encodeURIComponent(detailsText) + "&dateRange=" + dateRange + "&themeOption=" + themeOption + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
             document.getElementById("overlaylink").classList.remove("hide");
             document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
