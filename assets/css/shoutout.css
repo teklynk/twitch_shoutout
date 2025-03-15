@@ -64,7 +64,7 @@ video {
     margin-right: 24px;
     border-radius: 0px 24px 24px 0px;
     width: auto;
-    animation: fadeout 15s forwards;
+    animation: fadeout 10s forwards;
 }
 
 #details-container .details-text {
