@@ -78,6 +78,8 @@ $(document).ready(function () {
 
     let clip_Id = '';
 
+    let userIsVip = false;
+
     if (!raided) {
         raided = "false"; //default
     }
@@ -257,6 +259,20 @@ $(document).ready(function () {
 
     client.connect().catch(console.error);
 
+    // Check if user is VIP
+    client.on('chat', (channel, userstate, message, self) => {
+        // Ignore echoed messages.
+        if (self) {
+            return false;
+        }
+
+        if (userstate && userstate.badges && userstate.badges.vip !== null && userstate.badges.vip !== undefined && userstate.badges.vip !== '') {
+            userIsVip = true;
+        } else {
+            userIsVip = false;
+        }
+    })
+
     // triggers on message
     client.on('chat', (channel, user, message, self) => {
 
@@ -300,7 +316,7 @@ $(document).ready(function () {
 
         }
 
-        if (user['message-type'] === 'chat' && message.startsWith('!') && (user.mod || user.username === channelName)) {
+        if (user['message-type'] === 'chat' && message.startsWith('!') && (user.mod || userIsVip || user.username === channelName)) {
 
             // Hard-coded commands to control the clips
             if (message === "!sostop" || message === "!stopso" || message === "!stopclip" || message === "!clipstop" || message === "!clipreload") {
@@ -361,10 +377,10 @@ $(document).ready(function () {
                 return false; // Exit and Do nothing else
             }
 
-            if (modsOnly === 'true' && (user.mod || user.username === channelName)) {
+            if (modsOnly === 'true' && (user.mod || userIsVip || user.username === channelName)) {
  
                 console.log(getChannel);
-                doShoutOut(getChannel); // Mods only
+                doShoutOut(getChannel); // Mods and VIPs only
                 
             } else if (modsOnly === 'false' || user.username === channelName) {
                 doShoutOut(getChannel); // Everyone
