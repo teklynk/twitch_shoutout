@@ -408,6 +408,7 @@ Clipped by {creator_name} {created_at}"></textarea>
         let raidCount = document.getElementById("raidCount").value.trim();
         let delay = document.getElementById("delay").value.trim();
         let themeOption = document.getElementById("themeOption").value;
+        let validationError = false;
 
         if (!mainAccount) {
             alert('Twitch username is not set');
@@ -429,8 +430,26 @@ Clipped by {creator_name} {created_at}"></textarea>
              detailsText = "{title}\nWhile streaming {game}\nClipped by {creator_name} {created_at}";
         }
 
+        function validateForm() {
+            const mainChannelInput = document.getElementById('mainAccount');
+            const mainChannelValue = mainChannelInput.value;
+            const inputKeywords = ['http', 'https', 'twitch.tv'];
+
+            inputKeywords.forEach(keyword => {
+                if (mainChannelValue.includes(keyword)) {
+                    alert(`Invalid input: Channel name cannot contain "${keyword}".`);
+                    validationError = true;
+                    return false;
+                }
+            });
+
+            return true;
+        }
+
+        validateForm();
+
         //build overlay url
-        if (mainAccount) {
+        if (mainAccount && validationError == false) {
             let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
             let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showMsg=" + encodeURIComponent(showMsg) + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&raidCount=" + raidCount + "&delay=" + delay + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&customMsg=" + encodeURIComponent(customMsg) + "&customTitle=" + encodeURIComponent(customTitle) + "&showDetails=" + showDetails + "&detailsText=" + encodeURIComponent(detailsText) + "&dateRange=" + dateRange + "&themeOption=" + themeOption + "&ref=" + btoa(ref);
             fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
