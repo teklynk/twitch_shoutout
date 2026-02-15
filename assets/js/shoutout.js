@@ -233,18 +233,26 @@ $(document).ready(function () {
     }
 
     // If Auth token is set, then connect to chat using oauth, else connect anonymously.
-    if (ref) {
+    if (ref > '') {
         client = new tmi.Client({
             options: {
                 debug: true,
                 skipUpdatingEmotesets: true
             },
-            connection: {reconnect: true},
+            connection: {
+                reconnect: true,
+                maxReconnectAttempts: 3
+            },
             identity: {
                 username: channelName,
                 password: 'oauth:' + atob(ref)
             },
             channels: [channelName]
+        });
+
+        client.connect().catch((err) => {
+            console.error(err);
+            $("<div style='position:absolute;top:0;left:0;width:100%;background:rgba(0,0,0,0.8);color:red;font-size:20px;text-align:center;padding:20px;z-index:10000;'>Login authentication failed. Twitch Access Token may have expired. Please generate a new one.</div>").prependTo('body');
         });
     } else {
         client = new tmi.Client({
@@ -252,12 +260,21 @@ $(document).ready(function () {
                 debug: true,
                 skipUpdatingEmotesets: true
             },
-            connection: {reconnect: true},
+            connection: {
+                reconnect: true,
+                maxReconnectAttempts: 3
+            },
             channels: [channelName]
+        });
+
+        client.connect().catch((err) => {
+            console.error(err);
         });
     }
 
-    client.connect().catch(console.error);
+    client.on("maxreconnect", () => {
+        $("<div style='position:absolute;top:0;left:0;width:100%;background:rgba(0,0,0,0.8);color:red;font-size:20px;text-align:center;padding:20px;z-index:10000;'>Failed to connect to Twitch Chat. Please refresh to try again. Twitch Access Token may have also expired.</div>").prependTo('body');
+    });
 
     // Check if user is VIP
     client.on('chat', (channel, userstate, message, self) => {
