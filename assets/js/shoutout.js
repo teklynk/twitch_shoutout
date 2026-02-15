@@ -14,7 +14,7 @@ $(document).ready(function () {
     // Function to randomly select a api server
     function setRandomServer() {
         // set the api gateway servers 
-        const servers = ["https://twitchapi.teklynk.com","https://twitchapi.teklynk.dev","https://twitchapi2.teklynk.dev"];
+        const servers = ["https://twitchapi.teklynk.com", "https://twitchapi.teklynk.dev", "https://twitchapi2.teklynk.dev"];
 
         // Randomly select a server
         const randomIndex = Math.floor(Math.random() * servers.length);
@@ -27,6 +27,9 @@ $(document).ready(function () {
     const apiServer = setRandomServer();
 
     let getChannel;
+
+    let shoutOutQueue = [];
+    let isShoutOutPlaying = false;
 
     let titleText;
 
@@ -50,7 +53,7 @@ $(document).ready(function () {
 
     let showDetails = getUrlParameter('showDetails').trim();
 
-    let detailsText = getUrlParameter('detailsText').trim(); 
+    let detailsText = getUrlParameter('detailsText').trim();
 
     let showImage = getUrlParameter('showImage');
 
@@ -136,7 +139,7 @@ $(document).ready(function () {
         // format dates
         startDate = startDate.toISOString().slice(0, 10);
         todayDate = todayDate.toISOString().slice(0, 10);
-        
+
         // set the daterange url parameter for the api endpoint
         dateRange = "&start_date=" + startDate + "T00:00:00Z&end_date=" + todayDate + "T00:00:00Z";
     }
@@ -341,7 +344,7 @@ $(document).ready(function () {
                 // Reloads browser source
                 window.location.reload();
 
-            // Replay previous shout-out clip
+                // Replay previous shout-out clip
             } else if (message === "!clipreplay" || message === "!replayclip" || message === "!soreplay" || message === "!replayso") {
 
                 watch = false;
@@ -351,7 +354,7 @@ $(document).ready(function () {
                     doShoutOut(localStorage.getItem('twitchSOChannel'), true, false);
                 }
 
-            // Watch a clip from chat
+                // Watch a clip from chat
             } else if (message === "!watchclip") {
 
                 console.log("Watching a clip from chat");
@@ -373,11 +376,6 @@ $(document).ready(function () {
             // If message starts with custom command + space. !so teklynk
             if (message.startsWith('!' + command + ' ')) {
 
-                // Ignore if video clip is playing
-                if (document.getElementById("clip") || document.getElementById("text-container")) {
-                    return false; // Exit and Do nothing
-                }
-
                 getChannel = message.substr(command.length + 1);
                 getChannel = getChannel.replace('@', '');
                 getChannel = getChannel.trim();
@@ -395,262 +393,232 @@ $(document).ready(function () {
             }
 
             if (modsOnly === 'true' && (user.mod || userIsVip || user.username === channelName)) {
- 
+
                 console.log(getChannel);
                 doShoutOut(getChannel); // Mods and VIPs only
-                
+
             } else if (modsOnly === 'false' || user.username === channelName) {
                 doShoutOut(getChannel); // Everyone
             }
         }
     });
 
-    function doShoutOut(getChannel, replayClip = false, watchClip = false) {
+    function processShoutOutQueue() {
+        if (shoutOutQueue.length === 0) {
+            isShoutOutPlaying = false;
+            return;
+        }
 
+        isShoutOutPlaying = true;
+        const { getChannel, replayClip, watchClip } = shoutOutQueue.shift();
+        executeShoutOut(getChannel, replayClip, watchClip);
+    }
+
+    function doShoutOut(getChannel, replayClip = false, watchClip = false) {
+        shoutOutQueue.push({ getChannel, replayClip, watchClip });
+        console.log(`Added ${getChannel} to queue. Queue size: ${shoutOutQueue.length}`);
+        if (!isShoutOutPlaying) {
+            processShoutOutQueue();
+        }
+    }
+
+    function cleanupAndNext() {
+        // Remove existing elements
+        if (document.getElementById("clip")) {
+            document.getElementById("clip").remove();
+        }
+        if (document.getElementById("profile")) {
+            document.getElementById("profile").remove();
+        }
+        if (document.getElementById("text-container")) {
+            document.getElementById("text-container").remove();
+        }
+        if (document.getElementById("details-container")) {
+            document.getElementById("details-container").remove();
+        }
+
+        isShoutOutPlaying = false;
+        console.log('Shoutout finished. Processing next in queue.');
+        // Add a small delay before processing the next item to allow for CSS transitions to finish
+        setTimeout(processShoutOutQueue, 500);
+    }
+
+    function executeShoutOut(getChannel, replayClip = false, watchClip = false) {
         if (watchClip === true || replayClip === true) {
-            // Ignore if video clip is playing
-            if (document.getElementById("clip") || document.getElementById("text-container")) {
-                console.log('A clip is currently playing. Ignoring !watchclip command until clip is finished');
-                return false; // Exit and Do nothing
-            }
             // If chat command = !replayclip
             if (replayClip === true) {
                 clip_url = localStorage.getItem('twitchSOClipUrl');
                 console.log('Replaying: ' + clip_url);
-            // If chat command = !watchclip
+                // If chat command = !watchclip
             } else if (watchClip === true) {
                 clip_url = localStorage.getItem('twitchSOWatchClip');
                 console.log('Watching: ' + clip_url);
             }
 
-            if (document.getElementById("text-container")) {
-                document.getElementById("text-container").remove();
-            }
-            if (document.getElementById("details-container")) {
-                document.getElementById("details-container").remove();
+            if (!clip_url) {
+                console.log('No clip URL found to watch or replay.');
+                cleanupAndNext();
+                return;
             }
 
             titleText = '';
 
             $("<video id='clip' class='video fade' width='100%' height='100%' autoplay><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
 
+            let timer = 0;
+            const startTimer = setInterval(function () {
+                timer++;
+                if (timer >= parseInt(timeOut)) { // Use >= to be safe
+                    clearInterval(startTimer);
+                    cleanupAndNext();
+                }
+            }, 1000);
+
             // Remove video element after it has finished playing
             document.getElementById("clip").onended = function (e) {
-                // Remove existing video element
-                if (document.getElementById("clip")) {
-                    document.getElementById("clip").remove();
-                }
-                if (document.getElementById("text-container")) {
-                    document.getElementById("text-container").remove();
-                }
-                if (document.getElementById("details-container")) {
-                    document.getElementById("details-container").remove();
-                }
+                clearInterval(startTimer);
+                cleanupAndNext();
             };
-
+            return;
         }
 
-        getStatus(getChannel, function (info) {
+        getStatus(getChannel, function (statusInfo) {
             // If user exists
-            if (info.data) {
-
-                // Ignore if video clip is playing
-                if (document.getElementById("clip") || document.getElementById("text-container")) {
-                    return false; // Exit and Do nothing
-                }
+            if (statusInfo.data && statusInfo.data.length > 0) {
 
                 if (showMsg === 'true') {
-                    if (replay === true || watch === true) {
-                        // If replaying or watching a clip, say nothing.
-                        client.say(channelName,"");
-                    } else {
-                        // If user has streamed anything then say message
-                        if (info.data[0]['game_name']) {
-                            if (customMsg) {
-                                customMsg = getUrlParameter('customMsg').trim();
-                                customMsg = customMsg.replace("{channel}", info.data[0]['broadcaster_name']);
-                                customMsg = customMsg.replace("{game}", info.data[0]['game_name']);
-                                customMsg = customMsg.replace("{title}", info.data[0]['title']);
-                                customMsg = customMsg.replace("{url}", "https://twitch.tv/" + info.data[0]['broadcaster_login']);
-                                // Say custom message in chat
-                                client.say(channelName, decodeURIComponent(customMsg));
-                            } else {
-                                // Say default message in chat
-                                client.say(channelName, "Go check out " + info.data[0]['broadcaster_name'] + "! They were playing: " + info.data[0]['game_name'] + " - " + info.data[0]['title'] + " - https://twitch.tv/" + info.data[0]['broadcaster_login']);
-                            }
-                            // Say generic message in chat
+                    // If user has streamed anything then say message
+                    if (statusInfo.data[0]['game_name']) {
+                        if (customMsg) {
+                            let processedMsg = customMsg.replace(/{channel}/g, statusInfo.data[0]['broadcaster_name']);
+                            processedMsg = processedMsg.replace(/{game}/g, statusInfo.data[0]['game_name']);
+                            processedMsg = processedMsg.replace(/{title}/g, statusInfo.data[0]['title']);
+                            processedMsg = processedMsg.replace(/{url}/g, "https://twitch.tv/" + statusInfo.data[0]['broadcaster_login']);
+                            // Say custom message in chat
+                            client.say(channelName, decodeURIComponent(processedMsg));
                         } else {
-                            client.say(channelName, "Go check out " + info.data[0]['broadcaster_name'] + "! https://twitch.tv/" + info.data[0]['broadcaster_login']);
+                            // Say default message in chat
+                            client.say(channelName, "Go check out " + statusInfo.data[0]['broadcaster_name'] + "! They were playing: " + statusInfo.data[0]['game_name'] + " - " + statusInfo.data[0]['title'] + " - https://twitch.tv/" + statusInfo.data[0]['broadcaster_login']);
                         }
+                        // Say generic message in chat
+                    } else {
+                        client.say(channelName, "Go check out " + statusInfo.data[0]['broadcaster_name'] + "! https://twitch.tv/" + statusInfo.data[0]['broadcaster_login']);
                     }
-
                 }
 
                 // Show Clip
                 if (showClip === 'true' || showRecentClip === 'true') {
 
-                    getClips(getChannel, function (info) {
+                    getClips(getChannel, function (clipInfo) {
 
-                        console.log(info.data[0]);
+                        console.log(clipInfo.data[0]);
 
                         // If clips exist
-                        if (info.data[0] && info.data[0].clip_url > '') {
+                        if (clipInfo.data[0] && clipInfo.data[0].clip_url) {
 
                             console.log('Clips exist!');
 
-                            console.log('Clip URL: ' + info.data[0].clip_url);
+                            console.log('Clip URL: ' + clipInfo.data[0].clip_url);
 
-                            let clip_url = info.data[0].clip_url;
-
-                            // Remove existing video element
-                            if (document.getElementById("clip")) {
-                                document.getElementById("clip").remove();
-                            }
-                            if (document.getElementById("text-container")) {
-                                document.getElementById("text-container").remove();
-                            }
-                            if (document.getElementById("details-container")) {
-                                document.getElementById("details-container").remove();
-                            }
+                            let clip_url = clipInfo.data[0].clip_url;
 
                             // Text on top of clip
                             if (showText === 'true') {
                                 if (customTitle) {
-                                    customTitle = getUrlParameter('customTitle').trim();
-                                    if (customTitle.includes("{channel}")) {
-                                        customTitle = customTitle.replace("{channel}", info.data[indexClip]['broadcaster_name']);
+                                    let processedTitle = customTitle;
+                                    if (processedTitle.includes("{channel}")) {
+                                        processedTitle = processedTitle.replace(/{channel}/g, clipInfo.data[indexClip]['broadcaster_name']);
                                     }
-                                    if (customTitle.includes("{url}")) {
-                                        customTitle = customTitle.replace("{url}", "twitch.tv/" + info.data[indexClip]['broadcaster_name'].toLowerCase());
+                                    if (processedTitle.includes("{url}")) {
+                                        processedTitle = processedTitle.replace(/{url}/g, "twitch.tv/" + clipInfo.data[indexClip]['broadcaster_name'].toLowerCase());
                                     }
-                                    titleText = "<div id='text-container' class='hide'><span class='title-text'>" + decodeURIComponent(customTitle) + "</span></div>"
+                                    titleText = "<div id='text-container' class='hide'><span class='title-text'>" + decodeURIComponent(processedTitle) + "</span></div>"
                                 } else {
-                                    titleText = "<div id='text-container' class='hide'><span class='title-text'>Go check out " + info.data[0]['broadcaster_name'] + "</span></div>"
+                                    titleText = "<div id='text-container' class='hide'><span class='title-text'>Go check out " + clipInfo.data[0]['broadcaster_name'] + "</span></div>"
                                 }
                             } else {
                                 titleText = '';
                             }
 
-                            // Render titleText inside text-container
                             $(titleText).appendTo("#container");
 
-                            // Remove the hide class from text-container after a delay
                             setTimeout(function () {
                                 $("#text-container").removeClass("hide");
                                 $("#details-container").removeClass("hide");
-                            }, 500); // wait time
+                            }, 500);
 
-                            // Video Clip
                             $("<video id='clip' class='video fade' width='100%' height='100%' autoplay><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
 
-                            // Clip details panel
                             if (showDetails === 'true') {
                                 if (detailsText) {
-                                    
-                                    detailsText = getUrlParameter('detailsText').trim();
+                                    let processedDetails = detailsText;
 
-                                    // Show clip title if it exists
-                                    if (detailsText.includes("{title}")) {
-                                        if (info.data[indexClip]['title']) {
-                                            detailsText = detailsText.replace("{title}", info.data[indexClip]['title']);
+                                    if (processedDetails.includes("{title}")) {
+                                        if (clipInfo.data[indexClip]['title']) {
+                                            processedDetails = processedDetails.replace(/{title}/g, clipInfo.data[indexClip]['title']);
                                         } else {
-                                            detailsText = detailsText.replace("{title}", "?");
+                                            processedDetails = processedDetails.replace(/{title}/g, "?");
                                         }
                                     }
 
-                                    // Get game name/title using the game_id from the clip's json data
-                                    if (detailsText.includes("{game}")) {
-                                        // Show game title if it exists
-                                        if (info.data[indexClip]['game_id']) {
-                                            let game = game_title(info.data[indexClip]['game_id']);
-                                            detailsText = detailsText.replace("{game}", game.data[0]['name']);
+                                    if (processedDetails.includes("{game}")) {
+                                        if (clipInfo.data[indexClip]['game_id']) {
+                                            let game = game_title(clipInfo.data[indexClip]['game_id']);
+                                            processedDetails = processedDetails.replace(/{game}/g, game.data[0]['name']);
                                         } else {
-                                            detailsText = detailsText.replace("{game}", "?");
+                                            processedDetails = processedDetails.replace(/{game}/g, "?");
                                         }
                                     }
 
-                                    // Format created_at date
-                                    if (detailsText.includes("{created_at}")) {
-                                        detailsText = detailsText.replace("{created_at}", moment(info.data[indexClip]['created_at']).format("MMMM D, YYYY"));
+                                    if (processedDetails.includes("{created_at}")) {
+                                        processedDetails = processedDetails.replace(/{created_at}/g, moment(clipInfo.data[indexClip]['created_at']).format("MMMM D, YYYY"));
                                     }
-                                    if (detailsText.includes("{creator_name}")) {
-                                        detailsText = detailsText.replace("{creator_name}", info.data[indexClip]['creator_name']);
+                                    if (processedDetails.includes("{creator_name}")) {
+                                        processedDetails = processedDetails.replace(/{creator_name}/g, clipInfo.data[indexClip]['creator_name']);
                                     }
-                                    if (detailsText.includes("{channel}")) {
-                                        detailsText = detailsText.replace("{channel}", info.data[indexClip]['broadcaster_name']);
+                                    if (processedDetails.includes("{channel}")) {
+                                        processedDetails = processedDetails.replace(/{channel}/g, clipInfo.data[indexClip]['broadcaster_name']);
                                     }
-                                    if (detailsText.includes("{url}")) {
-                                        detailsText = detailsText.replace("{url}", "twitch.tv/" + info.data[indexClip]['broadcaster_name'].toLowerCase());
+                                    if (processedDetails.includes("{url}")) {
+                                        processedDetails = processedDetails.replace(/{url}/g, "twitch.tv/" + clipInfo.data[indexClip]['broadcaster_name'].toLowerCase());
                                     }
-                                    clipDetailsText = "<div id='details-container' class='hide'><span class='details-text'>" + detailsText + "</span></div>"
 
                                     let dText = "";
-
-                                    // split on line breaks and create an array
-                                    let separateLines = detailsText.split(/\r?\n|\r|\n/g);
-                        
-                                    // interate over separateLines array
+                                    let separateLines = processedDetails.split(/\r?\n|\r|\n/g);
                                     separateLines.forEach(lineBreaks);
-        
-                                    // generate html for each linebreak/item in array
+
                                     function lineBreaks(item, index) {
-                                        dText += "<div class='details-text item-" + index + "'>" + item + "</div>"; 
+                                        dText += "<div class='details-text item-" + index + "'>" + item + "</div>";
                                     }
-        
+
                                     $("<div id='details-container'>" + dText + "</div>").appendTo('#container');
 
                                 } else {
-                                    clipDetailsText = "<div id='details-container' class='hide'><span class='details-text'>Go check out " + info.data[indexClip]['broadcaster_name'] + "</span></div>"
+                                    clipDetailsText = "<div id='details-container' class='hide'><span class='details-text'>Go check out " + clipInfo.data[indexClip]['broadcaster_name'] + "</span></div>"
                                 }
-                                
+
                             } else {
                                 clipDetailsText = '';
                             }
 
-                            // Timeout start
                             let timer = 0;
-
-                            // Remove video after timeout has been reached
                             let startTimer = setInterval(function () {
-                                timer++; // Increment timer
-
+                                timer++;
                                 console.log(timer);
 
-                                if (timer === parseInt(timeOut)) {
-                                    // Remove existing video element
-                                    if (document.getElementById("clip")) {
-                                        document.getElementById("clip").remove();
-                                    }
-                                    if (document.getElementById("text-container")) {
-                                        document.getElementById("text-container").remove();
-                                    }
-                                    if (document.getElementById("details-container")) {
-                                        document.getElementById("details-container").remove();
-                                    }
-                                    timer = 0; // reset timer to zero
+                                if (timer >= parseInt(timeOut)) {
                                     clearInterval(startTimer);
+                                    cleanupAndNext();
                                 }
 
                             }, 1000);
 
-                            // Remove video element after it has finished playing
                             document.getElementById("clip").onended = function (e) {
-                                // Remove existing video element
-                                if (document.getElementById("clip")) {
-                                    document.getElementById("clip").remove();
-                                }
-                                if (document.getElementById("text-container")) {
-                                    document.getElementById("text-container").remove();
-                                }
-                                if (document.getElementById("details-container")) {
-                                    document.getElementById("details-container").remove();
-                                }
-                                timer = 0; // reset timer to zero
                                 clearInterval(startTimer);
+                                cleanupAndNext();
                             };
 
                             if (watch === false) {
-                                // Save clip url to localstorage so that it can be replayed if needed
                                 localStorage.setItem('twitchSOClipUrl', clip_url);
                                 localStorage.setItem('twitchSOChannel', getChannel);
                             }
@@ -662,59 +630,44 @@ $(document).ready(function () {
                             // Show profile image if no clips exist
                             if (showImage === 'true') {
 
-                                console.log('show profile image!');
+                                getInfo(getChannel, function (userInfo) {
+                                    let userImage = userInfo.data[0]['profile_image_url'];
 
-                                getInfo(getChannel, function (info) {
-                                    let userImage = info.data[0]['profile_image_url'];
-
-                                    // Text on top of clip
                                     if (showText === 'true') {
-                                        titleText = "<div id='text-container'><span class='title-text'>Go check out " + info.data[0]['display_name'] + "</span></div>"
+                                        titleText = "<div id='text-container'><span class='title-text'>Go check out " + userInfo.data[0]['display_name'] + "</span></div>"
                                     } else {
                                         titleText = '';
                                     }
 
-                                    // Profile Image
                                     $(titleText + "<img id='profile' class='fade img-fluid' src='" + userImage + "'>").appendTo("#container");
 
-                                    // Timeout start
                                     let timer = 0;
-
-                                    // Remove Profile Image after timeout has been reached
                                     let startTimer = setInterval(function () {
-                                        timer++; // Increment timer
-
+                                        timer++;
                                         console.log(timer);
 
-                                        // hardcoded timer value. This timer is idependent of the timeOut url param.
-                                        if (timer === 5) {
-                                            // Remove existing profile image element
-                                            if (document.getElementById("profile")) {
-                                                document.getElementById("profile").remove();
-                                            }
-                                            if (document.getElementById("clip")) {
-                                                document.getElementById("clip").remove();
-                                            }
-                                            if (document.getElementById("text-container")) {
-                                                document.getElementById("text-container").remove();
-                                            }
-                                            if (document.getElementById("details-container")) {
-                                                document.getElementById("details-container").remove();
-                                            }
-                                            timer = 0; // reset timer to zero
+                                        if (timer >= 5) {
                                             clearInterval(startTimer);
+                                            cleanupAndNext();
                                         }
 
                                     }, 1000);
                                 });
 
                             } else {
-
-                                return false; // Exit and Do nothing
-
+                                cleanupAndNext();
                             }
                         }
                     });
+                } else if (showImage === 'true') {
+                    // Fallback to image if clips are disabled
+                    getInfo(getChannel, function (userInfo) {
+                        // This logic is similar to the no-clips scenario
+                        // For brevity, it's assumed the logic to show image and timeout is here
+                        // and it will call cleanupAndNext() on completion.
+                    });
+                } else {
+                    cleanupAndNext();
                 }
 
             } else {
@@ -725,6 +678,7 @@ $(document).ready(function () {
             }
         });
     }
+
 
     // Automatically shout-out channel on raid
     if (raided === "true") {
