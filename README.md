@@ -15,7 +15,9 @@ Future development can be tracked here: [https://github.com/teklynk/twitch_shout
 **!so @MrCoolStreamer** **OR** **!so MrCoolStreamer** **OR** use a custom command.
 
 
-**NEW FEATURES**
+### NEW FEATURES
+
+**Multiple Shoutouts** Shoutout's go into a queue. When one shoutout finishes playing, it will play the next shoutout.
 
 **!watchclip** Play a clip that was posted into chat.
 
@@ -45,8 +47,6 @@ Mario Brothers | Some more gaming - https://twitch.tv/mrcoolstreamer"
 * Enable OBS browser source hardware acceleration in Settings -> Advanced in OBS.
 
 * Be sure to set "Shutdown source when not visible", "Control audio via OBS", "Refresh browser when scene becomes active" on the OBS Browser Source properties.
-
-* You can not shout-out a user while a clip is playing. You will need to wait for the clip to finish before doing another shout-out command.
 
 ## URL Parameters
 
