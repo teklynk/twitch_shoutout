@@ -20,6 +20,19 @@ html, body {
     text-align: center;
 }
 
+.msg-error {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    background:rgba(0,0,0,0.8);
+    color:red;
+    font-size:20px;
+    text-align:center;
+    padding:20px;
+    z-index:10000;
+}
+
 #container {
     display: block;
     padding: 4px;

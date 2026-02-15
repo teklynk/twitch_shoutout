@@ -252,7 +252,7 @@ $(document).ready(function () {
 
         client.connect().catch((err) => {
             console.error(err);
-            $("<div style='position:absolute;top:0;left:0;width:100%;background:rgba(0,0,0,0.8);color:red;font-size:20px;text-align:center;padding:20px;z-index:10000;'>Login authentication failed. Twitch Access Token may have expired. Please generate a new one.</div>").prependTo('body');
+            $("<div class='msg-error'>Login authentication failed. Twitch Access Token may have expired. Please generate a new one.</div>").prependTo('body');
         });
     } else {
         client = new tmi.Client({
@@ -273,7 +273,7 @@ $(document).ready(function () {
     }
 
     client.on("maxreconnect", () => {
-        $("<div style='position:absolute;top:0;left:0;width:100%;background:rgba(0,0,0,0.8);color:red;font-size:20px;text-align:center;padding:20px;z-index:10000;'>Failed to connect to Twitch Chat. Please refresh to try again. Twitch Access Token may have also expired.</div>").prependTo('body');
+        $("<div class='msg-error'>Failed to connect to Twitch Chat. Please refresh to try again. Twitch Access Token may have also expired.</div>").prependTo('body');
     });
 
     // Check if user is VIP
