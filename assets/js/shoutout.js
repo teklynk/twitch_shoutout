@@ -1,11 +1,6 @@
 $(document).ready(async function () {
     // Get values from URL string
-    function getUrlParameter(name) {
-        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-        let regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        let results = regex.exec(location.search);
-        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    }
+    const urlParams = new URLSearchParams(window.location.search);
 
     // clear localStorage on load. Some clips have a expire time that needs to be refreshed and can not sit in localStorage for too long.
     localStorage.clear();
@@ -55,43 +50,43 @@ $(document).ready(async function () {
 
     let client = '';
 
-    let channelName = getUrlParameter('channel').toLowerCase().trim();
+    let channelName = (urlParams.get('channel') || '').toLowerCase().trim();
 
-    let showClip = getUrlParameter('showClip');
+    let showClip = urlParams.get('showClip') || '';
 
-    let showRecentClip = getUrlParameter('showRecentClip');
+    let showRecentClip = urlParams.get('showRecentClip') || '';
 
-    let showMsg = getUrlParameter('showMsg');
+    let showMsg = urlParams.get('showMsg') || '';
 
-    let showText = getUrlParameter('showText');
+    let showText = urlParams.get('showText') || '';
 
-    let showDetails = getUrlParameter('showDetails').trim();
+    let showDetails = (urlParams.get('showDetails') || '').trim();
 
-    let detailsText = getUrlParameter('detailsText').trim();
+    let detailsText = (urlParams.get('detailsText') || '').trim();
 
-    let showImage = getUrlParameter('showImage');
+    let showImage = urlParams.get('showImage') || '';
 
-    let ref = getUrlParameter('ref');
+    let ref = urlParams.get('ref') || '';
 
-    let modsOnly = getUrlParameter('modsOnly');
+    let modsOnly = urlParams.get('modsOnly') || '';
 
-    let timeOut = getUrlParameter('timeOut');
+    let timeOut = urlParams.get('timeOut') || '';
 
-    let command = getUrlParameter('command').trim();
+    let command = (urlParams.get('command') || '').trim();
 
-    let customMsg = getUrlParameter('customMsg').trim();
+    let customMsg = (urlParams.get('customMsg') || '').trim();
 
-    let customTitle = getUrlParameter('customTitle').trim();
+    let customTitle = (urlParams.get('customTitle') || '').trim();
 
-    let dateRange = getUrlParameter('dateRange').trim();
+    let dateRange = (urlParams.get('dateRange') || '').trim();
 
-    let raided = getUrlParameter('raided').trim();
+    let raided = (urlParams.get('raided') || '').trim();
 
-    let raidCount = getUrlParameter('raidCount').trim();
+    let raidCount = (urlParams.get('raidCount') || '').trim();
 
-    let delay = getUrlParameter('delay').trim();
+    let delay = (urlParams.get('delay') || '').trim();
 
-    let themeOption = getUrlParameter('themeOption').trim();
+    let themeOption = (urlParams.get('themeOption') || '').trim();
 
     let clip_Id = '';
 
