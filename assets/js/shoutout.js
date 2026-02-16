@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(async function () {
     // Get values from URL string
     function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
