@@ -158,6 +158,9 @@ $(document).ready(function () {
     // Get game details function
     async function game_title(game_id) {
         const response = await fetch(apiServer + "/getgame.php?id=" + game_id);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         return await response.json();
     }
 
@@ -165,7 +168,12 @@ $(document).ready(function () {
     let getInfo = function (SOChannel, callback) {
         let urlU = apiServer + "/getuserinfo.php?channel=" + SOChannel;
         fetch(urlU)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => callback(data))
             .catch(error => console.error(error));
     };
@@ -174,7 +182,12 @@ $(document).ready(function () {
     let getStatus = function (SOChannel, callback) {
         let urlG = apiServer + "/getuserstatus.php?channel=" + SOChannel + "";
         fetch(urlG)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => callback(data))
             .catch(error => console.error(error));
     };
@@ -183,7 +196,12 @@ $(document).ready(function () {
     let getClips = function (SOChannel, callback) {
         let urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "" + dateRange + "&random=true";
         fetch(urlC)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => callback(data))
             .catch(error => console.error(error));
     };
@@ -192,7 +210,12 @@ $(document).ready(function () {
     let getClipUrl = function (id, callback) {
         let urlV = apiServer + "/getuserclips.php?id=" + id;
         fetch(urlV)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => callback(data))
             .catch(error => console.error(error));
     };
