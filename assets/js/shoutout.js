@@ -662,9 +662,27 @@ $(document).ready(function () {
                 } else if (showImage === 'true') {
                     // Fallback to image if clips are disabled
                     getInfo(getChannel, function (userInfo) {
-                        // This logic is similar to the no-clips scenario
-                        // For brevity, it's assumed the logic to show image and timeout is here
-                        // and it will call cleanupAndNext() on completion.
+                        let userImage = userInfo.data[0]['profile_image_url'];
+
+                        if (showText === 'true') {
+                            titleText = "<div id='text-container'><span class='title-text'>Go check out " + userInfo.data[0]['display_name'] + "</span></div>"
+                        } else {
+                            titleText = '';
+                        }
+
+                        $(titleText + "<img id='profile' class='fade img-fluid' src='" + userImage + "'>").appendTo("#container");
+
+                        let timer = 0;
+                        let startTimer = setInterval(function () {
+                            timer++;
+                            console.log(timer);
+
+                            if (timer >= 5) {
+                                clearInterval(startTimer);
+                                cleanupAndNext();
+                            }
+
+                        }, 1000);
                     });
                 } else {
                     cleanupAndNext();
