@@ -31,7 +31,7 @@ This is a Twitch Shout-Out generator and browser source overlay for OBS. This pr
 *   **Standard:** `!so @MrCoolStreamer` or `!so MrCoolStreamer`
 *   **Replay:** `!replayso`, `!soreplay`, `!clipreplay`, `!replayclip`
 *   **Stop:** `!stopclip`, `!sostop`, `!clipstop`, `!clipreload`
-*   **Watch:** `!watchclip <clip_url>`
+*   **Watch:** `!watchclip <clip_url>` or `!watchclip` to play a clip that was posted in chat.
 
 *(Note: The command trigger `!so` can be customized in the options)*
 
