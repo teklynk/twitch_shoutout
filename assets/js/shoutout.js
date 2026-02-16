@@ -156,77 +156,45 @@ $(document).ready(function () {
     }
 
     // Get game details function
-    function game_title(game_id) {
-        let $jsonParse = JSON.parse($.getJSON({
-            'url': apiServer + "/getgame.php?id=" + game_id,
-            'async': false
-        }).responseText);
-
-        return $jsonParse;
+    async function game_title(game_id) {
+        const response = await fetch(apiServer + "/getgame.php?id=" + game_id);
+        return await response.json();
     }
 
     // Twitch API get user info for !so command
     let getInfo = function (SOChannel, callback) {
         let urlU = apiServer + "/getuserinfo.php?channel=" + SOChannel;
-        let xhrU = new XMLHttpRequest();
-        xhrU.open("GET", urlU);
-        xhrU.onreadystatechange = function () {
-            if (xhrU.readyState === 4) {
-                callback(JSON.parse(xhrU.responseText));
-                return true;
-            } else {
-                return false;
-            }
-        };
-        xhrU.send();
+        fetch(urlU)
+            .then(response => response.json())
+            .then(data => callback(data))
+            .catch(error => console.error(error));
     };
 
     // Twitch API get last game played from a user
     let getStatus = function (SOChannel, callback) {
         let urlG = apiServer + "/getuserstatus.php?channel=" + SOChannel + "";
-        let xhrG = new XMLHttpRequest();
-        xhrG.open("GET", urlG);
-        xhrG.onreadystatechange = function () {
-            if (xhrG.readyState === 4) {
-                callback(JSON.parse(xhrG.responseText));
-                return true;
-            } else {
-                return false;
-            }
-        };
-        xhrG.send();
+        fetch(urlG)
+            .then(response => response.json())
+            .then(data => callback(data))
+            .catch(error => console.error(error));
     };
 
     // Twitch API get clips for !so command
     let getClips = function (SOChannel, callback) {
         let urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "" + dateRange + "&random=true";
-        let xhrC = new XMLHttpRequest();
-        xhrC.open("GET", urlC);
-        xhrC.onreadystatechange = function () {
-            if (xhrC.readyState === 4) {
-                callback(JSON.parse(xhrC.responseText));
-                return true;
-            } else {
-                return false;
-            }
-        };
-        xhrC.send();
+        fetch(urlC)
+            .then(response => response.json())
+            .then(data => callback(data))
+            .catch(error => console.error(error));
     };
 
     // Twitch API get clip for !watchclip command
     let getClipUrl = function (id, callback) {
         let urlV = apiServer + "/getuserclips.php?id=" + id;
-        let xhrV = new XMLHttpRequest();
-        xhrV.open("GET", urlV);
-        xhrV.onreadystatechange = function () {
-            if (xhrV.readyState === 4) {
-                callback(JSON.parse(xhrV.responseText));
-                return true;
-            } else {
-                return false;
-            }
-        };
-        xhrV.send();
+        fetch(urlV)
+            .then(response => response.json())
+            .then(data => callback(data))
+            .catch(error => console.error(error));
     };
 
     // Returns the urls as an array from a chat message(string)
@@ -509,7 +477,7 @@ $(document).ready(function () {
                 // Show Clip
                 if (showClip === 'true' || showRecentClip === 'true') {
 
-                    getClips(getChannel, function (clipInfo) {
+                    getClips(getChannel, async function (clipInfo) {
 
                         console.log(clipInfo.data[0]);
 
@@ -563,7 +531,7 @@ $(document).ready(function () {
 
                                     if (processedDetails.includes("{game}")) {
                                         if (clipInfo.data[indexClip]['game_id']) {
-                                            let game = game_title(clipInfo.data[indexClip]['game_id']);
+                                            let game = await game_title(clipInfo.data[indexClip]['game_id']);
                                             processedDetails = processedDetails.replace(/{game}/g, game.data[0]['name']);
                                         } else {
                                             processedDetails = processedDetails.replace(/{game}/g, "?");
