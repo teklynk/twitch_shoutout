@@ -12,19 +12,33 @@ $(document).ready(async function () {
     console.log('Cleared localStorage');
 
     // Function to randomly select a api server
-    function setRandomServer() {
+    async function setRandomServer() {
         // set the api gateway servers 
         const servers = ["https://twitchapi.teklynk.com", "https://twitchapi.teklynk.dev", "https://twitchapi2.teklynk.dev"];
 
-        // Randomly select a server
-        const randomIndex = Math.floor(Math.random() * servers.length);
-        const selectedServer = servers[randomIndex];
+        // Shuffle the servers to try them in random order
+        for (let i = servers.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [servers[i], servers[j]] = [servers[j], servers[i]];
+        }
 
-        return selectedServer;
+        // Check the server status. If it is down, try the next server.
+        for (const server of servers) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 2000);
+                await fetch(server, { method: 'HEAD', signal: controller.signal });
+                clearTimeout(timeoutId);
+                return server;
+            } catch (error) {
+                console.warn(`Server ${server} is unreachable. Trying next...`);
+            }
+        }
+        return servers[0];
     }
 
     // Call the function
-    const apiServer = setRandomServer();
+    const apiServer = await setRandomServer();
 
     let getChannel;
 
