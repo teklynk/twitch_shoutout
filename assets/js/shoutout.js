@@ -2,9 +2,9 @@ $(document).ready(async function () {
     // Get values from URL string
     const urlParams = new URLSearchParams(window.location.search);
 
-    // clear localStorage on load. Some clips have a expire time that needs to be refreshed and can not sit in localStorage for too long.
-    localStorage.clear();
-    console.log('Cleared localStorage');
+    // clear sessionStorage on load. Some clips have a expire time that needs to be refreshed and can not sit in sessionStorage for too long.
+    sessionStorage.clear();
+    console.log('Cleared sessionStorage');
 
     // Function to randomly select a api server
     async function setRandomServer() {
@@ -214,16 +214,28 @@ $(document).ready(async function () {
 
     // Twitch API get clips for !so command
     let getClips = function (SOChannel, callback) {
-        let urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "" + dateRange + "&random=true";
-        fetch(urlC)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => callback(data))
-            .catch(error => console.error(error));
+        if (sessionStorage.getItem(SOChannel)) {
+            let data = JSON.parse(sessionStorage.getItem(SOChannel));
+            if (data.data && data.data.length > 0) {
+                const randomIndex = Math.floor(Math.random() * data.data.length);
+                [data.data[0], data.data[randomIndex]] = [data.data[randomIndex], data.data[0]];
+            }
+            callback(data);
+        } else {
+            let urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "" + dateRange + "&random=true&count=10";
+            fetch(urlC)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    sessionStorage.setItem(SOChannel, JSON.stringify(data));
+                    callback(data);
+                })
+                .catch(error => console.error(error));
+        }
     };
 
     // Twitch API get clip for !watchclip command
@@ -340,8 +352,8 @@ $(document).ready(async function () {
             // get the clip_url from the api
             getClipUrl(clip_Id, function (info) {
                 if (info.data[0].clip_url) {
-                    // save the clip url to localstorage
-                    localStorage.setItem('twitchSOWatchClip', info.data[0].clip_url);
+                    // save the clip url to sessionStorage
+                    sessionStorage.setItem('twitchSOWatchClip', info.data[0].clip_url);
                 }
             });
 
@@ -361,8 +373,8 @@ $(document).ready(async function () {
                 watch = false;
                 replay = true;
 
-                if (localStorage.getItem('twitchSOChannel') && localStorage.getItem('twitchSOClipUrl')) {
-                    doShoutOut(localStorage.getItem('twitchSOChannel'), true, false);
+                if (sessionStorage.getItem('twitchSOChannel') && sessionStorage.getItem('twitchSOClipUrl')) {
+                    doShoutOut(sessionStorage.getItem('twitchSOChannel'), true, false);
                 }
 
                 // Watch a clip from chat
@@ -373,7 +385,7 @@ $(document).ready(async function () {
                 watch = true;
                 replay = false;
 
-                if (localStorage.getItem('twitchSOWatchClip')) {
+                if (sessionStorage.getItem('twitchSOWatchClip')) {
                     doShoutOut(channelName, false, true);
                 }
 
@@ -458,11 +470,11 @@ $(document).ready(async function () {
         if (watchClip === true || replayClip === true) {
             // If chat command = !replayclip
             if (replayClip === true) {
-                clip_url = localStorage.getItem('twitchSOClipUrl');
+                clip_url = sessionStorage.getItem('twitchSOClipUrl');
                 console.log('Replaying: ' + clip_url);
                 // If chat command = !watchclip
             } else if (watchClip === true) {
-                clip_url = localStorage.getItem('twitchSOWatchClip');
+                clip_url = sessionStorage.getItem('twitchSOWatchClip');
                 console.log('Watching: ' + clip_url);
             }
 
@@ -630,8 +642,8 @@ $(document).ready(async function () {
                             };
 
                             if (watch === false) {
-                                localStorage.setItem('twitchSOClipUrl', clip_url);
-                                localStorage.setItem('twitchSOChannel', getChannel);
+                                sessionStorage.setItem('twitchSOClipUrl', clip_url);
+                                sessionStorage.setItem('twitchSOChannel', getChannel);
                             }
 
                         } else {
