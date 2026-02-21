@@ -328,6 +328,13 @@ Clipped by {creator_name} {created_at}"></textarea>
         document.getElementById("customTitle").value = localStorage.getItem("TwitchSOCustomTitle");
         document.getElementById("ref").value = localStorage.getItem("TwitchSORef");
 
+        if (localStorage.getItem("TwitchSOCommand")) {
+            document.getElementById("command").value = localStorage.getItem("TwitchSOCommand");
+        }
+        if (localStorage.getItem("TwitchSOThemeOption")) {
+            document.getElementById("themeOption").value = localStorage.getItem("TwitchSOThemeOption");
+        }
+
         if (document.getElementById("showText").checked) {
             document.getElementById("customTitle_block").classList.toggle('hide');
         }
@@ -347,7 +354,7 @@ Clipped by {creator_name} {created_at}"></textarea>
     }
 
     // Check if any input fields have changed
-    $(":text,:password,textarea,:checkbox,input[type=range]").on('change', function (e) {
+    $(":text,:password,textarea,:checkbox,input[type=range],select").on('change', function (e) {
 
         $("#overlaylink").addClass("hide");
 
@@ -356,6 +363,8 @@ Clipped by {creator_name} {created_at}"></textarea>
         localStorage.setItem("TwitchSORef", document.getElementById("ref").value.trim());
         localStorage.setItem("TwitchSOCustomMsg", document.getElementById("customMsg").value.trim());
         localStorage.setItem("TwitchSOCustomTitle", document.getElementById("customTitle").value.trim());
+        localStorage.setItem("TwitchSOCommand", document.getElementById("command").value.trim());
+        localStorage.setItem("TwitchSOThemeOption", document.getElementById("themeOption").value);
     });
 
     //show chat message
