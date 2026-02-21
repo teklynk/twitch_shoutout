@@ -252,8 +252,7 @@ Clipped by {creator_name} {created_at}"></textarea>
                        placeholder="Go check out {channel}! - They were playing: {game} - {title} - {url}" size="50">
             </div>
             <div class="mb-2 mt-2">
-                <a href="https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=gl1cjo1kdgsmj7lwjajhnb2lireyus&redirect_uri=https://twitch-shoutout.pages.dev/&scope=chat:read+chat:edit&force_verify=true"
-                   target="_self"><img src="assets/images/connect.png"></a>
+                <a id="twitch-auth-link" href="#" target="_self"><img src="assets/images/connect.png"></a>
             </div>
             <label for="ref">Access token</label>
             <input type="password" id="ref" class="form-control">
@@ -287,6 +286,14 @@ Clipped by {creator_name} {created_at}"></textarea>
     function onInit() {
 
         let url = window.location.href;
+        let redirectUrl = window.location.origin + window.location.pathname;
+        redirectUrl = redirectUrl.replace(/\/$/, "");
+
+        // Update auth link
+        let authLink = document.getElementById("twitch-auth-link");
+        let clientId = "gl1cjo1kdgsmj7lwjajhnb2lireyus";
+        let scope = "chat:read+chat:edit";
+        authLink.href = "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + clientId + "&redirect_uri=" + redirectUrl + "&scope=" + scope + "&force_verify=true";
 
         if (url.indexOf('#access_token') !== -1) {
             // extract the access_token from the url
@@ -298,7 +305,7 @@ Clipped by {creator_name} {created_at}"></textarea>
             // Save token to localstorage
             localStorage.setItem("TwitchSORef", access_token);
             // Redirect to default page after getting token
-            window.location.href = "https://twitch-shoutout.pages.dev";
+            window.location.href = redirectUrl;
         } else {
             document.getElementById("ref").value = localStorage.getItem("TwitchSORef");
         }
