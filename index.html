@@ -77,7 +77,7 @@
             </ul>
         </div>
         <div class="card mb-4">
-            <div class="card-body">
+            <div class="card-body shadow">
                 <h2>Shout-Out Clip Player Overlay</h2>
                 <p>Play a random clip from the streamers channel that is shouted out.</p>
                 <h3>Features:</h3>
@@ -104,54 +104,56 @@
                     scene becomes active" on the OBS Browser Source properties.</p>
 
                 <div class="text-center p-2">
-                    <a class="btn btn-link btn-sm" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank">Help</a>
-                    <a class="btn btn-link btn-sm" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
-                    <a class="btn btn-link btn-sm" href="https://www.teklynk.com/support" target="_blank">Support</a>
+                    <a class="btn btn-dark btn-sm" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank">Help</a>
+                    <a class="btn btn-dark btn-sm" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
+                    <a class="btn btn-dark btn-sm" href="https://www.teklynk.com/support" target="_blank">Support</a>
                 </div>
             </div>
         </div>
 
-        <div class="alert alert-dark" role="alert">Access Token is now required if you would like to post a shoutout
+        <div class="alert alert-dark shadow" role="alert">Access Token is now required if you would like to post a shoutout
             message in chat.<br>
             <div class="form-label-group">
                 <div>
                     <a id="twitch-auth-link" href="#" target="_self"><img src="assets/images/connect.png"></a>
                 </div>
-                <label for="ref">Access token</label>
-                <input type="password" id="ref" class="form-control">
-                <span id="show_ref"
-                    style="cursor:pointer;text-align:left;display:inline-block;width:70px;margin-top: 4px;font-size:smaller;vertical-align:top;"
-                    title="Show/Hide">show
-                </span>
+                <div class="form-label-group mt-2">
+                    <label for="ref">Access token</label>
+                    <input type="password" id="ref" class="form-control">
+                    <span id="show_ref"
+                        style="cursor:pointer;text-align:left;display:inline-block;width:70px;margin-top: 4px;font-size:smaller;vertical-align:top;"
+                        title="Show/Hide">show
+                    </span>
+                </div>
             </div>
         </div>
 
         <div class="form-label-group mb-4">
             <label for="mainAccount">Twitch Account</label>
-            <input type="text" id="mainAccount" class="form-control validate" placeholder="MrCoolStreamer">
+            <input type="text" id="mainAccount" class="form-control validate shadow" placeholder="MrCoolStreamer">
         </div>
 
         <div class="form-label-group mb-4">
             <label for="command">Custom Command
                 <small>(so, soclip, playclip. No need to include the ! symbol)</small>
             </label>
-            <input type="text" id="command" class="form-control validate" value="so" placeholder="so" size="50">
+            <input type="text" id="command" class="form-control validate shadow" value="so" placeholder="so" size="50">
         </div>
         
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="showClip" checked>
+            <input class="form-check-input shadow" type="checkbox" value="" id="showClip" checked>
             <label class="form-check-label" for="showClip">
                 Show clip
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="showImage">
+            <input class="form-check-input shadow" type="checkbox" value="" id="showImage">
             <label class="form-check-label" for="showImage">
                 Show the user profile image if clips do not exist
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="raided">
+            <input class="form-check-input shadow" type="checkbox" value="" id="raided">
             <label class="form-check-label" for="raided">
                 Automatically shoutout a streamer when they raid you.
             </label>
@@ -191,7 +193,7 @@
             <small class="text-muted range-slider-value">Seconds</small>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="showText" checked>
+            <input class="form-check-input shadow" type="checkbox" value="" id="showText" checked>
             <label class="form-check-label" for="showText">
                 Show: "Go check out {channel}" on top of the clip
             </label>
@@ -200,13 +202,13 @@
                     <label for="customTitle">Custom Title
                         <small>(Optional)</small>
                     </label>
-                    <input type="text" id="customTitle" class="form-control" value=""
+                    <input type="text" id="customTitle" class="form-control shadow" value=""
                         placeholder="Go check out {channel} {url}" size="50">
                 </div>
             </div>
         </div>
         <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" value="" id="showDetails">
+            <input class="form-check-input shadow" type="checkbox" value="" id="showDetails">
             <label class="form-check-label" for="showDetails">
                 Show clip details panel
             </label>
@@ -214,12 +216,12 @@
         <div class="form-label-group mt-2 mb-4 ml-4 hide" id="showDetailsText">
             <label for="detailsText">Custom clip details panel text <small>(Optional)</small>
             </label>
-            <textarea class="form-control" id="detailsText" rows="4" placeholder="{title}
+            <textarea class="form-control shadow" id="detailsText" rows="4" placeholder="{title}
 While streaming {game}
 Clipped by {creator_name} {created_at}"></textarea>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="showMsg">
+            <input class="form-check-input shadow" type="checkbox" value="" id="showMsg">
             <label class="form-check-label" for="showMsg">
                 Show chat message: "Go check out {channel}! - They were playing: {game} - {title} - {url}"
                 <small class="text-warning">* Requires Twitch Access Token</small>
@@ -229,20 +231,20 @@ Clipped by {creator_name} {created_at}"></textarea>
                     <label for="customMsg">Custom Message
                         <small>(Optional)</small>
                     </label>
-                    <input type="text" id="customMsg" class="form-control" value=""
+                    <input type="text" id="customMsg" class="form-control shadow" value=""
                         placeholder="Go check out {channel}! - They were playing: {game} - {title} - {url}" size="50">
                 </div>
             </div>
         </div>
         <div class="form-check mb-2 mt-2">
-            <input class="form-check-input" type="checkbox" value="" id="modsOnly" checked>
+            <input class="form-check-input shadow" type="checkbox" value="" id="modsOnly" checked>
             <label class="form-check-label" for="modsOnly">
                 Mods &amp; VIPs only
             </label>
         </div>
         <div class="form-group mt-4">
             <label for="themeOption">Theme options</label>
-            <select class="form-control" id="themeOption">
+            <select class="form-control shadow" id="themeOption">
                 <option value="0">None</option>
                 <option value="1">Slide in fancy skewed</option>
                 <option value="2" selected>Slide in basic</option>
@@ -250,7 +252,7 @@ Clipped by {creator_name} {created_at}"></textarea>
             </select>
         </div>
         <br>
-        <button class="btn btn-lg btn-success btn-block" id="generate_button" type="button">Generate Overlay
+        <button class="btn btn-lg btn-success btn-block text-white" id="generate_button" type="button">Generate Overlay
             Link</button>
         <br>
         <div id="overlaylink" class="hide"></div>
@@ -450,9 +452,9 @@ Clipped by {creator_name} {created_at}"></textarea>
         });
     </script>
     <div class="text-center p-2">
-        <a class="btn btn-link btn-sm" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank">Help</a>
-        <a class="btn btn-link btn-sm" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
-        <a class="btn btn-link btn-sm" href="https://www.teklynk.com/support" target="_blank">Support</a>
+        <a class="btn btn-dark btn-sm" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank">Help</a>
+        <a class="btn btn-dark btn-sm" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
+        <a class="btn btn-dark btn-sm" href="https://www.teklynk.com/support" target="_blank">Support</a>
     </div>
     <script>
         // Json data - Ajax call
