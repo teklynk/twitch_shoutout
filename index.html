@@ -39,7 +39,8 @@
         color: #ddd9e8 !important;
     }
 
-    .card, .alert {
+    .card,
+    .alert {
         background-color: #292938 !important;
         border-color: #292938 !important;
         color: #ddd9e8 !important;
@@ -116,14 +117,17 @@
                     scene becomes active" on the OBS Browser Source properties.</p>
 
                 <div class="text-center p-2">
-                    <a class="btn btn-dark btn-sm" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank">Help</a>
-                    <a class="btn btn-dark btn-sm" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
+                    <a class="btn btn-dark btn-sm" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
+                        target="_blank">Help</a>
+                    <a class="btn btn-dark btn-sm" href="https://github.com/teklynk/twitch_shoutout"
+                        target="_blank">Github</a>
                     <a class="btn btn-dark btn-sm" href="https://www.teklynk.com/support" target="_blank">Support</a>
                 </div>
             </div>
         </div>
 
-        <div class="alert alert-dark shadow" role="alert">Access Token is now required if you would like to post a shoutout
+        <div class="alert alert-dark shadow" role="alert">Access Token is now required if you would like to post a
+            shoutout
             message in chat.<br>
             <div class="form-label-group">
                 <div>
@@ -151,7 +155,7 @@
             </label>
             <input type="text" id="command" class="form-control validate shadow" value="so" placeholder="so" size="50">
         </div>
-        
+
         <div class="form-check">
             <input class="form-check-input shadow" type="checkbox" value="" id="showClip" checked>
             <label class="form-check-label" for="showClip">
@@ -179,7 +183,7 @@
         <div class="form-group range-slider hide ml-4 mr-4 mt-2" id="so_count">
             <label for="delay">Min raid party size
             </label>
-            <input type="range" max="30" min="0" step="1" class="form-control range-slider-range" id="raidCount"
+            <input type="range" max="30" min="0" step="1" class="form-control range-slider-range shadow" id="raidCount"
                 value="3" style="height: 0;">
             <small class="text-muted range-slider-value"></small>
             <small class="text-muted range-slider-value">Users</small>
@@ -187,8 +191,8 @@
         <div class="form-group range-slider hide ml-4 mr-4" id="so_delay">
             <label for="delay">Delay automatic shoutout
             </label>
-            <input type="range" max="30" min="1" step="1" class="form-control range-slider-range" id="delay" value="10"
-                style="height: 0;">
+            <input type="range" max="30" min="1" step="1" class="form-control range-slider-range shadow" id="delay"
+                value="10" style="height: 0;">
             <small class="text-muted range-slider-value"></small>
             <small class="text-muted range-slider-value">Seconds</small>
         </div>
@@ -196,7 +200,7 @@
             <label for="dateRange">Only show clips from within a Date Range <small>(Optional)</small> <small
                     class="text-warning">* 0 Day(s) = OFF</small>
             </label>
-            <input type="range" max="365" min="0" step="1" class="form-control range-slider-range" id="dateRange"
+            <input type="range" max="365" min="0" step="1" class="form-control range-slider-range shadow" id="dateRange"
                 value="0" style="height: 0;">
             <small class="text-muted range-slider-value" id="date-limit"></small>
             <small class="text-muted range-slider-value">Day(s)</small>
@@ -205,7 +209,7 @@
             <label for="timeOut">Max Duration Time
                 <small>(How long should the clip play?)</small>
             </label>
-            <input type="range" max="120" min="1" step="1" class="form-control range-slider-range" id="timeOut"
+            <input type="range" max="120" min="1" step="1" class="form-control range-slider-range shadow" id="timeOut"
                 value="10" style="height: 0;">
             <small class="text-muted range-slider-value"></small>
             <small class="text-muted range-slider-value">Seconds</small>
@@ -270,18 +274,21 @@ Clipped by {creator_name} {created_at}"></textarea>
             </select>
         </div>
         <br>
-        <button class="btn btn-lg btn-success btn-block text-white shadow" id="generate_button" type="button">Generate Overlay
+        <button class="btn btn-lg btn-success btn-block text-white shadow" id="generate_button" type="button">Generate
+            Overlay
             Link</button>
         <br>
         <div id="overlaylink" class="hide"></div>
     </div>
     <div class="text-center p-2">
-        <a class="btn btn-dark btn-sm" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank">Help</a>
+        <a class="btn btn-dark btn-sm" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
+            target="_blank">Help</a>
         <a class="btn btn-dark btn-sm" href="https://github.com/teklynk/twitch_shoutout" target="_blank">Github</a>
         <a class="btn btn-dark btn-sm" href="https://www.teklynk.com/support" target="_blank">Support</a>
     </div>
     <div class="container text-center p-4">
-        <small class="muted">Made with <span class="heart">♥</span> by <a href="https://www.teklynk.com" target="_blank">Teklynk</a></small>
+        <small class="muted">Made with <span class="heart">♥</span> by <a href="https://www.teklynk.com"
+                target="_blank">Teklynk</a></small>
     </div>
     <script>
         function onInit() {
