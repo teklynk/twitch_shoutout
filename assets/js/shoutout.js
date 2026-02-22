@@ -99,6 +99,8 @@ $(document).ready(async function () {
 
     let themeOption = (urlParams.get('themeOption') || '').trim();
 
+    let preferFeatured = (urlParams.get('preferFeatured') || '').trim();
+
     let clip_Id = '';
 
     let userIsVip = false;
@@ -141,6 +143,10 @@ $(document).ready(async function () {
 
     if (!showImage) {
         showImage = 'false'; // default
+    }
+
+    if (!preferFeatured) {
+        preferFeatured = "false"; //default
     }
 
     if (channelName === '') {
@@ -186,34 +192,51 @@ $(document).ready(async function () {
 
     // Twitch API get user info for !so command
     let getInfo = function (SOChannel, callback) {
-        let urlU = apiServer + "/getuserinfo.php?channel=" + SOChannel;
-        fetch(urlU)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => callback(data))
-            .catch(error => console.error(error));
+        let storageKey = SOChannel + "-info";
+        if (sessionStorage.getItem(storageKey)) {
+            callback(JSON.parse(sessionStorage.getItem(storageKey)));
+        } else {
+            let urlU = apiServer + "/getuserinfo.php?channel=" + SOChannel;
+            fetch(urlU)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    sessionStorage.setItem(storageKey, JSON.stringify(data));
+                    callback(data);
+                })
+                .catch(error => console.error(error));
+        }
     };
 
     // Twitch API get last game played from a user
     let getStatus = function (SOChannel, callback) {
-        let urlG = apiServer + "/getuserstatus.php?channel=" + SOChannel + "";
-        fetch(urlG)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => callback(data))
-            .catch(error => console.error(error));
+        let storageKey = SOChannel + "-status";
+        if (sessionStorage.getItem(storageKey)) {
+            callback(JSON.parse(sessionStorage.getItem(storageKey)));
+        } else {
+            let urlG = apiServer + "/getuserstatus.php?channel=" + SOChannel + "";
+            fetch(urlG)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    sessionStorage.setItem(storageKey, JSON.stringify(data));
+                    callback(data);
+                })
+                .catch(error => console.error(error));
+        }
     };
 
     // Twitch API get clips for !so command
     let getClips = function (SOChannel, callback) {
+        let urlC;
         if (sessionStorage.getItem(SOChannel)) {
             let data = JSON.parse(sessionStorage.getItem(SOChannel));
             if (data.data && data.data.length > 0) {
@@ -222,7 +245,11 @@ $(document).ready(async function () {
             }
             callback(data);
         } else {
-            let urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "" + dateRange + "&random=true&count=10";
+            if (preferFeatured !== "false") {
+                urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=true&limit=20&shuffle=true" + dateRange;
+            } else {
+                urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=false&limit=20&shuffle=true" + dateRange;
+            }
             fetch(urlC)
                 .then(response => {
                     if (!response.ok) {
@@ -230,7 +257,15 @@ $(document).ready(async function () {
                     }
                     return response.json();
                 })
-                .then(data => {
+                .then(async data => {
+                    // If dateRange or preferFeatured is set but no clips are found. Try to pull any clip.
+                    if (data.data && data.data.length === 0 && (dateRange > "" || preferFeatured !== "false")) {
+                        console.log('No clips found matching dateRange or preferFeatured filter. PULL ANY Clip found from: ' + SOChannel);
+                        const response = await fetch(apiServer + "/getuserclips.php?channel=" + SOChannel + "&limit=20&shuffle=true");
+                        if (response.ok) {
+                            data = await response.json();
+                        }
+                    }
                     sessionStorage.setItem(SOChannel, JSON.stringify(data));
                     callback(data);
                 })

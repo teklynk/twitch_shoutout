@@ -170,6 +170,12 @@
                 Automatically shoutout a streamer when they raid you.
             </label>
         </div>
+        <div class="form-check mb-2">
+            <input class="form-check-input shadow" type="checkbox" value="" id="preferFeatured">
+            <label class="form-check-label" for="preferFeatured">
+                Prefer featured clips (Featured clips if found)
+            </label>
+        </div>
         <div class="form-group range-slider hide ml-4 mr-4 mt-2" id="so_count">
             <label for="delay">Min raid party size
             </label>
@@ -420,6 +426,7 @@ Clipped by {creator_name} {created_at}"></textarea>
             let raidCount = document.getElementById("raidCount").value.trim();
             let delay = document.getElementById("delay").value.trim();
             let themeOption = document.getElementById("themeOption").value;
+            let preferFeatured = document.getElementById("preferFeatured").checked;
             let validationError = false;
 
             if (!mainAccount) {
@@ -463,7 +470,7 @@ Clipped by {creator_name} {created_at}"></textarea>
             //build overlay url
             if (mainAccount && validationError == false) {
                 let srcURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showMsg=" + encodeURIComponent(showMsg) + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&raidCount=" + raidCount + "&delay=" + delay + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&customMsg=" + encodeURIComponent(customMsg) + "&customTitle=" + encodeURIComponent(customTitle) + "&showDetails=" + showDetails + "&detailsText=" + encodeURIComponent(detailsText) + "&dateRange=" + dateRange + "&themeOption=" + themeOption + "&ref=" + btoa(ref);
+                let fullUrl = srcURL + "shoutout.html?channel=" + mainAccount.toLowerCase() + "&showClip=" + showClip + "&showMsg=" + encodeURIComponent(showMsg) + "&showText=" + showText + "&showImage=" + showImage + "&raided=" + raided + "&raidCount=" + raidCount + "&delay=" + delay + "&modsOnly=" + modsOnly + "&timeOut=" + timeOut + "&command=" + command + "&customMsg=" + encodeURIComponent(customMsg) + "&customTitle=" + encodeURIComponent(customTitle) + "&showDetails=" + showDetails + "&detailsText=" + encodeURIComponent(detailsText) + "&dateRange=" + dateRange + "&themeOption=" + themeOption + "&preferFeatured=" + preferFeatured + "&ref=" + btoa(ref);
                 fullUrl = fullUrl.replace("index.htmlshoutout.html", "shoutout.html");
                 document.getElementById("overlaylink").classList.remove("hide");
                 document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
