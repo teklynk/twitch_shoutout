@@ -202,7 +202,7 @@
             <label for="dateRange">Prefer clips from within a Date Range (Date range clips if found) <small
                     class="text-warning">* 0 Day(s) = OFF</small>
             </label>
-            <input type="range" max="365" min="0" step="1" class="form-control range-slider-range shadow" id="dateRange"
+            <input type="range" max="365" min="0" step="10" class="form-control range-slider-range shadow" id="dateRange"
                 value="0" style="height: 0;">
             <small class="text-muted range-slider-value" id="date-limit"></small>
             <small class="text-muted range-slider-value">Day(s)</small>
@@ -211,7 +211,7 @@
             <label for="timeOut">Max Duration Time
                 <small>(How long should the clip play?)</small>
             </label>
-            <input type="range" max="120" min="1" step="1" class="form-control range-slider-range shadow" id="timeOut"
+            <input type="range" max="120" min="1" step="10" class="form-control range-slider-range shadow" id="timeOut"
                 value="10" style="height: 0;">
             <small class="text-muted range-slider-value"></small>
             <small class="text-muted range-slider-value">Seconds</small>
