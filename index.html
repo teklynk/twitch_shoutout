@@ -103,9 +103,11 @@
                     <li><strong>!stopclip</strong> to stop/reload the browser source in case a clip is just way too
                         long, cringey or playing at an inappropriate time. Limited to Mods and Streamer. Can also use
                         (!sostop, !stopclip, !clipstop, !clipreload)</li>
-                    <li><strong>Date Range option:</strong> This will grab a clip from within the last 5days, 10day,
-                        30days... If no clips exist, then no clip will play. You can enable the "Show the user profile
-                        image" to display the users avatar in place of a non-existent clip.</li>
+                    <li><strong>Date Range option:</strong> This will try to grab a clip from within the last 5days,
+                        10day,
+                        30days... If no clips exist, then it will play a random "popular" clip.</li>
+                    <li><strong>Prefer Featured Clips:</strong> This will try to grab featured clips. If no clips exist,
+                        then it will play a random "popular" clip.</li>
                     <li>
                         <strong>Show clip details panel:</strong> This will display a panel in the lower third of the
                         overlay that contains details about the clip. This can use
@@ -126,7 +128,7 @@
             </div>
         </div>
 
-        <div class="alert alert-dark shadow" role="alert">Access Token is now required if you would like to post a
+        <div class="alert alert-dark shadow" role="alert">Access Token is required if you would like to post a
             shoutout
             message in chat.<br>
             <div class="form-label-group">
@@ -197,7 +199,7 @@
             <small class="text-muted range-slider-value">Seconds</small>
         </div>
         <div class="form-group range-slider mt-2">
-            <label for="dateRange">Only show clips from within a Date Range <small>(Optional)</small> <small
+            <label for="dateRange">Prefer clips from within a Date Range (Date range clips if found) <small
                     class="text-warning">* 0 Day(s) = OFF</small>
             </label>
             <input type="range" max="365" min="0" step="1" class="form-control range-slider-range shadow" id="dateRange"

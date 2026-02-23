@@ -13,7 +13,7 @@ This is a Twitch Shout-Out generator and browser source overlay for OBS. This pr
 ## Features
 *   **Clip Player:** Plays a random or recent clip from the shouted-out channel.
 *   **Queue System:** Multiple shout-outs go into a queue and play sequentially.
-*   **Smart Fallback:** Displays the user's profile image if no clips are found.
+*   **Fallback**: If no clips match the filters (Date range/Featured), it falls back to the top most popular clips to ensure content plays.
 *   **Chat Integration:**
     *   **!watchclip:** Play a specific clip link posted in chat.
     *   **!replayso:** Replay the previous shout-out clip.
@@ -21,6 +21,7 @@ This is a Twitch Shout-Out generator and browser source overlay for OBS. This pr
 *   **Auto-Shoutout:** Automatically shout out streamers when they raid you (configurable min viewer count).
 *   **Customization:**
     *   Date range filters for clips (e.g., last 30 days).
+    *   Prefer Featured clips.
     *   Custom chat messages and overlay titles.
     *   Clip details panel showing Game, Title, Creator, and Date.
     *   CSS Theme options.
