@@ -10,13 +10,6 @@ This is a Twitch Shout-Out generator and browser source overlay for OBS. This pr
 - [https://twitch-shoutout.teklynk.dev](https://twitch-shoutout.teklynk.dev)
 - [https://twitch-shoutout.pages.dev](https://twitch-shoutout.pages.dev)
 
----
-
-## ⚠️ NOTICE
-**The Slider Feature is deprecated** and will be removed in a future version. This change allows us to simplify the codebase and focus on improving the Clips functionality. If you currently use the Slider overlay, please be aware that it will eventually be discontinued.
-
----
-
 ## Features
 *   **Clip Player:** Plays a random or recent clip from the shouted-out channel.
 *   **Queue System:** Multiple shout-outs go into a queue and play sequentially.
