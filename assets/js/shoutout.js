@@ -122,7 +122,7 @@ $(document).ready(async function () {
     }
 
     if (!timeOut) {
-        timeOut = 10; // default
+        timeOut = 60; // default
     }
 
     if (!modsOnly) {
