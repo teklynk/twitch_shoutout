@@ -376,17 +376,18 @@ $(document).ready(async function () {
             // extract the clip id/slug from the url
             if (message.includes('https://clips.twitch.tv/')) {
                 clip_Id = urlArr[3];
-                // remove everything in the url after the '?'
-                clip_Id = clip_Id.split('?')[0];
             } else {
                 clip_Id = urlArr[5];
             }
+
+            // remove everything in the url after the '?'
+            clip_Id = clip_Id.split('?')[0];
 
             console.log('clip_Id: ' + clip_Id);
 
             // get the clip_url from the api
             getClipUrl(clip_Id, function (info) {
-                if (info.data[0].clip_url) {
+                if (info.data && info.data[0] && info.data[0].clip_url) {
                     // save the clip url to sessionStorage
                     sessionStorage.setItem('twitchSOWatchClip', info.data[0].clip_url);
                 }
