@@ -152,9 +152,7 @@
         </div>
 
         <div class="form-label-group mb-4">
-            <label for="command">Custom Command
-                <small>(so, soclip, playclip. No need to include the ! symbol)</small>
-            </label>
+            <label for="command">Custom Command (so, soclip, playclip. No need to include the ! symbol)</label>
             <input type="text" id="command" class="form-control validate shadow" value="so" placeholder="so" size="50">
         </div>
 
@@ -183,24 +181,21 @@
             </label>
         </div>
         <div class="form-group range-slider hide ml-4 mr-4 mt-2" id="so_count">
-            <label for="delay">Min raid party size
-            </label>
+            <label for="delay">Min raid party size</label>
             <input type="range" max="30" min="0" step="1" class="form-control range-slider-range shadow" id="raidCount"
                 value="3" style="height: 0;">
             <small class="text-muted range-slider-value"></small>
             <small class="text-muted range-slider-value">Users</small>
         </div>
         <div class="form-group range-slider hide ml-4 mr-4" id="so_delay">
-            <label for="delay">Delay automatic shoutout
-            </label>
+            <label for="delay">Delay automatic shoutout</label>
             <input type="range" max="30" min="1" step="1" class="form-control range-slider-range shadow" id="delay"
                 value="10" style="height: 0;">
             <small class="text-muted range-slider-value"></small>
             <small class="text-muted range-slider-value">Seconds</small>
         </div>
         <div class="form-group range-slider mt-2">
-            <label for="dateRange">Prefer clips from within a Date Range (Date range clips if found) <small
-                    class="text-warning">* 0 Day(s) = OFF</small>
+            <label for="dateRange">Prefer clips from within a Date Range (Date range clips if found) <small class="text-warning">* 0 Day(s) = OFF</small>
             </label>
             <input type="range" max="365" min="0" step="10" class="form-control range-slider-range shadow" id="dateRange"
                 value="0" style="height: 0;">
@@ -208,9 +203,7 @@
             <small class="text-muted range-slider-value">Day(s)</small>
         </div>
         <div class="form-group range-slider">
-            <label for="timeOut">Max Duration Time
-                <small>(How long should the clip play?)</small>
-            </label>
+            <label for="timeOut">Max Duration Time (How long should the clip play?)</label>
             <input type="range" max="120" min="10" step="10" class="form-control range-slider-range shadow" id="timeOut"
                 value="10" style="height: 0;">
             <small class="text-muted range-slider-value"></small>
@@ -223,9 +216,7 @@
             </label>
             <div class="form-label-group mb-4 hide" id="customTitle_block">
                 <div class="form-label-group mb-4 mt-2">
-                    <label for="customTitle">Custom Title
-                        <small>(Optional)</small>
-                    </label>
+                    <label for="customTitle">Custom Title (Optional)</label>
                     <input type="text" id="customTitle" class="form-control shadow" value=""
                         placeholder="Go check out {channel} {url}" size="50">
                 </div>
@@ -238,7 +229,7 @@
             </label>
         </div>
         <div class="form-label-group mt-2 mb-4 ml-4 hide" id="showDetailsText">
-            <label for="detailsText">Custom clip details panel text <small>(Optional)</small>
+            <label for="detailsText">Custom clip details panel text (Optional)
             </label>
             <textarea class="form-control shadow" id="detailsText" rows="4" placeholder="{title}
 While streaming {game}
@@ -252,9 +243,7 @@ Clipped by {creator_name} {created_at}"></textarea>
             </label>
             <div class="form-label-group mb-4 hide" id="access_token">
                 <div class="form-label-group mb-4 mt-2">
-                    <label for="customMsg">Custom Message
-                        <small>(Optional)</small>
-                    </label>
+                    <label for="customMsg">Custom Message (Optional)</label>
                     <input type="text" id="customMsg" class="form-control shadow" value=""
                         placeholder="Go check out {channel}! - They were playing: {game} - {title} - {url}" size="50">
                 </div>
@@ -351,6 +340,49 @@ Clipped by {creator_name} {created_at}"></textarea>
             if (localStorage.getItem("TwitchSOThemeOption")) {
                 document.getElementById("themeOption").value = localStorage.getItem("TwitchSOThemeOption");
             }
+            if (localStorage.getItem("TwitchSORaidCount")) {
+                document.getElementById("raidCount").value = localStorage.getItem("TwitchSORaidCount");
+                $('#raidCount').trigger('input');
+            }
+            if (localStorage.getItem("TwitchSODelay")) {
+                document.getElementById("delay").value = localStorage.getItem("TwitchSODelay");
+                $('#delay').trigger('input');
+            }
+            if (localStorage.getItem("TwitchSODateRange")) {
+                document.getElementById("dateRange").value = localStorage.getItem("TwitchSODateRange");
+                $('#dateRange').trigger('input');
+            }
+            if (localStorage.getItem("TwitchSOTimeOut")) {
+                document.getElementById("timeOut").value = localStorage.getItem("TwitchSOTimeOut");
+                $('#timeOut').trigger('input');
+            }
+            if (localStorage.getItem("TwitchSOShowClip")) {
+                document.getElementById("showClip").checked = (localStorage.getItem("TwitchSOShowClip") === "true");
+            }
+            if (localStorage.getItem("TwitchSOPreferFeatured")) {
+                document.getElementById("preferFeatured").checked = (localStorage.getItem("TwitchSOPreferFeatured") === "true");
+            }
+            if (localStorage.getItem("TwitchSOShowImage")) {
+                document.getElementById("showImage").checked = (localStorage.getItem("TwitchSOShowImage") === "true");
+            }
+            if (localStorage.getItem("TwitchSORaided")) {
+                document.getElementById("raided").checked = (localStorage.getItem("TwitchSORaided") === "true");
+            }
+            if (localStorage.getItem("TwitchSOShowText")) {
+                document.getElementById("showText").checked = (localStorage.getItem("TwitchSOShowText") === "true");
+            }
+            if (localStorage.getItem("TwitchSOShowDetails")) {
+                document.getElementById("showDetails").checked = (localStorage.getItem("TwitchSOShowDetails") === "true");
+            }
+            if (localStorage.getItem("TwitchSOShowMsg")) {
+                document.getElementById("showMsg").checked = (localStorage.getItem("TwitchSOShowMsg") === "true");
+            }
+            if (localStorage.getItem("TwitchSOModsOnly")) {
+                document.getElementById("modsOnly").checked = (localStorage.getItem("TwitchSOModsOnly") === "true");
+            }
+            if (localStorage.getItem("TwitchSODetailsText")) {
+                document.getElementById("detailsText").value = localStorage.getItem("TwitchSODetailsText");
+            }
 
             if (document.getElementById("showText").checked) {
                 document.getElementById("customTitle_block").classList.toggle('hide');
@@ -367,6 +399,7 @@ Clipped by {creator_name} {created_at}"></textarea>
 
             if (document.getElementById("raided").checked) {
                 document.getElementById("so_delay").classList.toggle('hide');
+                document.getElementById("so_count").classList.toggle('hide');
             }
         }
 
@@ -382,6 +415,19 @@ Clipped by {creator_name} {created_at}"></textarea>
             localStorage.setItem("TwitchSOCustomTitle", document.getElementById("customTitle").value.trim());
             localStorage.setItem("TwitchSOCommand", document.getElementById("command").value.trim());
             localStorage.setItem("TwitchSOThemeOption", document.getElementById("themeOption").value);
+            localStorage.setItem("TwitchSOShowClip", document.getElementById("showClip").checked);
+            localStorage.setItem("TwitchSOPreferFeatured", document.getElementById("preferFeatured").checked);
+            localStorage.setItem("TwitchSOShowImage", document.getElementById("showImage").checked);
+            localStorage.setItem("TwitchSORaided", document.getElementById("raided").checked);
+            localStorage.setItem("TwitchSOShowText", document.getElementById("showText").checked);
+            localStorage.setItem("TwitchSOShowDetails", document.getElementById("showDetails").checked);
+            localStorage.setItem("TwitchSOShowMsg", document.getElementById("showMsg").checked);
+            localStorage.setItem("TwitchSOModsOnly", document.getElementById("modsOnly").checked);
+            localStorage.setItem("TwitchSORaidCount", document.getElementById("raidCount").value);
+            localStorage.setItem("TwitchSODelay", document.getElementById("delay").value);
+            localStorage.setItem("TwitchSODateRange", document.getElementById("dateRange").value);
+            localStorage.setItem("TwitchSOTimeOut", document.getElementById("timeOut").value);
+            localStorage.setItem("TwitchSODetailsText", document.getElementById("detailsText").value);
         });
 
         //show chat message
