@@ -2,10 +2,6 @@ $(document).ready(async function () {
     // Get values from URL string
     const urlParams = new URLSearchParams(window.location.search);
 
-    // clear sessionStorage on load. Some clips have a expire time that needs to be refreshed and can not sit in sessionStorage for too long.
-    sessionStorage.clear();
-    console.log('Cleared sessionStorage');
-
     // Function to randomly select a api server
     async function setRandomServer() {
         let serverArr = [];
