@@ -101,6 +101,8 @@ $(document).ready(async function () {
 
     let userIsVip = false;
 
+    let limit = "100";
+
     if (!raided) {
         raided = "false"; //default
     }
@@ -179,11 +181,16 @@ $(document).ready(async function () {
 
     // Get game details function
     async function game_title(game_id) {
-        const response = await fetch(apiServer + "/getgame.php?id=" + game_id);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+        try {
+            const response = await fetch(apiServer + "/getgame.php?id=" + game_id);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await response.json();
+        } catch (e) {
+            console.error(e);
+            return null;
         }
-        return await response.json();
     }
 
     // Twitch API get user info for !so command
@@ -242,9 +249,9 @@ $(document).ready(async function () {
             callback(data);
         } else {
             if (preferFeatured !== "false") {
-                urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=true&limit=20&shuffle=true" + dateRange;
+                urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=true&limit=" + limit + "&shuffle=true" + dateRange;
             } else {
-                urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=false&limit=20&shuffle=true" + dateRange;
+                urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=false&limit=" + limit + "&shuffle=true" + dateRange;
             }
             fetch(urlC)
                 .then(response => {
@@ -257,7 +264,7 @@ $(document).ready(async function () {
                     // If dateRange or preferFeatured is set but no clips are found. Try to pull any clip.
                     if (data.data && data.data.length === 0 && (dateRange > "" || preferFeatured !== "false")) {
                         console.log('No clips found matching dateRange or preferFeatured filter. PULL ANY Clip found from: ' + SOChannel);
-                        const response = await fetch(apiServer + "/getuserclips.php?channel=" + SOChannel + "&limit=20&shuffle=true");
+                        const response = await fetch(apiServer + "/getuserclips.php?channel=" + SOChannel + "&limit=" + limit + "&shuffle=true");
                         if (response.ok) {
                             data = await response.json();
                         }
@@ -499,12 +506,10 @@ $(document).ready(async function () {
     }
 
     function executeShoutOut(getChannel, replayClip = false, watchClip = false) {
-        if (watchClip === true || replayClip === true) {
-            // If chat command = !replayclip
+        if (watchClip === true || replayClip === true) { // If chat command = !replayclip
             if (replayClip === true) {
                 clip_url = sessionStorage.getItem('twitchSOClipUrl');
-                console.log('Replaying: ' + clip_url);
-                // If chat command = !watchclip
+                console.log('Replaying: ' + clip_url); // If chat command = !watchclip
             } else if (watchClip === true) {
                 clip_url = sessionStorage.getItem('twitchSOWatchClip');
                 console.log('Watching: ' + clip_url);
@@ -517,23 +522,42 @@ $(document).ready(async function () {
             }
 
             titleText = '';
-
             $("<video id='clip' class='video fade' width='100%' height='100%' autoplay><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
+            const videoElement = document.getElementById("clip");
 
             let timer = 0;
             const startTimer = setInterval(function () {
                 timer++;
                 if (timer >= parseInt(timeOut)) { // Use >= to be safe
                     clearInterval(startTimer);
+                    clearTimeout(playCheckTimeout);
                     cleanupAndNext();
                 }
             }, 1000);
 
-            // Remove video element after it has finished playing
-            document.getElementById("clip").onended = function (e) {
+            const handleWatchReplayError = () => {
+                console.log("Error playing watched/replayed clip: " + clip_url);
                 clearInterval(startTimer);
+                clearTimeout(playCheckTimeout);
                 cleanupAndNext();
             };
+
+            const playCheckTimeout = setTimeout(() => {
+                if (videoElement && videoElement.readyState < 2) {
+                    console.log("Watched/replayed clip did not load in time. Assuming error.");
+                    handleWatchReplayError();
+                }
+            }, 5000);
+
+            // Remove video element after it has finished playing
+            videoElement.onended = function (e) {
+                clearInterval(startTimer);
+                clearTimeout(playCheckTimeout);
+                cleanupAndNext();
+            };
+
+            videoElement.onerror = handleWatchReplayError;
+
             return;
         }
 
@@ -566,153 +590,195 @@ $(document).ready(async function () {
 
                     getClips(getChannel, async function (clipInfo) {
 
-                        console.log(clipInfo.data[0]);
+                        indexClip = 0;
+                        let errorCount = 0;
 
-                        // If clips exist
-                        if (clipInfo.data[0] && clipInfo.data[0].clip_url) {
+                        const playClip = async function () {
 
-                            console.log('Clips exist!');
+                            console.log(clipInfo.data[indexClip]);
 
-                            console.log('Clip URL: ' + clipInfo.data[0].clip_url);
+                            // If clips exist
+                            if (clipInfo.data[indexClip] && clipInfo.data[indexClip].clip_url) {
 
-                            let clip_url = clipInfo.data[0].clip_url;
+                                console.log('Clips exist!');
 
-                            // Text on top of clip
-                            if (showText === 'true') {
-                                if (customTitle) {
-                                    let processedTitle = customTitle;
-                                    if (processedTitle.includes("{channel}")) {
-                                        processedTitle = processedTitle.replace(/{channel}/g, clipInfo.data[indexClip]['broadcaster_name']);
-                                    }
-                                    if (processedTitle.includes("{url}")) {
-                                        processedTitle = processedTitle.replace(/{url}/g, "twitch.tv/" + clipInfo.data[indexClip]['broadcaster_name'].toLowerCase());
-                                    }
-                                    titleText = "<div id='text-container' class='hide'><span class='title-text'>" + decodeURIComponent(processedTitle) + "</span></div>"
-                                } else {
-                                    titleText = "<div id='text-container' class='hide'><span class='title-text'>Go check out " + clipInfo.data[0]['broadcaster_name'] + "</span></div>"
-                                }
-                            } else {
-                                titleText = '';
-                            }
+                                console.log('Clip URL: ' + clipInfo.data[indexClip].clip_url);
 
-                            $(titleText).appendTo("#container");
+                                const clip_url = clipInfo.data[indexClip].clip_url;
 
-                            setTimeout(function () {
-                                $("#text-container").removeClass("hide");
-                                $("#details-container").removeClass("hide");
-                            }, 500);
-
-                            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
-
-                            if (showDetails === 'true') {
-                                if (detailsText) {
-                                    let processedDetails = detailsText;
-
-                                    if (processedDetails.includes("{title}")) {
-                                        if (clipInfo.data[indexClip]['title']) {
-                                            processedDetails = processedDetails.replace(/{title}/g, clipInfo.data[indexClip]['title']);
-                                        } else {
-                                            processedDetails = processedDetails.replace(/{title}/g, "?");
+                                // Text on top of clip
+                                if (showText === 'true') {
+                                    if (customTitle) {
+                                        let processedTitle = customTitle;
+                                        if (processedTitle.includes("{channel}")) {
+                                            processedTitle = processedTitle.replace(/{channel}/g, clipInfo.data[indexClip].broadcaster_name);
                                         }
-                                    }
-
-                                    if (processedDetails.includes("{game}")) {
-                                        if (clipInfo.data[indexClip]['game_id']) {
-                                            let game = await game_title(clipInfo.data[indexClip]['game_id']);
-                                            processedDetails = processedDetails.replace(/{game}/g, game.data[0]['name']);
-                                        } else {
-                                            processedDetails = processedDetails.replace(/{game}/g, "?");
+                                        if (processedTitle.includes("{url}")) {
+                                            processedTitle = processedTitle.replace(/{url}/g, "twitch.tv/" + clipInfo.data[indexClip].broadcaster_name.toLowerCase());
                                         }
+                                        titleText = "<div id='text-container' class='hide'><span class='title-text'>" + decodeURIComponent(processedTitle) + "</span></div>"
+                                    } else {
+                                        titleText = "<div id='text-container' class='hide'><span class='title-text'>Go check out " + clipInfo.data[indexClip].broadcaster_name + "</span></div>"
                                     }
-
-                                    if (processedDetails.includes("{created_at}")) {
-                                        processedDetails = processedDetails.replace(/{created_at}/g, moment(clipInfo.data[indexClip]['created_at']).format("MMMM D, YYYY"));
-                                    }
-                                    if (processedDetails.includes("{creator_name}")) {
-                                        processedDetails = processedDetails.replace(/{creator_name}/g, clipInfo.data[indexClip]['creator_name']);
-                                    }
-                                    if (processedDetails.includes("{channel}")) {
-                                        processedDetails = processedDetails.replace(/{channel}/g, clipInfo.data[indexClip]['broadcaster_name']);
-                                    }
-                                    if (processedDetails.includes("{url}")) {
-                                        processedDetails = processedDetails.replace(/{url}/g, "twitch.tv/" + clipInfo.data[indexClip]['broadcaster_name'].toLowerCase());
-                                    }
-
-                                    let dText = "";
-                                    let separateLines = processedDetails.split(/\r?\n|\r|\n/g);
-                                    separateLines.forEach(lineBreaks);
-
-                                    function lineBreaks(item, index) {
-                                        dText += "<div class='details-text item-" + index + "'>" + item + "</div>";
-                                    }
-
-                                    $("<div id='details-container'>" + dText + "</div>").appendTo('#container');
-
                                 } else {
-                                    clipDetailsText = "<div id='details-container' class='hide'><span class='details-text'>Go check out " + clipInfo.data[indexClip]['broadcaster_name'] + "</span></div>"
+                                    titleText = '';
                                 }
 
-                            } else {
-                                clipDetailsText = '';
-                            }
+                                $(titleText).appendTo("#container");
 
-                            let timer = 0;
-                            let startTimer = setInterval(function () {
-                                timer++;
-                                console.log(timer);
+                                setTimeout(() => {
+                                    $("#text-container").removeClass("hide");
+                                    $("#details-container").removeClass("hide");
+                                }, 500);
 
-                                if (timer >= parseInt(timeOut)) {
+                                $("<video id='clip' class='video fade' width='100%' height='100%' autoplay><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
+                                const videoElement = document.getElementById("clip");
+
+                                if (showDetails === 'true') {
+                                    if (detailsText) {
+                                        let processedDetails = detailsText;
+
+                                        if (processedDetails.includes("{title}")) {
+                                            if (clipInfo.data[indexClip].title) {
+                                                processedDetails = processedDetails.replace(/{title}/g, clipInfo.data[indexClip].title);
+                                            } else {
+                                                processedDetails = processedDetails.replace(/{title}/g, "?");
+                                            }
+                                        }
+
+                                        if (processedDetails.includes("{game}")) {
+                                            if (clipInfo.data[indexClip].game_id) {
+                                                const game = await game_title(clipInfo.data[indexClip].game_id);
+                                                if (game && game.data && game.data[0]) {
+                                                    processedDetails = processedDetails.replace(/{game}/g, game.data[0]['name']);
+                                                } else {
+                                                    processedDetails = processedDetails.replace(/{game}/g, "?");
+                                                }
+                                            } else {
+                                                processedDetails = processedDetails.replace(/{game}/g, "?");
+                                            }
+                                        }
+
+                                        if (processedDetails.includes("{created_at}")) { processedDetails = processedDetails.replace(/{created_at}/g, moment(clipInfo.data[indexClip].created_at).format("MMMM D, YYYY")); }
+                                        if (processedDetails.includes("{creator_name}")) { processedDetails = processedDetails.replace(/{creator_name}/g, clipInfo.data[indexClip].creator_name); }
+                                        if (processedDetails.includes("{channel}")) { processedDetails = processedDetails.replace(/{channel}/g, clipInfo.data[indexClip].broadcaster_name); }
+                                        if (processedDetails.includes("{url}")) { processedDetails = processedDetails.replace(/{url}/g, "twitch.tv/" + clipInfo.data[indexClip].broadcaster_name.toLowerCase()); }
+
+                                        let dText = "";
+                                        const separateLines = processedDetails.split(/\r?\n|\r|\n/g);
+                                        separateLines.forEach(lineBreaks);
+
+                                        function lineBreaks(item, index) {
+                                            dText += "<div class='details-text item-" + index + "'>" + item + "</div>";
+                                        }
+
+                                        $("<div id='details-container'>" + dText + "</div>").appendTo('#container');
+
+                                    } else {
+                                        clipDetailsText = "<div id='details-container' class='hide'><span class='details-text'>Go check out " + clipInfo.data[indexClip].broadcaster_name + "</span></div>"
+                                    }
+
+                                } else {
+                                    clipDetailsText = '';
+                                }
+
+                                let timer = 0;
+                                let startTimer;
+                                let playCheckTimeout;
+
+                                const handleClipError = async () => {
+                                    console.log("Error loading clip: " + clip_url);
+
                                     clearInterval(startTimer);
+                                    clearTimeout(playCheckTimeout);
+
+                                    if (document.getElementById("clip")) {
+                                        document.getElementById("clip").remove();
+                                    }
+                                    if (document.getElementById("text-container")) { document.getElementById("text-container").remove(); }
+                                    if (document.getElementById("details-container")) { document.getElementById("details-container").remove(); }
+
+                                    errorCount++;
+                                    indexClip++;
+
+                                    if (errorCount >= 3) {
+                                        console.log("Too many errors. Stopping.");
+                                        cleanupAndNext();
+                                        return;
+                                    }
+                                    await playClip();
+                                };
+
+                                playCheckTimeout = setTimeout(() => {
+                                    if (videoElement && videoElement.readyState < 2) {
+                                        console.log("Video did not load in time. Assuming error for: " + clip_url);
+                                        handleClipError();
+                                    }
+                                }, 3000);
+
+                                startTimer = setInterval(function () {
+                                    timer++;
+                                    console.log(timer);
+
+                                    if (timer >= parseInt(timeOut)) {
+                                        clearInterval(startTimer);
+                                        clearTimeout(playCheckTimeout);
+                                        cleanupAndNext();
+                                    }
+
+                                }, 1000);
+
+                                videoElement.onended = function (e) {
+                                    clearInterval(startTimer);
+                                    clearTimeout(playCheckTimeout);
+                                    cleanupAndNext();
+                                };
+
+                                videoElement.onerror = handleClipError;
+
+                                if (watch === false) {
+                                    sessionStorage.setItem('twitchSOClipUrl', clip_url);
+                                    sessionStorage.setItem('twitchSOChannel', getChannel);
+                                }
+
+                            } else {
+
+                                console.log('no clips found!');
+
+                                // Show profile image if no clips exist
+                                if (showImage === 'true' && indexClip === 0) {
+
+                                    getInfo(getChannel, function (userInfo) {
+                                        let userImage = userInfo.data[0]['profile_image_url'];
+
+                                        if (showText === 'true') {
+                                            titleText = "<div id='text-container'><span class='title-text'>Go check out " + userInfo.data[0]['display_name'] + "</span></div>"
+                                        } else {
+                                            titleText = '';
+                                        }
+
+                                        $(titleText + "<img id='profile' class='fade img-fluid' src='" + userImage + "'>").appendTo("#container");
+
+                                        let timer = 0;
+                                        let startTimer = setInterval(function () {
+                                            timer++;
+                                            console.log(timer);
+
+                                            if (timer >= 5) {
+                                                clearInterval(startTimer);
+                                                cleanupAndNext();
+                                            }
+
+                                        }, 1000);
+                                    });
+
+                                } else {
                                     cleanupAndNext();
                                 }
-
-                            }, 1000);
-
-                            document.getElementById("clip").onended = function (e) {
-                                clearInterval(startTimer);
-                                cleanupAndNext();
-                            };
-
-                            if (watch === false) {
-                                sessionStorage.setItem('twitchSOClipUrl', clip_url);
-                                sessionStorage.setItem('twitchSOChannel', getChannel);
-                            }
-
-                        } else {
-
-                            console.log('no clips found!');
-
-                            // Show profile image if no clips exist
-                            if (showImage === 'true') {
-
-                                getInfo(getChannel, function (userInfo) {
-                                    let userImage = userInfo.data[0]['profile_image_url'];
-
-                                    if (showText === 'true') {
-                                        titleText = "<div id='text-container'><span class='title-text'>Go check out " + userInfo.data[0]['display_name'] + "</span></div>"
-                                    } else {
-                                        titleText = '';
-                                    }
-
-                                    $(titleText + "<img id='profile' class='fade img-fluid' src='" + userImage + "'>").appendTo("#container");
-
-                                    let timer = 0;
-                                    let startTimer = setInterval(function () {
-                                        timer++;
-                                        console.log(timer);
-
-                                        if (timer >= 5) {
-                                            clearInterval(startTimer);
-                                            cleanupAndNext();
-                                        }
-
-                                    }, 1000);
-                                });
-
-                            } else {
-                                cleanupAndNext();
                             }
                         }
+
+                        playClip();
                     });
                 } else if (showImage === 'true') {
                     // Fallback to image if clips are disabled
