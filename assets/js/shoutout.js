@@ -174,6 +174,8 @@ $(document).ready(async function () {
 
     let clip_url = '';
 
+    let clip_poster = '';
+
     // Load theme css file if theme is set
     if (parseInt(themeOption) > 0) {
         $('head').append('<link rel="stylesheet" type="text/css" href="assets/css/theme' + themeOption + '.css">');
@@ -394,6 +396,8 @@ $(document).ready(async function () {
                 if (info && info.data && info.data[0] && info.data[0].clip_url) {
                     // save the clip url to sessionStorage
                     sessionStorage.setItem('twitchSOWatchClip', info.data[0].clip_url);
+                    // save the clip poster image to sessioinStorage
+                    sessionStorage.setItem('twitchSOWatchPoster', info.data[0].thumbnail_url);
                 }
             });
 
@@ -510,9 +514,11 @@ $(document).ready(async function () {
         if (watchClip === true || replayClip === true) { // If chat command = !replayclip
             if (replayClip === true) {
                 clip_url = sessionStorage.getItem('twitchSOClipUrl');
+                clip_poster = sessionStorage.getItem('twitchSOClipPoster');
                 console.log('Replaying: ' + clip_url); // If chat command = !watchclip
             } else if (watchClip === true) {
                 clip_url = sessionStorage.getItem('twitchSOWatchClip');
+                clip_poster = sessionStorage.getItem('twitchSOWatchPoster');
                 console.log('Watching: ' + clip_url);
             }
 
@@ -523,7 +529,7 @@ $(document).ready(async function () {
             }
 
             titleText = '';
-            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
+            $("<video id='clip' class='video fade' width='100%' height='100%' autoplay poster='" + clip_poster + "'><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
             const videoElement = document.getElementById("clip");
 
             let timer = 0;
@@ -606,6 +612,7 @@ $(document).ready(async function () {
                                 console.log('Clip URL: ' + clipInfo.data[indexClip].clip_url);
 
                                 const clip_url = clipInfo.data[indexClip].clip_url;
+                                const clip_poster = clipInfo.data[indexClip].thumbnail_url;
 
                                 // Text on top of clip
                                 if (showText === 'true') {
@@ -632,7 +639,7 @@ $(document).ready(async function () {
                                     $("#details-container").removeClass("hide");
                                 }, 500);
 
-                                $("<video id='clip' class='video fade' width='100%' height='100%' autoplay><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
+                                $("<video id='clip' class='video fade' width='100%' height='100%' autoplay poster='" + clip_poster + "'><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
                                 const videoElement = document.getElementById("clip");
 
                                 if (showDetails === 'true') {
@@ -739,6 +746,7 @@ $(document).ready(async function () {
 
                                 if (watch === false) {
                                     sessionStorage.setItem('twitchSOClipUrl', clip_url);
+                                    sessionStorage.setItem('twitchSOClipPoster', clip_poster);
                                     sessionStorage.setItem('twitchSOChannel', getChannel);
                                 }
 
