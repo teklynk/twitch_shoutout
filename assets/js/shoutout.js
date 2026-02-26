@@ -101,7 +101,7 @@ $(document).ready(async function () {
 
     let userIsVip = false;
 
-    let limit = "100";
+    let limit = "10";
 
     if (!raided) {
         raided = "false"; //default
@@ -194,51 +194,51 @@ $(document).ready(async function () {
     }
 
     // Twitch API get user info for !so command
-    let getInfo = function (SOChannel, callback) {
+    async function getInfo(SOChannel) {
         let storageKey = SOChannel + "-info";
         if (sessionStorage.getItem(storageKey)) {
-            callback(JSON.parse(sessionStorage.getItem(storageKey)));
+            return JSON.parse(sessionStorage.getItem(storageKey));
         } else {
             let urlU = apiServer + "/getuserinfo.php?channel=" + SOChannel;
-            fetch(urlU)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    sessionStorage.setItem(storageKey, JSON.stringify(data));
-                    callback(data);
-                })
-                .catch(error => console.error(error));
+            try {
+                const response = await fetch(urlU);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                sessionStorage.setItem(storageKey, JSON.stringify(data));
+                return data;
+            } catch (error) {
+                console.error(error);
+                return null;
+            }
         }
-    };
+    }
 
     // Twitch API get last game played from a user
-    let getStatus = function (SOChannel, callback) {
+    async function getStatus(SOChannel) {
         let storageKey = SOChannel + "-status";
         if (sessionStorage.getItem(storageKey)) {
-            callback(JSON.parse(sessionStorage.getItem(storageKey)));
+            return JSON.parse(sessionStorage.getItem(storageKey));
         } else {
             let urlG = apiServer + "/getuserstatus.php?channel=" + SOChannel + "";
-            fetch(urlG)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    sessionStorage.setItem(storageKey, JSON.stringify(data));
-                    callback(data);
-                })
-                .catch(error => console.error(error));
+            try {
+                const response = await fetch(urlG);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                sessionStorage.setItem(storageKey, JSON.stringify(data));
+                return data;
+            } catch (error) {
+                console.error(error);
+                return null;
+            }
         }
-    };
+    }
 
     // Twitch API get clips for !so command
-    let getClips = function (SOChannel, callback) {
+    async function getClips(SOChannel) {
         let urlC;
         if (sessionStorage.getItem(SOChannel)) {
             let data = JSON.parse(sessionStorage.getItem(SOChannel));
@@ -246,49 +246,50 @@ $(document).ready(async function () {
                 const randomIndex = Math.floor(Math.random() * data.data.length);
                 [data.data[0], data.data[randomIndex]] = [data.data[randomIndex], data.data[0]];
             }
-            callback(data);
+            return data;
         } else {
             if (preferFeatured !== "false") {
                 urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=true&limit=" + limit + "&shuffle=true" + dateRange;
             } else {
                 urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=false&limit=" + limit + "&shuffle=true" + dateRange;
             }
-            fetch(urlC)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(async data => {
-                    // If dateRange or preferFeatured is set but no clips are found. Try to pull any clip.
-                    if (data.data && data.data.length === 0 && (dateRange > "" || preferFeatured !== "false")) {
-                        console.log('No clips found matching dateRange or preferFeatured filter. PULL ANY Clip found from: ' + SOChannel);
-                        const response = await fetch(apiServer + "/getuserclips.php?channel=" + SOChannel + "&limit=" + limit + "&shuffle=true");
-                        if (response.ok) {
-                            data = await response.json();
-                        }
-                    }
-                    sessionStorage.setItem(SOChannel, JSON.stringify(data));
-                    callback(data);
-                })
-                .catch(error => console.error(error));
-        }
-    };
-
-    // Twitch API get clip for !watchclip command
-    let getClipUrl = function (id, callback) {
-        let urlV = apiServer + "/getuserclips.php?id=" + id;
-        fetch(urlV)
-            .then(response => {
+            try {
+                let response = await fetch(urlC);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.json();
-            })
-            .then(data => callback(data))
-            .catch(error => console.error(error));
-    };
+                let data = await response.json();
+                // If dateRange or preferFeatured is set but no clips are found. Try to pull any clip.
+                if (data.data && data.data.length === 0 && (dateRange > "" || preferFeatured !== "false")) {
+                    console.log('No clips found matching dateRange or preferFeatured filter. PULL ANY Clip found from: ' + SOChannel);
+                    const responseFallback = await fetch(apiServer + "/getuserclips.php?channel=" + SOChannel + "&limit=" + limit + "&shuffle=true");
+                    if (responseFallback.ok) {
+                        data = await responseFallback.json();
+                    }
+                }
+                sessionStorage.setItem(SOChannel, JSON.stringify(data));
+                return data;
+            } catch (error) {
+                console.error(error);
+                return null;
+            }
+        }
+    }
+
+    // Twitch API get clip for !watchclip command
+    async function getClipUrl(id) {
+        let urlV = apiServer + "/getuserclips.php?id=" + id;
+        try {
+            const response = await fetch(urlV);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
 
     // Returns the urls as an array from a chat message(string)
     function detectURLs(chatmsg) {
@@ -389,8 +390,8 @@ $(document).ready(async function () {
             console.log('clip_Id: ' + clip_Id);
 
             // get the clip_url from the api
-            getClipUrl(clip_Id, function (info) {
-                if (info.data && info.data[0] && info.data[0].clip_url) {
+            getClipUrl(clip_Id).then(function (info) {
+                if (info && info.data && info.data[0] && info.data[0].clip_url) {
                     // save the clip url to sessionStorage
                     sessionStorage.setItem('twitchSOWatchClip', info.data[0].clip_url);
                 }
@@ -505,7 +506,7 @@ $(document).ready(async function () {
         setTimeout(processShoutOutQueue, 500);
     }
 
-    function executeShoutOut(getChannel, replayClip = false, watchClip = false) {
+    async function executeShoutOut(getChannel, replayClip = false, watchClip = false) {
         if (watchClip === true || replayClip === true) { // If chat command = !replayclip
             if (replayClip === true) {
                 clip_url = sessionStorage.getItem('twitchSOClipUrl');
@@ -561,9 +562,9 @@ $(document).ready(async function () {
             return;
         }
 
-        getStatus(getChannel, function (statusInfo) {
-            // If user exists
-            if (statusInfo.data && statusInfo.data.length > 0) {
+        const statusInfo = await getStatus(getChannel);
+        // If user exists
+        if (statusInfo && statusInfo.data && statusInfo.data.length > 0) {
 
                 if (showMsg === 'true') {
                     // If user has streamed anything then say message
@@ -588,7 +589,7 @@ $(document).ready(async function () {
                 // Show Clip
                 if (showClip === 'true' || showRecentClip === 'true') {
 
-                    getClips(getChannel, async function (clipInfo) {
+                    const clipInfo = await getClips(getChannel);
 
                         indexClip = 0;
                         let errorCount = 0;
@@ -779,10 +780,9 @@ $(document).ready(async function () {
                         }
 
                         playClip();
-                    });
                 } else if (showImage === 'true') {
                     // Fallback to image if clips are disabled
-                    getInfo(getChannel, function (userInfo) {
+                    const userInfo = await getInfo(getChannel);
                         let userImage = userInfo.data[0]['profile_image_url'];
 
                         if (showText === 'true') {
@@ -804,18 +804,16 @@ $(document).ready(async function () {
                             }
 
                         }, 1000);
-                    });
                 } else {
                     cleanupAndNext();
                 }
 
             } else {
-
                 // If user/channel does not exist
                 console.log(getChannel + ': Does not exist!');
+                cleanupAndNext();
                 return false;
             }
-        });
     }
 
 
