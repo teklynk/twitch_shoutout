@@ -757,7 +757,8 @@ $(document).ready(async function () {
                                 // Show profile image if no clips exist
                                 if (showImage === 'true' && indexClip === 0) {
 
-                                    getInfo(getChannel, function (userInfo) {
+                                    const userInfo = await getInfo(getChannel);
+                                    if (userInfo && userInfo.data && userInfo.data.length > 0) {
                                         let userImage = userInfo.data[0]['profile_image_url'];
 
                                         if (showText === 'true') {
@@ -779,7 +780,9 @@ $(document).ready(async function () {
                                             }
 
                                         }, 1000);
-                                    });
+                                    } else {
+                                        cleanupAndNext();
+                                    }
 
                                 } else {
                                     cleanupAndNext();
