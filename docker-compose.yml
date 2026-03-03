@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  web:
+    image: nginx:alpine
+    container_name: twitch_shoutout
+    volumes:
+      - .:/usr/share/nginx/html:ro
+    ports:
+      - "5002:80"
