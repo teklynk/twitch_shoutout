@@ -286,6 +286,8 @@ Clipped by {creator_name} {created_at}"></textarea>
         <small class="muted">Made with <i class="fa fa-heart vertical-middle text-danger"></i> by <a href="https://www.teklynk.com" target="_blank">Teklynk</a></small>
     </div>
     <script>
+        const TWITCH_CLIENT_ID = "gl1cjo1kdgsmj7lwjajhnb2lireyus";
+
         function onInit() {
 
             let url = window.location.href;
@@ -294,9 +296,8 @@ Clipped by {creator_name} {created_at}"></textarea>
 
             // Update auth link
             let authLink = document.getElementById("twitch-auth-link");
-            let clientId = "gl1cjo1kdgsmj7lwjajhnb2lireyus";
             let scope = "chat:read+chat:edit";
-            authLink.href = "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + clientId + "&redirect_uri=" + redirectUrl + "&scope=" + scope + "&force_verify=true";
+            authLink.href = "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + TWITCH_CLIENT_ID + "&redirect_uri=" + redirectUrl + "&scope=" + scope + "&force_verify=true";
 
             if (url.indexOf('#access_token') !== -1) {
                 // extract the access_token from the url
