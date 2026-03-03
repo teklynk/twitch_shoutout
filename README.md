@@ -3,6 +3,8 @@
 ## What is this?
 This is a Twitch Shout-Out generator and browser source overlay for OBS. This project uses [TMI.js](https://tmijs.com/), JavaScript, HTML, and CSS. It is client-side code that can run locally (localhost) or on your own server.
 
+**NOTE:** This project relies on a custom Twitch API Gateway server/service. You can host this service using Docker. Check out the project for more details. [https://github.com/teklynk/twitch_api_public](https://github.com/teklynk/twitch_api_public)
+
 ### Try it here 
 
 - [https://twitchshoutout.com](https://twitchshoutout.com)
