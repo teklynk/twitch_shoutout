@@ -279,12 +279,24 @@ $(document).ready(async function () {
                     if (responseFallback.ok) {
                         data = await responseFallback.json();
                     }
+                    // If the fallback fails, just use the empty `data` object from the first request.
                 }
-                sessionStorage.setItem(SOChannel, JSON.stringify(data));
+                try {
+                    sessionStorage.setItem(SOChannel, JSON.stringify(data));
+                } catch (e) {
+                    console.error("sessionStorage error:", e);
+                }
                 return data;
             } catch (error) {
                 console.error(error);
-                return null;
+                // On any error, create an empty data object to be cached to prevent re-fetching.
+                const data = { data: [] };
+                try {
+                    sessionStorage.setItem(SOChannel, JSON.stringify(data));
+                } catch (e) {
+                    console.error("sessionStorage error:", e);
+                }
+                return data;
             }
         }
     }
@@ -580,7 +592,8 @@ $(document).ready(async function () {
         }
 
         const statusInfo = await getStatus(getChannel);
-        // If user exists
+        
+        // If user exists, then getClips
         if (statusInfo && statusInfo.data && statusInfo.data.length > 0) {
 
                 if (showMsg === 'true') {
