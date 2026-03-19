@@ -526,6 +526,9 @@ $(document).ready(async function () {
         if (document.getElementById("details-container")) {
             document.getElementById("details-container").remove();
         }
+        if (document.getElementById("progress-bar-container")) {
+            document.getElementById("progress-bar-container").remove();
+        }
 
         isShoutOutPlaying = false;
         console.log('Shoutout finished. Processing next in queue.');
@@ -666,6 +669,23 @@ $(document).ready(async function () {
                                 $("<video id='clip' class='video fade' width='100%' height='100%' autoplay poster='" + clip_poster + "'><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
                                 const videoElement = document.getElementById("clip");
 
+                                // Create progress bar
+                                let progressBarContainer = document.createElement('div');
+                                progressBarContainer.id = 'progress-bar-container';
+                                $(progressBarContainer).appendTo('#container');
+
+                                let progressBar = document.createElement('div');
+                                progressBar.id = 'progress-bar';
+                                $(progressBar).appendTo(progressBarContainer);
+
+                                // Update progress bar
+                                videoElement.addEventListener('timeupdate', () => {
+                                    if (videoElement.duration) {
+                                        let percentage = (videoElement.currentTime / videoElement.duration) * 100;
+                                        progressBar.style.width = percentage + '%';
+                                    }
+                                });
+
                                 if (showDetails === 'true') {
                                     if (detailsText) {
                                         let processedDetails = detailsText;
@@ -729,6 +749,7 @@ $(document).ready(async function () {
                                     }
                                     if (document.getElementById("text-container")) { document.getElementById("text-container").remove(); }
                                     if (document.getElementById("details-container")) { document.getElementById("details-container").remove(); }
+                                    if (document.getElementById("progress-bar-container")) { document.getElementById("progress-bar-container").remove(); }
 
                                     errorCount++;
                                     indexClip++;

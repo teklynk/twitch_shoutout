@@ -43,6 +43,7 @@ This is a Twitch Shout-Out generator and browser source overlay for OBS. This pr
     *   Enable **"Shutdown source when not visible"**.
     *   Enable **"Control audio via OBS"**.
     *   Enable **"Refresh browser when scene becomes active"**.
+    *   Set browser source window size to **"1920x1080"** and then resize/scale the browser source window.
 4.  Enable **Browser Source Hardware Acceleration** in OBS Settings -> Advanced for better performance.
 
 ## Twitch OAuth Token
@@ -91,4 +92,30 @@ Stop and remove the container with:
 
 ```bash
 docker-compose down
+```
+
+## Custom CSS
+
+You can add this to the OBS browser source **CSS** box to set a fixed video width and height (optional).
+
+```css
+video {
+    width: 1280px !important;
+    height: 720px !important;
+    background-color: #000000;
+}
+
+#container {
+    padding:0;
+    margin:0;
+}
+
+#details-container {
+    top: 44vw;
+}
+
+/** Hide progress bar (optional) **/
+#progress-bar-container {
+    display: none;
+}
 ```
