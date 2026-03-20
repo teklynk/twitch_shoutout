@@ -683,6 +683,10 @@ $(document).ready(async function () {
                                     if (videoElement.duration) {
                                         let percentage = (videoElement.currentTime / videoElement.duration) * 100;
                                         progressBar.style.width = percentage + '%';
+                                        // immediately set the progress bar width back to 0%
+                                        if (percentage == 100) {
+                                            $(progressBar).css("width", "0%");
+                                        }
                                     }
                                 });
 
