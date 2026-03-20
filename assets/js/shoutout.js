@@ -419,8 +419,14 @@ $(document).ready(async function () {
                 if (info && info.data && info.data[0] && info.data[0].clip_url) {
                     // save the clip url to sessionStorage
                     sessionStorage.setItem('twitchSOWatchClip', info.data[0].clip_url);
-                    // save the clip poster image to sessioinStorage
-                    sessionStorage.setItem('twitchSOWatchPoster', info.data[0].thumbnail_url);
+                    let thumbnailUrl = info.data[0].thumbnail_url;
+                    if (thumbnailUrl) {
+                        thumbnailUrl = thumbnailUrl.replace("-preview-480x272.jpg", "-preview-1920x1080.jpg");
+                    } else {
+                        thumbnailUrl = "";
+                    }
+                    // save the clip poster image to sessionStorage
+                    sessionStorage.setItem('twitchSOWatchPoster', thumbnailUrl);
                 }
             });
 
@@ -639,7 +645,11 @@ $(document).ready(async function () {
                                 console.log('Clip URL: ' + clipInfo.data[indexClip].clip_url);
 
                                 const clip_url = clipInfo.data[indexClip].clip_url;
-                                const clip_poster = clipInfo.data[indexClip].thumbnail_url;
+                                let clip_poster = clipInfo.data[indexClip].thumbnail_url;
+
+                                if (clip_poster) {
+                                    clip_poster = clip_poster.replace("-preview-480x272.jpg", "-preview-1920x1080.jpg");
+                                }
 
                                 // Text on top of clip
                                 if (showText === 'true') {
@@ -673,6 +683,7 @@ $(document).ready(async function () {
                                 let progressBarContainer = document.createElement('div');
                                 progressBarContainer.id = 'progress-bar-container';
                                 $(progressBarContainer).appendTo('#container');
+                                $(progressBarContainer).css("display", "none");
 
                                 let progressBar = document.createElement('div');
                                 progressBar.id = 'progress-bar';
@@ -681,11 +692,13 @@ $(document).ready(async function () {
                                 // Update progress bar
                                 videoElement.addEventListener('timeupdate', () => {
                                     if (videoElement.duration) {
+                                        $(progressBarContainer).css("display", "block");
                                         let percentage = (videoElement.currentTime / videoElement.duration) * 100;
                                         progressBar.style.width = percentage + '%';
                                         // immediately set the progress bar width back to 0%
                                         if (percentage == 100) {
                                             $(progressBar).css("width", "0%");
+                                            $(progressBarContainer).css("display", "none");
                                         }
                                     }
                                 });
