@@ -686,18 +686,20 @@ $(document).ready(async function () {
                                 $(progressBar).appendTo(progressBarContainer);
 
                                 // Update progress bar
-                                videoElement.addEventListener('timeupdate', () => {
+                                function animateProgressBar() {
                                     if (videoElement.duration) {
                                         $(progressBarContainer).css("display", "block");
                                         let percentage = (videoElement.currentTime / videoElement.duration) * 100;
                                         progressBar.style.width = percentage + '%';
                                         // immediately set the progress bar width back to 0%
-                                        if (percentage == 100) {
+                                        if (percentage >= 100) {
                                             $(progressBar).css("width", "0%");
                                             $(progressBarContainer).css("display", "none");
                                         }
                                     }
-                                });
+                                    requestAnimationFrame(animateProgressBar);
+                                }
+                                requestAnimationFrame(animateProgressBar);
 
                                 if (showDetails === 'true') {
                                     if (detailsText) {
