@@ -116,6 +116,6 @@ video {
 
 /** Hide progress bar (optional) **/
 #progress-bar-container {
-    display: none;
+    display: none !important;
 }
 ```
