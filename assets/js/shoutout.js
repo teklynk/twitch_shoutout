@@ -647,10 +647,6 @@ $(document).ready(async function () {
                                 const clip_url = clipInfo.data[indexClip].clip_url;
                                 let clip_poster = clipInfo.data[indexClip].thumbnail_url;
 
-                                if (clip_poster) {
-                                    clip_poster = clip_poster.replace("-preview-480x272.jpg", "-preview-1920x1080.jpg");
-                                }
-
                                 // Text on top of clip
                                 if (showText === 'true') {
                                     if (customTitle) {
