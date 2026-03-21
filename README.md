@@ -28,6 +28,9 @@ This is a Twitch Shout-Out generator and browser source overlay for OBS. This pr
     *   Clip details panel showing Game, Title, Creator, and Date.
     *   CSS Theme options.
 
+## Notes
+If you set `Date Range` AND `Prefer featured clips`, it will try to pull clips that are featured within the specified date range.
+
 ## Chat Commands
 *   **Standard:** `!so @MrCoolStreamer` or `!so MrCoolStreamer`
 *   **Replay:** `!replayso`, `!soreplay`, `!clipreplay`, `!replayclip`
