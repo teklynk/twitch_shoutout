@@ -1,4 +1,13 @@
 $(document).ready(async function () {
+
+    // automatically clear sessionStorage on load
+    Object.keys(sessionStorage).forEach((key) => {
+        if (!key.startsWith('game_')) {
+            sessionStorage.removeItem(key);
+        }
+    });
+    console.log('Cleared sessionStorage (except game_*)');
+
     // Get values from URL string
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -67,6 +76,8 @@ $(document).ready(async function () {
 
     let showText = urlParams.get('showText') || '';
 
+    let videoSize = (urlParams.get('videoSize') || '').trim();
+
     let showDetails = (urlParams.get('showDetails') || '').trim();
 
     let detailsText = (urlParams.get('detailsText') || '').trim();
@@ -94,6 +105,8 @@ $(document).ready(async function () {
     let delay = (urlParams.get('delay') || '').trim();
 
     let themeOption = (urlParams.get('themeOption') || '').trim();
+
+    let progressBarOption = (urlParams.get('progressBar') || '').trim();
 
     let preferFeatured = (urlParams.get('preferFeatured') || '').trim();
 
@@ -420,10 +433,8 @@ $(document).ready(async function () {
                     // save the clip url to sessionStorage
                     sessionStorage.setItem('twitchSOWatchClip', info.data[0].clip_url);
                     let thumbnailUrl = info.data[0].thumbnail_url;
-                    if (thumbnailUrl) {
-                        thumbnailUrl = thumbnailUrl.replace("-preview-480x272.jpg", "-preview-1920x1080.jpg");
-                    } else {
-                        thumbnailUrl = "";
+                    if (videoSize > '') {
+                        thumbnailUrl = thumbnailUrl.replace("1920x1080", videoSize);
                     }
                     // save the clip poster image to sessionStorage
                     sessionStorage.setItem('twitchSOWatchPoster', thumbnailUrl);
@@ -647,6 +658,10 @@ $(document).ready(async function () {
                                 const clip_url = clipInfo.data[indexClip].clip_url;
                                 let clip_poster = clipInfo.data[indexClip].thumbnail_url;
 
+                                if (videoSize > '') {
+                                    clip_poster = clip_poster.replace("1920x1080", videoSize);
+                                }
+
                                 // Text on top of clip
                                 if (showText === 'true') {
                                     if (customTitle) {
@@ -672,8 +687,17 @@ $(document).ready(async function () {
                                     $("#details-container").removeClass("hide");
                                 }, 500);
 
-                                $("<video id='clip' class='video fade' width='100%' height='100%' autoplay poster='" + clip_poster + "'><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
+                                $("<video id='clip' class='video' width='100%' height='100%' autoplay poster='" + clip_poster + "'><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
                                 const videoElement = document.getElementById("clip");
+
+                                if (videoSize > '') {
+                                    let dimensions = videoSize.split('x');
+                                    $(videoElement).css({
+                                        "width": dimensions[0] + "px",
+                                        "height": dimensions[1] + "px",
+                                        "object-fit": "fill"
+                                    });
+                                }
 
                                 // Create progress bar
                                 let progressBarContainer = document.createElement('div');
@@ -681,13 +705,20 @@ $(document).ready(async function () {
                                 $(progressBarContainer).appendTo('#container');
                                 $(progressBarContainer).css("display", "none");
 
+                                if (videoSize > '') {
+                                    let dimensions = videoSize.split('x');
+                                    $(progressBarContainer).css({
+                                        "width": dimensions[0] + "px"
+                                    });
+                                }
+
                                 let progressBar = document.createElement('div');
                                 progressBar.id = 'progress-bar';
                                 $(progressBar).appendTo(progressBarContainer);
 
                                 // Update progress bar
                                 function animateProgressBar() {
-                                    if (videoElement.duration) {
+                                    if (videoElement.duration && progressBarOption !== 'false') {
                                         $(progressBarContainer).css("display", "block");
                                         let percentage = (videoElement.currentTime / videoElement.duration) * 100;
                                         progressBar.style.width = percentage + '%';
