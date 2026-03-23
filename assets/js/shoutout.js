@@ -580,33 +580,15 @@ $(document).ready(async function () {
                 timer++;
                 if (timer >= parseInt(timeOut)) { // Use >= to be safe
                     clearInterval(startTimer);
-                    clearTimeout(playCheckTimeout);
                     cleanupAndNext();
                 }
             }, 1000);
 
-            const handleWatchReplayError = () => {
-                console.log("Error playing watched/replayed clip: " + clip_url);
-                clearInterval(startTimer);
-                clearTimeout(playCheckTimeout);
-                cleanupAndNext();
-            };
-
-            const playCheckTimeout = setTimeout(() => {
-                if (videoElement && videoElement.readyState < 2) {
-                    console.log("Watched/replayed clip did not load in time. Assuming error.");
-                    handleWatchReplayError();
-                }
-            }, 5000);
-
             // Remove video element after it has finished playing
             videoElement.onended = function (e) {
                 clearInterval(startTimer);
-                clearTimeout(playCheckTimeout);
                 cleanupAndNext();
             };
-
-            videoElement.onerror = handleWatchReplayError;
 
             return;
         }
@@ -782,38 +764,6 @@ $(document).ready(async function () {
 
                                 let timer = 0;
                                 let startTimer;
-                                let playCheckTimeout;
-
-                                const handleClipError = async () => {
-                                    console.log("Error loading clip: " + clip_url);
-
-                                    clearInterval(startTimer);
-                                    clearTimeout(playCheckTimeout);
-
-                                    if (document.getElementById("clip")) {
-                                        document.getElementById("clip").remove();
-                                    }
-                                    if (document.getElementById("text-container")) { document.getElementById("text-container").remove(); }
-                                    if (document.getElementById("details-container")) { document.getElementById("details-container").remove(); }
-                                    if (document.getElementById("progress-bar-container")) { document.getElementById("progress-bar-container").remove(); }
-
-                                    errorCount++;
-                                    indexClip++;
-
-                                    if (errorCount >= 3) {
-                                        console.log("Too many errors. Stopping.");
-                                        cleanupAndNext();
-                                        return;
-                                    }
-                                    await playClip();
-                                };
-
-                                playCheckTimeout = setTimeout(() => {
-                                    if (videoElement && videoElement.readyState < 2) {
-                                        console.log("Video did not load in time. Assuming error for: " + clip_url);
-                                        handleClipError();
-                                    }
-                                }, 3000);
 
                                 startTimer = setInterval(function () {
                                     timer++;
@@ -821,7 +771,6 @@ $(document).ready(async function () {
 
                                     if (timer >= parseInt(timeOut)) {
                                         clearInterval(startTimer);
-                                        clearTimeout(playCheckTimeout);
                                         cleanupAndNext();
                                     }
 
@@ -829,11 +778,8 @@ $(document).ready(async function () {
 
                                 videoElement.onended = function (e) {
                                     clearInterval(startTimer);
-                                    clearTimeout(playCheckTimeout);
                                     cleanupAndNext();
                                 };
-
-                                videoElement.onerror = handleClipError;
 
                                 if (watch === false) {
                                     sessionStorage.setItem('twitchSOClipUrl', clip_url);
