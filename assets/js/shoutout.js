@@ -70,8 +70,6 @@ $(document).ready(async function () {
 
     let showClip = urlParams.get('showClip') || '';
 
-    let showRecentClip = urlParams.get('showRecentClip') || '';
-
     let showMsg = urlParams.get('showMsg') || '';
 
     let showText = urlParams.get('showText') || '';
@@ -642,7 +640,7 @@ $(document).ready(async function () {
                 }
 
                 // Show Clip
-                if (showClip === 'true' || showRecentClip === 'true') {
+                if (showClip === 'true') {
 
                     const clipInfo = await getClips(getChannel);
 
