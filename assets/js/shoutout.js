@@ -108,6 +108,8 @@ $(document).ready(async function () {
 
     let progressBarOption = (urlParams.get('progressBar') || '').trim();
 
+    let profileBadge = (urlParams.get('profileBadge') || '').trim();
+
     let preferFeatured = (urlParams.get('preferFeatured') || '').trim();
 
     let clip_Id = '';
@@ -158,6 +160,14 @@ $(document).ready(async function () {
 
     if (!preferFeatured) {
         preferFeatured = "false"; //default
+    }
+
+    if (!progressBarOption) {
+        progressBarOption = 'true'; // default
+    }
+
+    if (!profileBadge) {
+        profileBadge = 'false'; // default
     }
 
     if (channelName === '') {
@@ -537,6 +547,9 @@ $(document).ready(async function () {
         if (document.getElementById("profile")) {
             document.getElementById("profile").remove();
         }
+        if (document.getElementById("profile-badge")) {
+            document.getElementById("profile-badge").remove();
+        }
         if (document.getElementById("text-container")) {
             document.getElementById("text-container").remove();
         }
@@ -593,14 +606,24 @@ $(document).ready(async function () {
             return;
         }
 
-        const statusInfo = await getStatus(getChannel);
+        const userInfo = await getInfo(getChannel);
+        let statusInfo = null;
         
-        // If user exists, then getClips
-        if (statusInfo && statusInfo.data && statusInfo.data.length > 0) {
+        if (showMsg === 'true') {
+            statusInfo = await getStatus(getChannel);
+        }
+        
+        // If user exists
+        if (userInfo && userInfo.data && userInfo.data.length > 0) {
+
+                // Fetch and show profile image badge
+                if (profileBadge !== 'false') {
+                    $("<img id='profile-badge' class='hide' src='" + userInfo.data[0].profile_image_url + "'>").appendTo("#container");
+                }
 
                 if (showMsg === 'true') {
                     // If user has streamed anything then say message
-                    if (statusInfo.data[0]['game_name']) {
+                    if (statusInfo && statusInfo.data && statusInfo.data.length > 0 && statusInfo.data[0]['game_name']) {
                         if (customMsg) {
                             let processedMsg = customMsg.replace(/{channel}/g, statusInfo.data[0]['broadcaster_name']);
                             processedMsg = processedMsg.replace(/{game}/g, statusInfo.data[0]['game_name']);
@@ -614,7 +637,7 @@ $(document).ready(async function () {
                         }
                         // Say generic message in chat
                     } else {
-                        client.say(channelName, "Go check out " + statusInfo.data[0]['broadcaster_name'] + "! https://twitch.tv/" + statusInfo.data[0]['broadcaster_login']);
+                        client.say(channelName, "Go check out " + userInfo.data[0]['display_name'] + "! https://twitch.tv/" + userInfo.data[0]['login']);
                     }
                 }
 
@@ -667,6 +690,7 @@ $(document).ready(async function () {
                                 setTimeout(() => {
                                     $("#text-container").removeClass("hide");
                                     $("#details-container").removeClass("hide");
+                                    $("#profile-badge").removeClass("hide");
                                 }, 500);
 
                                 $("<video id='clip' class='video' width='100%' height='100%' autoplay poster='" + clip_poster + "'><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
