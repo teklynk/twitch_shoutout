@@ -37,19 +37,27 @@ $(document).ready(async function () {
         for (const server of servers) {
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 2000);
-                await fetch(server, { method: 'HEAD', signal: controller.signal });
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                const response = await fetch(server, { method: 'HEAD', signal: controller.signal });
                 clearTimeout(timeoutId);
-                return server;
+                
+                if (response.ok) {
+                    return server;
+                }
             } catch (error) {
                 console.warn(`Server ${server} is unreachable. Trying next...`);
             }
         }
-        return servers[0];
+        return null;
     }
 
     // Call the function
-    const apiServer = await setRandomServer();
+    let apiServer = await setRandomServer();
+
+    if (!apiServer) {
+        console.error('All API Gateway servers are currently unreachable.');
+        $("<div class='msg-error'>All API Gateway servers are currently unreachable. Please try again later.</div>").prependTo('body');
+    }
 
     let getChannel;
 
@@ -65,6 +73,8 @@ $(document).ready(async function () {
     let cmdArray = [];
 
     let client = '';
+
+    let pendingFetches = {};
 
     let channelName = (urlParams.get('channel') || '').toLowerCase().trim();
 
@@ -208,7 +218,11 @@ $(document).ready(async function () {
             return JSON.parse(sessionStorage.getItem('game_' + game_id));
         }
         try {
-            const response = await fetch(apiServer + "/getgame.php?id=" + game_id);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            const response = await fetch(apiServer + "/getgame.php?id=" + game_id, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -221,8 +235,12 @@ $(document).ready(async function () {
                 }
             }
             return data;
-        } catch (e) {
-            console.error(e);
+        } catch (error) {
+            console.error(error);
+            // Failover logic: attempt to switch to a healthy API server for future requests
+            if (error.name === 'TypeError' || error.name === 'AbortError' || error.message === 'Network response was not ok') {
+                apiServer = await setRandomServer();
+            }
             return null;
         }
     }
@@ -235,7 +253,11 @@ $(document).ready(async function () {
         } else {
             let urlU = apiServer + "/getuserinfo.php?channel=" + SOChannel;
             try {
-                const response = await fetch(urlU);
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                const response = await fetch(urlU, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -244,6 +266,10 @@ $(document).ready(async function () {
                 return data;
             } catch (error) {
                 console.error(error);
+                // Failover logic: attempt to switch to a healthy API server for future requests
+                if (error.name === 'TypeError' || error.name === 'AbortError' || error.message === 'Network response was not ok') {
+                    apiServer = await setRandomServer();
+                }
                 return null;
             }
         }
@@ -257,7 +283,11 @@ $(document).ready(async function () {
         } else {
             let urlG = apiServer + "/getuserstatus.php?channel=" + SOChannel + "";
             try {
-                const response = await fetch(urlG);
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                const response = await fetch(urlG, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -266,6 +296,10 @@ $(document).ready(async function () {
                 return data;
             } catch (error) {
                 console.error(error);
+                // Failover logic: attempt to switch to a healthy API server for future requests
+                if (error.name === 'TypeError' || error.name === 'AbortError' || error.message === 'Network response was not ok') {
+                    apiServer = await setRandomServer();
+                }
                 return null;
             }
         }
@@ -282,42 +316,83 @@ $(document).ready(async function () {
             }
             return data;
         } else {
-            if (preferFeatured !== "false") {
-                urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=true&limit=" + limit + "&shuffle=true" + dateRange;
-            } else {
-                urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=false&limit=" + limit + "&shuffle=true" + dateRange;
-            }
-            try {
-                let response = await fetch(urlC);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                let data = await response.json();
-                // If dateRange or preferFeatured is set but no clips are found. Try to pull any clip.
-                if (data.data && data.data.length === 0 && (dateRange > "" || preferFeatured !== "false")) {
-                    console.log('No clips found matching dateRange or preferFeatured filter. PULL ANY Clip found from: ' + SOChannel);
-                    const responseFallback = await fetch(apiServer + "/getuserclips.php?channel=" + SOChannel + "&limit=" + limit + "&shuffle=true");
-                    if (responseFallback.ok) {
-                        data = await responseFallback.json();
+            if (pendingFetches[SOChannel]) return pendingFetches[SOChannel];
+
+            const fetchPromise = (async () => {
+                let attempts = 0;
+                const maxAttempts = 3;
+                let data = { data: [] };
+
+                while (attempts < maxAttempts) {
+                    if (preferFeatured !== "false") {
+                        urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=true&limit=" + limit + "&shuffle=true" + dateRange;
+                    } else {
+                        urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=false&limit=" + limit + "&shuffle=true" + dateRange;
                     }
-                    // If the fallback fails, just use the empty `data` object from the first request.
+                    
+                    try {
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 3000);
+                        let response = await fetch(urlC, { signal: controller.signal });
+                        clearTimeout(timeoutId);
+
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        data = await response.json();
+                        // If dateRange or preferFeatured is set but no clips are found. Try to pull any clip.
+                        if (data.data && data.data.length === 0 && (dateRange > "" || preferFeatured !== "false")) {
+                            console.log('No clips found matching dateRange or preferFeatured filter. PULL ANY Clip found from: ' + SOChannel);
+                            const fallbackController = new AbortController();
+                            const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 3000);
+                            const responseFallback = await fetch(apiServer + "/getuserclips.php?channel=" + SOChannel + "&limit=" + limit + "&shuffle=true", { signal: fallbackController.signal });
+                            clearTimeout(fallbackTimeoutId);
+                            if (responseFallback.ok) {
+                                data = await responseFallback.json();
+                            }
+                        }
+                        try {
+                            sessionStorage.setItem(SOChannel, JSON.stringify(data));
+                        } catch (e) {
+                            if (e.name === 'QuotaExceededError') {
+                                sessionStorage.clear();
+                                console.log('Cleared sessionStorage due to QuotaExceededError');
+                            }
+                            console.error("sessionStorage error:", e);
+                        }
+                        return data;
+                    } catch (error) {
+                        attempts++;
+                        console.warn(`Attempt ${attempts} failed for ${SOChannel} on server ${apiServer}:`, error);
+                        
+                        // Failover logic: if network error, timeout, or restricted access (403), switch API server
+                        if (error.name === 'TypeError' || error.name === 'AbortError' || error.message === 'Network response was not ok') {
+                            console.log('API server error detected. Attempting to find a new healthy API server...');
+                            apiServer = await setRandomServer();
+                        }
+
+                        if (!apiServer || attempts >= maxAttempts) {
+                            break;
+                        }
+                        // Small delay before retrying with new server
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
                 }
+
+                // If all retries failed or no servers available, return empty data and cache it
                 try {
                     sessionStorage.setItem(SOChannel, JSON.stringify(data));
                 } catch (e) {
                     console.error("sessionStorage error:", e);
                 }
                 return data;
-            } catch (error) {
-                console.error(error);
-                // On any error, create an empty data object to be cached to prevent re-fetching.
-                const data = { data: [] };
-                try {
-                    sessionStorage.setItem(SOChannel, JSON.stringify(data));
-                } catch (e) {
-                    console.error("sessionStorage error:", e);
-                }
-                return data;
+            })();
+
+            pendingFetches[SOChannel] = fetchPromise;
+            try {
+                return await fetchPromise;
+            } finally {
+                delete pendingFetches[SOChannel];
             }
         }
     }
@@ -326,13 +401,21 @@ $(document).ready(async function () {
     async function getClipUrl(id) {
         let urlV = apiServer + "/getuserclips.php?id=" + id;
         try {
-            const response = await fetch(urlV);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            const response = await fetch(urlV, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             return await response.json();
         } catch (error) {
             console.error(error);
+            // Rotate server on failure to help future requests
+            if (error.name === 'TypeError' || error.name === 'AbortError' || error.message === 'Network response was not ok') {
+                apiServer = await setRandomServer();
+            }
             return null;
         }
     }
