@@ -96,6 +96,8 @@ $(document).ready(async function () {
 
     let modsOnly = urlParams.get('modsOnly') || '';
 
+    let vipsOnly = urlParams.get('vipsOnly') || '';
+
     let timeOut = urlParams.get('timeOut') || '';
 
     let command = (urlParams.get('command') || '').trim();
@@ -122,8 +124,6 @@ $(document).ready(async function () {
 
     let clip_Id = '';
 
-    let userIsVip = false;
-
     let limit = "10";
 
     if (!raided) {
@@ -148,6 +148,10 @@ $(document).ready(async function () {
 
     if (!modsOnly) {
         modsOnly = 'true'; // default
+    }
+
+    if (!vipsOnly) {
+        vipsOnly = 'true'; // default
     }
 
     if (!showText) {
@@ -470,54 +474,28 @@ $(document).ready(async function () {
         $("<div class='msg-error'>Failed to connect to Twitch Chat. Please refresh to try again. Twitch Access Token may have also expired.</div>").prependTo('body');
     });
 
-    // Check if user is VIP
-    client.on('chat', (channel, userstate, message, self) => {
-        // Ignore echoed messages.
-        if (self) {
-            return false;
-        }
-
-        if (userstate && userstate.badges && userstate.badges.vip !== null && userstate.badges.vip !== undefined && userstate.badges.vip !== '') {
-            userIsVip = true;
-        } else {
-            userIsVip = false;
-        }
-    })
-
     // triggers on message
     client.on('chat', (channel, user, message, self) => {
-
-        // Ignore echoed messages.
-        if (self) {
-            return false;
-        }
+        if (self) return false;
 
         // If message contains a clip url
         if (message.includes('https://clips.twitch.tv/') || message.includes('/clip/')) {
-
             // Remove trailing spaces from message
             message = message.trim();
-
             // get the url from the chat message
             let chatClipUrl = detectURLs(message);
-
             console.log('clip_url: ' + chatClipUrl);
-
             // parse url into an array
             let urlArr = chatClipUrl[0].split('/');
-
             // extract the clip id/slug from the url
             if (message.includes('https://clips.twitch.tv/')) {
                 clip_Id = urlArr[3];
             } else {
                 clip_Id = urlArr[5];
             }
-
             // remove everything in the url after the '?'
             clip_Id = clip_Id.split('?')[0];
-
             console.log('clip_Id: ' + clip_Id);
-
             // get the clip_url from the api
             getClipUrl(clip_Id).then(function (info) {
                 if (info && info.data && info.data[0] && info.data[0].clip_url) {
@@ -531,19 +509,22 @@ $(document).ready(async function () {
                     sessionStorage.setItem('twitchSOWatchPoster', thumbnailUrl);
                 }
             });
-
         }
 
-        if (user['message-type'] === 'chat' && message.startsWith('!') && (user.mod || userIsVip || user.username === channelName)) {
+        if (user['message-type'] === 'chat' && message.startsWith('!')) {
+            const isStreamer = user.username === channelName;
+            const isMod = user.mod;
+            const isVip = (user.badges && user.badges.vip !== undefined);
+            const isPrivileged = isStreamer || isMod || isVip;
 
-            // Hard-coded commands to control the clips
-            if (message === "!sostop" || message === "!stopso" || message === "!stopclip" || message === "!clipstop" || message === "!clipreload") {
+            // Hard-coded commands to control the clips - Mods, VIPs and Streamer only
+            if (isPrivileged && (message === "!sostop" || message === "!stopso" || message === "!stopclip" || message === "!clipstop" || message === "!clipreload")) {
 
                 // Reloads browser source
                 window.location.reload();
 
                 // Replay previous shout-out clip
-            } else if (message === "!clipreplay" || message === "!replayclip" || message === "!soreplay" || message === "!replayso") {
+            } else if (isPrivileged && (message === "!clipreplay" || message === "!replayclip" || message === "!soreplay" || message === "!replayso")) {
 
                 watch = false;
                 replay = true;
@@ -553,7 +534,7 @@ $(document).ready(async function () {
                 }
 
                 // Watch a clip from chat
-            } else if (message === "!watchclip") {
+            } else if (isPrivileged && message === "!watchclip") {
 
                 console.log("Watching a clip from chat");
 
@@ -590,13 +571,19 @@ $(document).ready(async function () {
                 return false; // Exit and Do nothing else
             }
 
-            if (modsOnly === 'true' && (user.mod || userIsVip || user.username === channelName)) {
+            // Permission check for shoutout command
+            let canExecute = false;
+            if (isStreamer) {
+                canExecute = true;
+            } else if (modsOnly === 'false' && vipsOnly === 'false') {
+                canExecute = true;
+            } else if ((modsOnly === 'true' && isMod) || (vipsOnly === 'true' && isVip)) {
+                canExecute = true;
+            }
 
+            if (canExecute) {
                 console.log(getChannel);
-                doShoutOut(getChannel); // Mods and VIPs only
-
-            } else if (modsOnly === 'false' || user.username === channelName) {
-                doShoutOut(getChannel); // Everyone
+                doShoutOut(getChannel);
             }
         }
     });
