@@ -9,8 +9,6 @@ This is a Twitch Shout-Out generator and browser source overlay for OBS. This pr
 
 - [https://twitchshoutout.com](https://twitchshoutout.com)
 - [https://twitch-shoutout.teklynk.com](https://twitch-shoutout.teklynk.com)
-- [https://twitch-shoutout.teklynk.dev](https://twitch-shoutout.teklynk.dev)
-- [https://twitch-shoutout.pages.dev](https://twitch-shoutout.pages.dev)
 
 ## Features
 *   **Clip Player:** Plays a random or recent clip from the shouted-out channel.
