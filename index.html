@@ -46,7 +46,8 @@
         color: #8c8dff !important;
     }
 
-    a:hover, a:focus {
+    a:hover,
+    a:focus {
         text-decoration: underline !important;
         color: #a0a1ff !important;
     }
@@ -60,7 +61,9 @@
         color: #ddd9e8;
     }
 
-    a:hover i, a:focus i, a.active i {
+    a:hover i,
+    a:focus i,
+    a.active i {
         color: #eef0f3;
     }
 
@@ -109,9 +112,20 @@
         color: #fff !important;
     }
 
-    .btn-purple, .btn-purple:hover, .btn-purple:focus, .btn-purple:active {
+    .btn-purple,
+    .btn-purple:hover,
+    .btn-purple:focus,
+    .btn-purple:active {
         background-color: #6441a5;
         border-color: #523c7c;
+    }
+
+    a.btn-link:hover,
+    a.btn-link:focus,
+    a.btn-success:hover,
+    a.btn-success:focus {
+        text-decoration: none !important;
+        color: #fff !important;
     }
 </style>
 
@@ -126,13 +140,6 @@
                     </div>
                 </li>
             </ul>
-        </div>
-
-        <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
-            <p style="margin: 0;">If you enjoy some of these tools, please consider <a href="https://www.teklynk.com/support" target="_blank" style="color: #007bff;">donating</a>. It helps support the online infrastructure that powers these projects.</p>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
         </div>
 
         <div class="card mb-4">
@@ -162,22 +169,33 @@
                     <li><strong>Raid shoutout:</strong> Automatically do a shout-out on Raid events.</li>
                 </ul>
                 <p>Be sure to set "Shutdown source when not visible", "Control audio via OBS", "Refresh browser when
-                    scene becomes active" on the OBS Browser Source properties. Set the browser source window size to 1920x1080 and then resize/scale the browser source window.</p>
-                <p>* NOTE: If you set `Date Range` AND `Prefer featured clips`, it will try to pull clips that are featured within the specified date range.</p>
-                <p>Join our <a href="https://github.com/teklynk/twitch_shoutout/discussions" target="_blank">GitHub Discussions</a> to get the latest on new features and updates, submit feature requests, report issues, and talk tech with the community.</p>
+                    scene becomes active" on the OBS Browser Source properties. Set the browser source window size to
+                    1920x1080 and then resize/scale the browser source window.</p>
+                <p>* NOTE: If you set `Date Range` AND `Prefer featured clips`, it will try to pull clips that are
+                    featured within the specified date range.</p>
+                <p>Join our <a href="https://github.com/teklynk/twitch_shoutout/discussions" target="_blank">GitHub
+                        Discussions</a> to get the latest on new features and updates, submit feature requests, report
+                    issues, and talk tech with the community.</p>
                 <div class="text-center p-2">
-                    <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank" title="README"><i class="fa-brands fa-readme"></i></a>
-                    <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout" target="_blank" title="GitHub"><i class="fa-brands fa-github"></i></a>
-                    <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout/discussions" target="_blank" title="GitHub Discussions"><i class="fa-solid fa-comment"></i></a>
-                    <a class="btn btn-link btn-lg" href="https://github.com/sponsors/teklynk" target="_blank" title="Donate/Support"><i class="fa-solid fa-dollar-sign"></i></a>
+                    <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
+                        target="_blank" title="README"><i class="fa-brands fa-readme"></i></a>
+                    <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout" target="_blank"
+                        title="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout/discussions"
+                        target="_blank" title="GitHub Discussions"><i class="fa-solid fa-comment"></i></a>
+                    <a class="btn btn-link btn-lg" href="https://github.com/sponsors/teklynk" target="_blank"
+                        title="Donate/Support"><i class="fa-solid fa-dollar-sign"></i></a>
                 </div>
             </div>
         </div>
 
-        <div class="alert alert-dark shadow" role="alert"><p>Access Token is required if you would like to post a shoutout message in chat.</p>
+        <div class="alert alert-dark shadow" role="alert">
+            <p>Access Token is required if you would like to post a shoutout message in chat.</p>
             <div class="form-label-group">
                 <div>
-                    <a class="btn btn-purple btn-lg text-white shadow-sm font-weight-bold" id="twitch-auth-link" href="#" target="_self" title="Sign in with your Twitch account"><i class="fa-brands fa-twitch"></i>&nbsp;Connect</a>
+                    <a class="btn btn-purple btn-lg text-white shadow-sm font-weight-bold" id="twitch-auth-link"
+                        href="#" target="_self" title="Sign in with your Twitch account"><i
+                            class="fa-brands fa-twitch"></i>&nbsp;Connect</a>
                 </div>
                 <div class="form-label-group mt-2">
                     <label for="ref">Access token</label>
@@ -239,10 +257,11 @@
             <small class="text-muted range-slider-value">Seconds</small>
         </div>
         <div class="form-group range-slider mt-2">
-            <label for="dateRange">Prefer clips from within a Date Range (Date range clips if found) <small class="text-warning">* 0 Day(s) = OFF</small>
+            <label for="dateRange">Prefer clips from within a Date Range (Date range clips if found) <small
+                    class="text-warning">* 0 Day(s) = OFF</small>
             </label>
-            <input type="range" max="365" min="0" step="10" class="form-control range-slider-range shadow" id="dateRange"
-                value="0" style="height: 0;">
+            <input type="range" max="365" min="0" step="10" class="form-control range-slider-range shadow"
+                id="dateRange" value="0" style="height: 0;">
             <small class="text-muted range-slider-value" id="date-limit"></small>
             <small class="text-muted range-slider-value">Day(s)</small>
         </div>
@@ -307,13 +326,16 @@ Clipped by {creator_name} {created_at}"></textarea>
                 <option value="8">Terminal Slide</option>
                 <option value="9">Mega Retro</option>
             </select>
-            <small class="text-muted"><a href="https://github.com/teklynk/twitch_shoutout/discussions/31" target="_blank">Screenshots of themes</a></small>
+            <small class="text-muted"><a href="https://github.com/teklynk/twitch_shoutout/discussions/31"
+                    target="_blank">Screenshots of themes</a></small>
         </div>
         <div class="form-group mb-2">
             <label>Force Video Size (Optional)</label>
             <div class="form-row">
-                <div class="col"><input type="number" id="videoWidth" class="form-control shadow" placeholder="Width (e.g. 1920)"></div>
-                <div class="col"><input type="number" id="videoHeight" class="form-control shadow" placeholder="Height (e.g. 1080)"></div>
+                <div class="col"><input type="number" id="videoWidth" class="form-control shadow"
+                        placeholder="Width (e.g. 1920)"></div>
+                <div class="col"><input type="number" id="videoHeight" class="form-control shadow"
+                        placeholder="Height (e.g. 1080)"></div>
             </div>
             <small class="text-muted">Set specific width and height to force video scale</small>
         </div>
@@ -346,16 +368,58 @@ Clipped by {creator_name} {created_at}"></textarea>
             Overlay
             Link</button>
         <br>
+
         <div id="overlaylink" class="hide"></div>
+
+        <p class="text-center m-0 mt-4 d-block">If you enjoy some of these tools, please consider <a
+                href="https://www.teklynk.com/support" target="_blank">donating</a>. It
+            helps support the online infrastructure that powers these projects.</p>
     </div>
     <div class="text-center p-2">
-        <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md" target="_blank" title="README"><i class="fa-brands fa-readme"></i></a>
-        <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout" target="_blank" title="GitHub"><i class="fa-brands fa-github"></i></a>
-        <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout/discussions" target="_blank" title="GitHub Discussions"><i class="fa-solid fa-comment"></i></a>
-        <a class="btn btn-link btn-lg" href="https://github.com/sponsors/teklynk" target="_blank" title="Donate/Support"><i class="fa-solid fa-dollar-sign"></i></a>
+        <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout/blob/main/README.md"
+            target="_blank" title="README"><i class="fa-brands fa-readme"></i></a>
+        <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout" target="_blank"
+            title="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a class="btn btn-link btn-lg" href="https://github.com/teklynk/twitch_shoutout/discussions" target="_blank"
+            title="GitHub Discussions"><i class="fa-solid fa-comment"></i></a>
+        <a class="btn btn-link btn-lg" href="https://github.com/sponsors/teklynk" target="_blank"
+            title="Donate/Support"><i class="fa-solid fa-dollar-sign"></i></a>
     </div>
     <div class="container text-center p-4">
-        <small class="muted">Made with <i class="fa fa-heart vertical-middle"></i> by <a href="https://www.teklynk.com" target="_blank">Teklynk</a></small>
+        <small class="muted">Made with <i class="fa fa-heart vertical-middle"></i> by <a href="https://www.teklynk.com"
+                target="_blank">Teklynk</a></small>
+    </div>
+
+    <!-- Donation Modal -->
+    <div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static"
+        data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark">
+                    <h5 class="modal-title">Would you like to make a donation?</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mb-3">If this tool helped you, consider supporting development to keep it free:</p>
+
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <small class="text-muted"><strong>$3/mo</strong><br>Covers server costs</small>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-primary"><strong>$5/mo</strong><br>Funds new features</small>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-secondary"><strong>$10 one-time</strong><br>Just a thank you ❤️</small>
+                        </div>
+                    </div>
+
+                    <a href="https://www.teklynk.com/support" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-lg btn-success btn-block text-white text-decoration-none shadow">Donate Now</a>
+                    <button type="button" class="btn btn-lg btn-link btn-block text-white text-decoration-none"
+                        data-dismiss="modal">No thanks</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -498,6 +562,21 @@ Clipped by {creator_name} {created_at}"></textarea>
             }
         }
 
+        // Donation Modal Logic
+        const DONATION_STORAGE_KEY = 'overlay_tool_donation_shown';
+        const DONATION_CAP_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+        function shouldShowDonationModal() {
+            const lastShown = localStorage.getItem(DONATION_STORAGE_KEY);
+            if (!lastShown) return true;
+            const elapsed = Date.now() - parseInt(lastShown, 10);
+            return elapsed >= DONATION_CAP_DURATION_MS;
+        }
+
+        function recordModalShown() {
+            localStorage.setItem(DONATION_STORAGE_KEY, Date.now().toString());
+        }
+
         // Check if any input fields have changed
         $(":text,:password,textarea,:checkbox,input[type=range],select,input[type=number]").on('change', function (e) {
 
@@ -636,6 +715,13 @@ Clipped by {creator_name} {created_at}"></textarea>
                 document.getElementById("overlaylink").classList.remove("hide");
                 document.getElementById("overlaylink").innerHTML = "<p>Add this link as a browser source in OBS.<br>" +
                     "<a style='word-break:break-all;' href='" + fullUrl + "' target='_blank'>" + fullUrl + "</a><br><span class='text-warning'><small>* Never share this url with anyone or show it on stream!</small></span></p>";
+
+                // Show donation modal if conditions are met
+                if (shouldShowDonationModal()) {
+                    recordModalShown();
+                    $('#donationModal').modal('show');
+                }
+
             }
         });
 
