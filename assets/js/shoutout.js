@@ -122,9 +122,11 @@ $(document).ready(async function () {
 
     let preferFeatured = (urlParams.get('preferFeatured') || '').trim();
 
+    let cache = (urlParams.get('cache') || '').trim();
+
     let clip_Id = '';
 
-    let limit = "10";
+    let limit = "100";
 
     if (!raided) {
         raided = "false"; //default
@@ -135,7 +137,7 @@ $(document).ready(async function () {
     }
 
     if (!delay) {
-        delay = "10"; //default
+        delay = "0"; //default
     }
 
     if (!command) {
@@ -329,9 +331,9 @@ $(document).ready(async function () {
 
                 while (attempts < maxAttempts) {
                     if (preferFeatured !== "false") {
-                        urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=true&limit=" + limit + "&shuffle=true" + dateRange;
+                        urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=true&limit=" + limit + "&shuffle=true&cache=" + cache + dateRange;
                     } else {
-                        urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=false&limit=" + limit + "&shuffle=true" + dateRange;
+                        urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=false&limit=" + limit + "&shuffle=true&cache=" + cache + dateRange;
                     }
                     
                     try {
@@ -349,7 +351,7 @@ $(document).ready(async function () {
                             console.log('No clips found matching dateRange or preferFeatured filter. PULL ANY Clip found from: ' + SOChannel);
                             const fallbackController = new AbortController();
                             const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 3000);
-                            const responseFallback = await fetch(apiServer + "/getuserclips.php?channel=" + SOChannel + "&limit=" + limit + "&shuffle=true", { signal: fallbackController.signal });
+                            const responseFallback = await fetch(apiServer + "/getuserclips.php?channel=" + SOChannel + "&limit=" + limit + "&shuffle=truee&cache=" + cache, { signal: fallbackController.signal });
                             clearTimeout(fallbackTimeoutId);
                             if (responseFallback.ok) {
                                 data = await responseFallback.json();
