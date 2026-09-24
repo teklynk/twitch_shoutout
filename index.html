@@ -244,7 +244,7 @@
             </label>
         </div>
         <div class="form-group range-slider hide ml-4 mr-4 mt-2" id="so_count">
-            <label for="delay">Min raid party size</label>
+            <label for="raidCount">Min raid party size</label>
             <input type="range" max="30" min="0" step="1" class="form-control range-slider-range shadow" id="raidCount"
                 value="3" style="height: 0;">
             <small class="text-muted range-slider-value"></small>
@@ -569,8 +569,8 @@ Clipped by {creator_name} {created_at}"></textarea>
             }
 
             if (document.getElementById("raided").checked) {
-                document.getElementById("so_delay").classList.toggle('hide');
-                document.getElementById("so_count").classList.toggle('hide');
+                document.getElementById("so_delay").classList.remove('hide');
+                document.getElementById("so_count").classList.remove('hide');
             }
         }
 
