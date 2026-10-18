@@ -63,7 +63,6 @@ $(document).ready(async function () {
 
     let shoutOutQueue = [];
     let isShoutOutPlaying = false;
-    let stopBufferRecovery = null;
 
     let titleText;
 
@@ -427,26 +426,6 @@ $(document).ready(async function () {
         }
     }
 
-    function getClipStreamUrl(id, quality) {
-        const url = new URL(apiServer + "/getclipurl.php");
-        url.searchParams.set('id', id);
-        url.searchParams.set('url', 'true');
-        url.searchParams.set('quality', String(quality));
-        return url.toString();
-    }
-
-    function getClipId(clip) {
-        if (clip.id) {
-            return clip.id;
-        }
-
-        try {
-            return new URL(clip.clip_url, window.location.href).searchParams.get('id');
-        } catch (error) {
-            return null;
-        }
-    }
-
     // Returns the urls as an array from a chat message(string)
     function detectURLs(chatmsg) {
         let urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
@@ -519,13 +498,11 @@ $(document).ready(async function () {
             // remove everything in the url after the '?'
             clip_Id = clip_Id.split('?')[0];
             console.log('clip_Id: ' + clip_Id);
-            const requestedClipId = clip_Id;
             // get the clip_url from the api
-            getClipUrl(requestedClipId).then(function (info) {
+            getClipUrl(clip_Id).then(function (info) {
                 if (info && info.data && info.data[0] && info.data[0].clip_url) {
                     // save the clip url to sessionStorage
-                    sessionStorage.setItem('twitchSOWatchClip', getClipStreamUrl(requestedClipId, 720));
-                    sessionStorage.setItem('twitchSOWatchClip480', getClipStreamUrl(requestedClipId, 480));
+                    sessionStorage.setItem('twitchSOWatchClip', info.data[0].clip_url);
                     let thumbnailUrl = info.data[0].thumbnail_url;
                     if (videoSize > '') {
                         thumbnailUrl = thumbnailUrl.replace("1280x720", videoSize);
@@ -633,11 +610,6 @@ $(document).ready(async function () {
     }
 
     function cleanupAndNext() {
-        if (stopBufferRecovery) {
-            stopBufferRecovery();
-            stopBufferRecovery = null;
-        }
-
         // Remove existing elements
         if (document.getElementById("clip")) {
             document.getElementById("clip").remove();
@@ -664,108 +636,15 @@ $(document).ready(async function () {
         setTimeout(processShoutOutQueue, 500);
     }
 
-    function addBufferRecovery(videoElement, lowerQualityUrl) {
-        let bufferTimer = null;
-        let recoveryAttempted = false;
-        let hasPlayed = false;
-        let restorePlaybackHandler = null;
-
-        function clearBufferTimer() {
-            if (bufferTimer !== null) {
-                clearTimeout(bufferTimer);
-                bufferTimer = null;
-            }
-        }
-
-        function handleStall() {
-            if (!hasPlayed || bufferTimer !== null || recoveryAttempted) {
-                return;
-            }
-
-            const stalledAt = videoElement.currentTime;
-            bufferTimer = setTimeout(function () {
-                bufferTimer = null;
-                const madeProgress = Math.abs(videoElement.currentTime - stalledAt) >= 0.25;
-                if (madeProgress || videoElement.paused || videoElement.ended || !videoElement.isConnected) {
-                    return;
-                }
-
-                recoveryAttempted = true;
-                const recoveryUrl = lowerQualityUrl || videoElement.currentSrc || videoElement.src;
-                console.warn(lowerQualityUrl
-                    ? 'Clip stalled for 3 seconds; switching to 480p once.'
-                    : 'Clip stalled for 3 seconds; reloading once.', {
-                    time: stalledAt,
-                    readyState: videoElement.readyState,
-                    networkState: videoElement.networkState
-                });
-
-                restorePlaybackHandler = function () {
-                    restorePlaybackHandler = null;
-                    if (!videoElement.isConnected) {
-                        return;
-                    }
-
-                    if (stalledAt > 0 && videoElement.seekable.length > 0) {
-                        const seekableStart = videoElement.seekable.start(0);
-                        const seekableEnd = videoElement.seekable.end(videoElement.seekable.length - 1);
-                        if (stalledAt >= seekableStart && stalledAt < seekableEnd) {
-                            try {
-                                videoElement.currentTime = stalledAt;
-                            } catch (error) {
-                                console.warn('Could not restore clip position after reload.', error);
-                            }
-                        }
-                    }
-
-                    videoElement.play().catch(function (error) {
-                        console.warn('Could not resume clip after reload.', error);
-                    });
-                };
-                videoElement.addEventListener('loadedmetadata', restorePlaybackHandler, { once: true });
-
-                videoElement.src = recoveryUrl;
-                videoElement.load();
-            }, 3000);
-        }
-
-        function handlePlaying() {
-            hasPlayed = true;
-            clearBufferTimer();
-        }
-
-        videoElement.addEventListener('waiting', handleStall);
-        videoElement.addEventListener('stalled', handleStall);
-        videoElement.addEventListener('playing', handlePlaying);
-        videoElement.addEventListener('pause', clearBufferTimer);
-        videoElement.addEventListener('ended', clearBufferTimer);
-
-        return function stopRecovery() {
-            clearBufferTimer();
-            if (restorePlaybackHandler) {
-                videoElement.removeEventListener('loadedmetadata', restorePlaybackHandler);
-                restorePlaybackHandler = null;
-            }
-            videoElement.removeEventListener('waiting', handleStall);
-            videoElement.removeEventListener('stalled', handleStall);
-            videoElement.removeEventListener('playing', handlePlaying);
-            videoElement.removeEventListener('pause', clearBufferTimer);
-            videoElement.removeEventListener('ended', clearBufferTimer);
-        };
-    }
-
     async function executeShoutOut(getChannel, replayClip = false, watchClip = false) {
         if (watchClip === true || replayClip === true) { // If chat command = !replayclip
-            let fallbackClipUrl = null;
             if (replayClip === true) {
                 clip_url = sessionStorage.getItem('twitchSOClipUrl');
                 clip_poster = sessionStorage.getItem('twitchSOClipPoster');
-                fallbackClipUrl = sessionStorage.getItem('twitchSOClip480Url');
                 console.log('Replaying: ' + clip_url); // If chat command = !watchclip
             } else if (watchClip === true) {
                 clip_url = sessionStorage.getItem('twitchSOWatchClip');
                 clip_poster = sessionStorage.getItem('twitchSOWatchPoster');
-                fallbackClipUrl = sessionStorage.getItem('twitchSOWatchClip480');
                 console.log('Watching: ' + clip_url);
             }
 
@@ -778,7 +657,6 @@ $(document).ready(async function () {
             titleText = '';
             $("<video id='clip' class='video fade' width='100%' height='100%' autoplay poster='" + clip_poster + "'><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
             const videoElement = document.getElementById("clip");
-            stopBufferRecovery = addBufferRecovery(videoElement, fallbackClipUrl);
 
             let timer = 0;
             const startTimer = setInterval(function () {
@@ -852,14 +730,7 @@ $(document).ready(async function () {
 
                                 console.log('Clip URL: ' + clipInfo.data[indexClip].clip_url);
 
-                                const clipData = clipInfo.data[indexClip];
-                                const clipId = getClipId(clipData);
-                                const clip_url = clipId
-                                    ? getClipStreamUrl(clipId, 720)
-                                    : clipData.clip_url;
-                                const lowerQualityUrl = clipId
-                                    ? getClipStreamUrl(clipId, 480)
-                                    : null;
+                                const clip_url = clipInfo.data[indexClip].clip_url;
                                 let clip_poster = clipInfo.data[indexClip].thumbnail_url;
 
                                 if (videoSize > '') {
@@ -894,7 +765,6 @@ $(document).ready(async function () {
 
                                 $("<video id='clip' class='video' width='100%' height='100%' autoplay poster='" + clip_poster + "'><source src='" + clip_url + "' type='video/mp4'></video>").appendTo("#container");
                                 const videoElement = document.getElementById("clip");
-                                stopBufferRecovery = addBufferRecovery(videoElement, lowerQualityUrl);
 
                                 if (videoSize > '') {
                                     let dimensions = videoSize.split('x');
@@ -924,10 +794,6 @@ $(document).ready(async function () {
 
                                 // Update progress bar
                                 function animateProgressBar() {
-                                    if (!videoElement.isConnected) {
-                                        return;
-                                    }
-
                                     // Reset progress bar when called
                                     $(progressBar).css("width", "0%");
                                     $(progressBarContainer).css("display", "none");
@@ -1015,9 +881,6 @@ $(document).ready(async function () {
 
                                 if (watch === false) {
                                     sessionStorage.setItem('twitchSOClipUrl', clip_url);
-                                    if (lowerQualityUrl) {
-                                        sessionStorage.setItem('twitchSOClip480Url', lowerQualityUrl);
-                                    }
                                     sessionStorage.setItem('twitchSOClipPoster', clip_poster);
                                     sessionStorage.setItem('twitchSOChannel', getChannel);
                                 }
