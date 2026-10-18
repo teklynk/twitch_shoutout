@@ -528,7 +528,7 @@ $(document).ready(async function () {
                     sessionStorage.setItem('twitchSOWatchClip480', getClipStreamUrl(requestedClipId, 480));
                     let thumbnailUrl = info.data[0].thumbnail_url;
                     if (videoSize > '') {
-                        thumbnailUrl = thumbnailUrl.replace("1920x1080", videoSize);
+                        thumbnailUrl = thumbnailUrl.replace("1280x720", videoSize);
                     }
                     // save the clip poster image to sessionStorage
                     sessionStorage.setItem('twitchSOWatchPoster', thumbnailUrl);
@@ -863,7 +863,7 @@ $(document).ready(async function () {
                                 let clip_poster = clipInfo.data[indexClip].thumbnail_url;
 
                                 if (videoSize > '') {
-                                    clip_poster = clip_poster.replace("1920x1080", videoSize);
+                                    clip_poster = clip_poster.replace("1280x720", videoSize);
                                 }
 
                                 // Text on top of clip
