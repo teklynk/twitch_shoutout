@@ -124,6 +124,8 @@ $(document).ready(async function () {
 
     let cache = (urlParams.get('cache') || '').trim();
 
+    let quality = (urlParams.get('quality') || '720').trim();
+
     let clip_Id = '';
 
     let limit = "100";
@@ -405,7 +407,7 @@ $(document).ready(async function () {
 
     // Twitch API get clip for !watchclip command
     async function getClipUrl(id) {
-        let urlV = apiServer + "/getuserclips.php?id=" + id;
+        let urlV = apiServer + "/getuserclips.php?id=" + id + "&quality=" + quality;
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 3000);
