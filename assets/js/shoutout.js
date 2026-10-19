@@ -333,9 +333,9 @@ $(document).ready(async function () {
 
                 while (attempts < maxAttempts) {
                     if (preferFeatured !== "false") {
-                        urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=true&limit=" + limit + "&shuffle=true&cache=" + cache + dateRange;
+                        urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=true&limit=" + limit + "&shuffle=true&quality=" + quality + "&cache=" + cache + dateRange;
                     } else {
-                        urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=false&limit=" + limit + "&shuffle=true&cache=" + cache + dateRange;
+                        urlC = apiServer + "/getuserclips.php?channel=" + SOChannel + "&prefer_featured=false&limit=" + limit + "&shuffle=true&quality=" + quality + "&cache=" + cache + dateRange;
                     }
                     
                     try {
@@ -353,7 +353,7 @@ $(document).ready(async function () {
                             console.log('No clips found matching dateRange or preferFeatured filter. PULL ANY Clip found from: ' + SOChannel);
                             const fallbackController = new AbortController();
                             const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 3000);
-                            const responseFallback = await fetch(apiServer + "/getuserclips.php?channel=" + SOChannel + "&limit=" + limit + "&shuffle=truee&cache=" + cache, { signal: fallbackController.signal });
+                            const responseFallback = await fetch(apiServer + "/getuserclips.php?channel=" + SOChannel + "&limit=" + limit + "&shuffle=true&cache=" + cache, { signal: fallbackController.signal });
                             clearTimeout(fallbackTimeoutId);
                             if (responseFallback.ok) {
                                 data = await responseFallback.json();
